@@ -1,0 +1,763 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "FungID API",
+    "contact": {
+      "name": "FungID",
+      "url": "https://fungid.app",
+      "email": "michael@fungid.app"
+    },
+    "version": "0.0.1"
+  },
+  "paths": {
+    "/classifier/full": {
+      "put": {
+        "tags": ["classifier"],
+        "summary": "Evaluate Full Classifier",
+        "operationId": "evaluate_full_classifier_classifier_full_put",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Date",
+              "type": "string",
+              "format": "date-time"
+            },
+            "name": "date",
+            "in": "query"
+          },
+          {
+            "required": true,
+            "schema": { "title": "Lat", "type": "number" },
+            "name": "lat",
+            "in": "query"
+          },
+          {
+            "required": true,
+            "schema": { "title": "Lon", "type": "number" },
+            "name": "lon",
+            "in": "query"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_evaluate_full_classifier_classifier_full_put"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Evaluate Full Classifier Classifier Full Put",
+                  "type": "object",
+                  "additionalProperties": { "type": "number" }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/classifier/location": {
+      "get": {
+        "tags": ["classifier"],
+        "summary": "Evaluate Location Classifier",
+        "operationId": "evaluate_location_classifier_classifier_location_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": { "title": "Lat", "type": "number" },
+            "name": "lat",
+            "in": "query"
+          },
+          {
+            "required": true,
+            "schema": { "title": "Lon", "type": "number" },
+            "name": "lon",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Evaluate Location Classifier Classifier Location Get",
+                  "type": "object",
+                  "additionalProperties": { "type": "number" }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/classifier/tabular": {
+      "get": {
+        "tags": ["classifier"],
+        "summary": "Evaluate Tabular Classifier",
+        "operationId": "evaluate_tabular_classifier_classifier_tabular_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Date",
+              "type": "string",
+              "format": "date-time"
+            },
+            "name": "date",
+            "in": "query"
+          },
+          {
+            "required": true,
+            "schema": { "title": "Lat", "type": "number" },
+            "name": "lat",
+            "in": "query"
+          },
+          {
+            "required": true,
+            "schema": { "title": "Lon", "type": "number" },
+            "name": "lon",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Evaluate Tabular Classifier Classifier Tabular Get",
+                  "type": "object",
+                  "additionalProperties": { "type": "number" }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/classifier/image": {
+      "put": {
+        "tags": ["classifier"],
+        "summary": "Evaluate Image Classifier",
+        "operationId": "evaluate_image_classifier_classifier_image_put",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_evaluate_image_classifier_classifier_image_put"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Evaluate Image Classifier Classifier Image Put",
+                  "type": "object",
+                  "additionalProperties": { "type": "number" }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/taxonomy/species/": {
+      "get": {
+        "tags": ["taxonomy"],
+        "summary": "Get All Species",
+        "operationId": "get_all_species_taxonomy_species__get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Page",
+              "minimum": 1.0,
+              "type": "integer",
+              "default": 1
+            },
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Size",
+              "maximum": 100.0,
+              "minimum": 1.0,
+              "type": "integer",
+              "default": 50
+            },
+            "name": "size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Page_Species_" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/taxonomy/species/{name_or_id}": {
+      "get": {
+        "tags": ["taxonomy"],
+        "summary": "Get Species",
+        "operationId": "get_species_taxonomy_species__name_or_id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": { "title": "Name Or Id", "type": "string" },
+            "name": "name_or_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Species" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/observations/": {
+      "get": {
+        "tags": ["observations"],
+        "summary": "Get All Observations",
+        "operationId": "get_all_observations_observations__get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Page",
+              "minimum": 1.0,
+              "type": "integer",
+              "default": 1
+            },
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Size",
+              "maximum": 100.0,
+              "minimum": 1.0,
+              "type": "integer",
+              "default": 50
+            },
+            "name": "size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_GbifObservation_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/observations/{id}": {
+      "get": {
+        "tags": ["observations"],
+        "summary": "Get Observations By Id",
+        "operationId": "get_observations_by_id_observations__id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": { "title": "Id", "type": "integer" },
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/GbifObservation" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/observations/by_species/{species}": {
+      "get": {
+        "tags": ["observations"],
+        "summary": "Get Observations By Species",
+        "operationId": "get_observations_by_species_observations_by_species__species__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": { "title": "Species", "type": "string" },
+            "name": "species",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Page",
+              "minimum": 1.0,
+              "type": "integer",
+              "default": 1
+            },
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Size",
+              "maximum": 100.0,
+              "minimum": 1.0,
+              "type": "integer",
+              "default": 50
+            },
+            "name": "size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_GbifObservation_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/observations/{observation_id}/images": {
+      "get": {
+        "tags": ["observations"],
+        "summary": "Get Observation Images By Observation Id",
+        "operationId": "get_observation_images_by_observation_id_observations__observation_id__images_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": { "title": "Observation Id", "type": "integer" },
+            "name": "observation_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Page",
+              "minimum": 1.0,
+              "type": "integer",
+              "default": 1
+            },
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Size",
+              "maximum": 100.0,
+              "minimum": 1.0,
+              "type": "integer",
+              "default": 50
+            },
+            "name": "size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_GbifObservationImage_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/observations/images": {
+      "get": {
+        "tags": ["observations"],
+        "summary": "Get Observation Images",
+        "operationId": "get_observation_images_observations_images_get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Page",
+              "minimum": 1.0,
+              "type": "integer",
+              "default": 1
+            },
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Size",
+              "maximum": 100.0,
+              "minimum": 1.0,
+              "type": "integer",
+              "default": 50
+            },
+            "name": "size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_GbifObservationImage_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/observations/images/{image_id}": {
+      "get": {
+        "tags": ["observations"],
+        "summary": "Get Image By Id",
+        "operationId": "get_image_by_id_observations_images__image_id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": { "title": "Image Id", "type": "integer" },
+            "name": "image_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GbifObservationImage"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/healthcheck": {
+      "get": {
+        "summary": "Healthcheck",
+        "operationId": "healthcheck_healthcheck_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Body_evaluate_full_classifier_classifier_full_put": {
+        "title": "Body_evaluate_full_classifier_classifier_full_put",
+        "required": ["images"],
+        "type": "object",
+        "properties": {
+          "images": {
+            "title": "Images",
+            "type": "array",
+            "items": { "type": "string", "format": "binary" }
+          }
+        }
+      },
+      "Body_evaluate_image_classifier_classifier_image_put": {
+        "title": "Body_evaluate_image_classifier_classifier_image_put",
+        "required": ["images"],
+        "type": "object",
+        "properties": {
+          "images": {
+            "title": "Images",
+            "type": "array",
+            "items": { "type": "string", "format": "binary" }
+          }
+        }
+      },
+      "GbifObservation": {
+        "title": "GbifObservation",
+        "required": ["gbifid"],
+        "type": "object",
+        "properties": {
+          "gbifid": { "title": "Gbifid", "type": "integer" },
+          "datecreated": {
+            "title": "Datecreated",
+            "type": "string",
+            "format": "date-time"
+          },
+          "latitude": { "title": "Latitude", "type": "number" },
+          "longitude": { "title": "Longitude", "type": "number" },
+          "public": { "title": "Public", "type": "boolean" },
+          "acces_rights": { "title": "Acces Rights", "type": "string" },
+          "rights_holder": { "title": "Rights Holder", "type": "string" },
+          "recorded_by": { "title": "Recorded By", "type": "string" },
+          "license": { "title": "License", "type": "string" },
+          "countrycode": { "title": "Countrycode", "type": "string" },
+          "state_province": { "title": "State Province", "type": "string" },
+          "county": { "title": "County", "type": "string" },
+          "municipality": { "title": "Municipality", "type": "string" },
+          "locality": { "title": "Locality", "type": "string" },
+          "species_id": { "title": "Species Id", "type": "integer" },
+          "observer_id": { "title": "Observer Id", "type": "integer" }
+        }
+      },
+      "GbifObservationImage": {
+        "title": "GbifObservationImage",
+        "required": ["id"],
+        "type": "object",
+        "properties": {
+          "id": { "title": "Id", "type": "integer" },
+          "imgid": { "title": "Imgid", "type": "integer" },
+          "external_url": { "title": "External Url", "type": "string" },
+          "rights_holder": { "title": "Rights Holder", "type": "string" },
+          "creator": { "title": "Creator", "type": "string" },
+          "license": { "title": "License", "type": "string" },
+          "is_thumbnail": {
+            "title": "Is Thumbnail",
+            "type": "boolean",
+            "default": false
+          },
+          "observation_id": { "title": "Observation Id", "type": "integer" }
+        }
+      },
+      "HTTPValidationError": {
+        "title": "HTTPValidationError",
+        "type": "object",
+        "properties": {
+          "detail": {
+            "title": "Detail",
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ValidationError" }
+          }
+        }
+      },
+      "Page_GbifObservationImage_": {
+        "title": "Page[GbifObservationImage]",
+        "required": ["items", "total", "page", "size"],
+        "type": "object",
+        "properties": {
+          "items": {
+            "title": "Items",
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/GbifObservationImage" }
+          },
+          "total": { "title": "Total", "minimum": 0.0, "type": "integer" },
+          "page": { "title": "Page", "minimum": 1.0, "type": "integer" },
+          "size": { "title": "Size", "minimum": 1.0, "type": "integer" }
+        }
+      },
+      "Page_GbifObservation_": {
+        "title": "Page[GbifObservation]",
+        "required": ["items", "total", "page", "size"],
+        "type": "object",
+        "properties": {
+          "items": {
+            "title": "Items",
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/GbifObservation" }
+          },
+          "total": { "title": "Total", "minimum": 0.0, "type": "integer" },
+          "page": { "title": "Page", "minimum": 1.0, "type": "integer" },
+          "size": { "title": "Size", "minimum": 1.0, "type": "integer" }
+        }
+      },
+      "Page_Species_": {
+        "title": "Page[Species]",
+        "required": ["items", "total", "page", "size"],
+        "type": "object",
+        "properties": {
+          "items": {
+            "title": "Items",
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Species" }
+          },
+          "total": { "title": "Total", "minimum": 0.0, "type": "integer" },
+          "page": { "title": "Page", "minimum": 1.0, "type": "integer" },
+          "size": { "title": "Size", "minimum": 1.0, "type": "integer" }
+        }
+      },
+      "Species": {
+        "title": "Species",
+        "required": ["id"],
+        "type": "object",
+        "properties": {
+          "id": { "title": "Id", "type": "integer" },
+          "phylum": { "title": "Phylum", "type": "string" },
+          "classname": { "title": "Classname", "type": "string" },
+          "order": { "title": "Order", "type": "string" },
+          "family": { "title": "Family", "type": "string" },
+          "genus": { "title": "Genus", "type": "string" },
+          "species": { "title": "Species", "type": "string" },
+          "description": { "title": "Description", "type": "string" },
+          "included_in_classifier": {
+            "title": "Included In Classifier",
+            "type": "boolean",
+            "default": false
+          },
+          "number_of_observations": {
+            "title": "Number Of Observations",
+            "type": "integer"
+          }
+        }
+      },
+      "ValidationError": {
+        "title": "ValidationError",
+        "required": ["loc", "msg", "type"],
+        "type": "object",
+        "properties": {
+          "loc": {
+            "title": "Location",
+            "type": "array",
+            "items": { "anyOf": [{ "type": "string" }, { "type": "integer" }] }
+          },
+          "msg": { "title": "Message", "type": "string" },
+          "type": { "title": "Error Type", "type": "string" }
+        }
+      }
+    }
+  }
+}
