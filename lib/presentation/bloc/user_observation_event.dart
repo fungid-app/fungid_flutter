@@ -49,8 +49,8 @@ class UpdateObservationLocation extends SingleObservationEvent {
   }) : super(observation: observation);
 }
 
-class ReturnToList extends UserObservationEvent {
-  const ReturnToList();
+class ViewObservationList extends UserObservationEvent {
+  const ViewObservationList();
 }
 
 class DeleteObservation extends SingleObservationEvent {

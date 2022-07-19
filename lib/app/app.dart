@@ -1,6 +1,8 @@
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:fungid_flutter/screens/home_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fungid_flutter/repositories/camera_repository.dart';
+import 'package:fungid_flutter/repositories/user_observation_repository.dart';
+import 'package:fungid_flutter/presentation/pages/observation_list.dart';
 import 'package:openapi_generator_annotations/openapi_generator_annotations.dart';
 
 @Openapi(
@@ -13,12 +15,29 @@ import 'package:openapi_generator_annotations/openapi_generator_annotations.dart
 class FungIDApp extends StatelessWidget {
   const FungIDApp({
     super.key,
-    required this.cameras,
+    required this.observationsRepsoitory,
+    required this.cameraRepository,
   });
 
-  final List<CameraDescription> cameras;
+  final UserObservationsRepository observationsRepsoitory;
+  final CameraRepository cameraRepository;
 
-  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    return MultiRepositoryProvider(providers: [
+      RepositoryProvider.value(
+        value: observationsRepsoitory,
+      ),
+      RepositoryProvider.value(
+        value: cameraRepository,
+      ),
+    ], child: const AppView());
+  }
+}
+
+class AppView extends StatelessWidget {
+  const AppView({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -26,9 +45,7 @@ class FungIDApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: HomeScreen(
-        cameras: cameras,
-      ),
+      home: const ObservationListPage(),
     );
   }
 }

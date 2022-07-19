@@ -7,10 +7,7 @@ class TakeObservationImageScreen extends StatefulWidget {
   /// Default Constructor
   const TakeObservationImageScreen({
     super.key,
-    required this.cameras,
   });
-
-  final List<CameraDescription> cameras;
 
   @override
   State<TakeObservationImageScreen> createState() =>

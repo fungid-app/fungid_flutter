@@ -1,22 +1,36 @@
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fungid_flutter/domain.dart';
-import 'package:fungid_flutter/screens/screens.dart';
+import 'package:fungid_flutter/presentation/cubit/observation_list_cubit.dart';
+import 'package:fungid_flutter/presentation/pages/take_observation_image_screen.dart';
+import 'package:fungid_flutter/repositories/user_observation_repository.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({
+class ObservationListPage extends StatelessWidget {
+  const ObservationListPage({
     super.key,
-    required this.cameras,
   });
 
-  final List<CameraDescription> cameras;
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
+    UserObservationsRepository repository =
+        RepositoryProvider.of<UserObservationsRepository>(context);
+
+    return BlocProvider(
+      create: (_) => ObservationListCubit(repository),
+      child: const ObservationListView(),
+    );
+  }
+}
+
+class ObservationListView extends StatelessWidget {
+  const ObservationListView({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    context.read<ObservationListCubit>().fetchObservations();
+    final observations = context
+        .select((ObservationListCubit cubit) => cubit.state.observations);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Your Observations'),
@@ -27,8 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>
-                        TakeObservationImageScreen(cameras: widget.cameras),
+                    builder: (context) => const TakeObservationImageScreen(),
                   ));
             },
           ),
@@ -39,21 +52,11 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              padding: const EdgeInsets.all(8.0),
-              child: const Text(
-                'Unclassified Observations: ',
-                style: TextStyle(
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
             ListView.builder(
               shrinkWrap: true,
-              itemCount: UserObservation.observations.length,
+              itemCount: observations.length,
               itemBuilder: (BuildContext context, int index) {
-                return _observation_card(UserObservation.observations[index]);
+                return _observation_card(observations[index]);
               },
             ),
           ],

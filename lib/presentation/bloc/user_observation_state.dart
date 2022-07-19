@@ -7,10 +7,6 @@ abstract class UserObservationState extends Equatable {
   List<Object> get props => [];
 }
 
-class UserObservationEmpty extends UserObservationState {
-  const UserObservationEmpty();
-}
-
 class UserObservationList extends UserObservationState {
   const UserObservationList({
     required this.userObservations,
@@ -26,10 +22,12 @@ class UserObservationList extends UserObservationState {
 
 class UserObservationCamera extends UserObservationState {
   const UserObservationCamera({
+    required this.cameras,
     this.observation,
   });
 
   final UserObservation? observation;
+  final List<CameraDescription> cameras;
 
   @override
   List<Object> get props => [
