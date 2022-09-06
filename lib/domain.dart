@@ -14,11 +14,13 @@ const maxImageSize = 1000;
 UserObservation initializeObservation() {
   return UserObservation(
     images: const [],
-    dateCreated: DateTime.now(),
-    lat: 0.0,
-    lng: 0.0,
+    location: const ObservationLocation(
+      lat: 0.0,
+      lng: 0.0,
+      placeName: "",
+    ),
     id: const Uuid().v4(),
-    lastUpdated: DateTime.now(),
+    dateCreated: DateTime.now(),
   );
 }
 
@@ -58,31 +60,52 @@ UserObservation removeImageFromObservation(
 
 @JsonSerializable()
 class UserObservation extends Equatable {
-  double lat;
-  double lng;
+  final ObservationLocation location;
   final String id;
-  DateTime dateCreated;
-  DateTime lastUpdated;
-  List<UserObservationImage> images;
-  Predictions? predictions;
+  final DateTime dateCreated;
+  final DateTime lastUpdated;
+  final List<UserObservationImage> images;
+  final Predictions? predictions;
 
   UserObservation({
-    required this.lat,
-    required this.lng,
-    required this.dateCreated,
+    required this.location,
     required this.images,
     required this.id,
-    required this.lastUpdated,
-  });
+    required this.dateCreated,
+    this.predictions,
+  }) : lastUpdated = DateTime.now();
 
   @override
-  List<Object?> get props => [id, lat, lng, dateCreated, images, predictions];
+  List<Object?> get props => [
+        id,
+        location,
+        dateCreated,
+        images,
+        predictions,
+      ];
 
   static List<UserObservation> observations = [];
   factory UserObservation.fromJson(Map<String, dynamic> json) =>
       _$UserObservationFromJson(json);
 
   Map<String, dynamic> toJson() => _$UserObservationToJson(this);
+
+  UserObservation copyWith({
+    ObservationLocation? location,
+    String? id,
+    DateTime? dateCreated,
+    DateTime? lastUpdated,
+    List<UserObservationImage>? images,
+    Predictions? predictions,
+  }) {
+    return UserObservation(
+      location: location ?? this.location,
+      id: id ?? this.id,
+      dateCreated: dateCreated ?? this.dateCreated,
+      images: images ?? this.images,
+      predictions: predictions ?? this.predictions,
+    );
+  }
 }
 
 @JsonSerializable()
@@ -102,6 +125,27 @@ class Predictions extends Equatable {
       _$PredictionsFromJson(json);
 
   Map<String, dynamic> toJson() => _$PredictionsToJson(this);
+}
+
+@JsonSerializable()
+class ObservationLocation extends Equatable {
+  final double lat;
+  final double lng;
+  final String placeName;
+
+  const ObservationLocation({
+    required this.lat,
+    required this.lng,
+    required this.placeName,
+  });
+
+  @override
+  List<Object?> get props => [lat, lng];
+
+  factory ObservationLocation.fromJson(Map<String, dynamic> json) =>
+      _$ObservationLocationFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ObservationLocationToJson(this);
 }
 
 @JsonSerializable()
@@ -126,11 +170,12 @@ class Prediction extends Equatable {
 class UserObservationImage extends Equatable {
   final String? id;
   final Uint8List imageBytes;
+  final DateTime dateCreated;
 
-  const UserObservationImage({
+  UserObservationImage({
     required this.imageBytes,
     required this.id,
-  });
+  }) : dateCreated = DateTime.now();
 
   @override
   List<Object?> get props => [id, imageBytes];

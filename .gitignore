@@ -10,6 +10,9 @@
 .svn/
 migrate_working_dir/
 
+.vscode/launch.json
+local.properties
+
 # IntelliJ related
 *.iml
 *.ipr

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fungid_flutter/repositories/camera_repository.dart';
+import 'package:fungid_flutter/repositories/location_repository.dart';
 import 'package:fungid_flutter/repositories/user_observation_repository.dart';
 import 'package:fungid_flutter/presentation/pages/observation_list.dart';
 import 'package:openapi_generator_annotations/openapi_generator_annotations.dart';
@@ -16,11 +16,11 @@ class FungIDApp extends StatelessWidget {
   const FungIDApp({
     super.key,
     required this.observationsRepsoitory,
-    required this.cameraRepository,
+    required this.locationRepository,
   });
 
   final UserObservationsRepository observationsRepsoitory;
-  final CameraRepository cameraRepository;
+  final LocationRepository locationRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +29,7 @@ class FungIDApp extends StatelessWidget {
         value: observationsRepsoitory,
       ),
       RepositoryProvider.value(
-        value: cameraRepository,
+        value: locationRepository,
       ),
     ], child: const AppView());
   }

@@ -1,103 +1,64 @@
-import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:fungid_flutter/domain.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-class UserObservationsSharedPrefProvider {
-  UserObservationsSharedPrefProvider({required SharedPreferences prefs})
-      : _prefs = prefs;
-
-  static const kObsevationPrefix = 'observation_';
-  static const _kObservationList = 'observations';
-  final SharedPreferences _prefs;
-
-  List<String> _getObservationList() {
-    return _prefs.getStringList(_kObservationList) ?? [];
-  }
-
-  Future<bool> _saveObservationList(List<String> observations) async {
-    return _prefs.setStringList(_kObservationList, observations);
-  }
-
-  Future<bool> _addToObservationList(String id) async {
-    final observations = _getObservationList();
-
-    if (!observations.contains(id)) {
-      observations.add(id);
-      return _saveObservationList(observations);
-    }
-
-    return true;
-  }
-
-  Future<bool> _removeFromObservationList(String id) async {
-    final observations = _getObservationList();
-    observations.remove(id);
-    return _saveObservationList(observations);
-  }
-
-  Future<bool> _saveObservation(UserObservation obs) async {
-    final key = '$kObsevationPrefix${obs.id}';
-    final json = obs.toJson();
-
-    _addToObservationList(obs.id);
-
-    return _prefs.setString(key, json.toString());
-  }
-
-  Future<UserObservation?> getObservation(String id) async {
-    final key = '$kObsevationPrefix$id';
-    final jsonString = _prefs.getString(key);
-
-    if (jsonString == null) return null;
-
-    var json = jsonDecode(jsonString);
-
-    return UserObservation.fromJson(json);
-  }
-
-  List<UserObservation> getAllObservations() {
-    final observations = _getObservationList();
-
-    return observations
-        .map((id) => getObservation(id))
-        .whereType<UserObservation>()
-        .toList();
-  }
-
-  Future<bool> saveObservations(List<UserObservation> obs) async {
-    var results = await Future.wait(obs.map((ob) => _saveObservation(ob)));
-
-    return results.every((r) => r);
-  }
-
-  Future<bool> removeObservation(String id) async {
-    final key = '$kObsevationPrefix$id';
-
-    var result1 = await _prefs.remove(key);
-    var result2 = await _removeFromObservationList(id);
-    return result1 && result2;
-  }
-}
+import 'package:fungid_flutter/providers/user_observation_provider.dart';
+import 'package:fungid_flutter/utils/images.dart';
+import 'package:uuid/uuid.dart';
 
 class UserObservationsRepository {
-  UserObservationsRepository(this.provider);
+  const UserObservationsRepository({
+    required UserObservationsSharedPrefProvider provider,
+  }) : _provider = provider;
 
-  final UserObservationsSharedPrefProvider provider;
+  final UserObservationsSharedPrefProvider _provider;
 
-  List<UserObservation> getAllObservations() {
-    return provider.getAllObservations();
+  Stream<List<UserObservation>> getAllObservations() {
+    return _provider.getObservations();
   }
 
-  Future<bool> saveObservations(List<UserObservation> obs) async {
-    return provider.saveObservations(obs);
+  UserObservation createObservation() {
+    final obs = UserObservation(
+      id: const Uuid().v4(),
+      images: const [],
+      location: const ObservationLocation(
+        lat: 0.0,
+        lng: 0.0,
+        placeName: "",
+      ),
+      dateCreated: DateTime.now(),
+    );
+
+    return obs;
+  }
+
+  UserObservation addImagesToObservation(
+      UserObservation observation, List<String> images) {
+    List<UserObservationImage> converted = _convertImages(images);
+    observation.images.addAll(converted);
+
+    return observation;
+  }
+
+  List<UserObservationImage> _convertImages(List<String> images) {
+    var converted = images
+        .map((i) => prepareImageFile(i, 1000))
+        .whereType<Uint8List>()
+        .map(
+          (e) => UserObservationImage(imageBytes: e, id: const Uuid().v4()),
+        )
+        .toList();
+    return converted;
+  }
+
+  Future<void> saveObservation(UserObservation obs) async {
+    return _provider.saveObservation(obs);
   }
 
   Future<bool> clearObservations() async {
-    var observations = provider.getAllObservations();
-    var results = await Future.wait(
-        observations.map((obs) => provider.removeObservation(obs.id)));
+    return _provider.clear();
+  }
 
-    return results.every((e) => e);
+  Future<void> deleteObservation(String id) async {
+    return _provider.deleteObservation(id);
   }
 }

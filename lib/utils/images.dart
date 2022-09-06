@@ -31,3 +31,15 @@ Uint8List dataFromBase64String(String base64String) {
 String base64String(Uint8List data) {
   return base64Encode(data);
 }
+
+Uint8List? prepareImageFile(String path, int maxSize) {
+  Image? image = resizeFromFile(path, maxSize);
+  if (image == null) return null;
+  return image.getBytes();
+}
+
+Uint8List? getBytesFromFile(String path) {
+  File file = File(path);
+  if (!file.existsSync()) return null;
+  return file.readAsBytesSync();
+}

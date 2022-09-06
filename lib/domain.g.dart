@@ -12,10 +12,8 @@ UserObservation _$UserObservationFromJson(Map<String, dynamic> json) =>
       json,
       ($checkedConvert) {
         final val = UserObservation(
-          lat: $checkedConvert('lat', (v) => (v as num).toDouble()),
-          lng: $checkedConvert('lng', (v) => (v as num).toDouble()),
-          dateCreated: $checkedConvert(
-              'date_created', (v) => DateTime.parse(v as String)),
+          location: $checkedConvert('location',
+              (v) => ObservationLocation.fromJson(v as Map<String, dynamic>)),
           images: $checkedConvert(
               'images',
               (v) => (v as List<dynamic>)
@@ -23,31 +21,26 @@ UserObservation _$UserObservationFromJson(Map<String, dynamic> json) =>
                       UserObservationImage.fromJson(e as Map<String, dynamic>))
                   .toList()),
           id: $checkedConvert('id', (v) => v as String),
-          lastUpdated: $checkedConvert(
-              'last_updated', (v) => DateTime.parse(v as String)),
+          dateCreated: $checkedConvert(
+              'date_created', (v) => DateTime.parse(v as String)),
+          predictions: $checkedConvert(
+              'predictions',
+              (v) => v == null
+                  ? null
+                  : Predictions.fromJson(v as Map<String, dynamic>)),
         );
-        $checkedConvert(
-            'predictions',
-            (v) => val.predictions = v == null
-                ? null
-                : Predictions.fromJson(v as Map<String, dynamic>));
         return val;
       },
-      fieldKeyMap: const {
-        'dateCreated': 'date_created',
-        'lastUpdated': 'last_updated'
-      },
+      fieldKeyMap: const {'dateCreated': 'date_created'},
     );
 
 Map<String, dynamic> _$UserObservationToJson(UserObservation instance) =>
     <String, dynamic>{
-      'lat': instance.lat,
-      'lng': instance.lng,
+      'location': instance.location,
       'id': instance.id,
       'date_created': instance.dateCreated.toIso8601String(),
-      'last_updated': instance.lastUpdated.toIso8601String(),
-      'images': instance.images.map((e) => e.toJson()).toList(),
-      'predictions': instance.predictions?.toJson(),
+      'images': instance.images,
+      'predictions': instance.predictions,
     };
 
 Predictions _$PredictionsFromJson(Map<String, dynamic> json) => $checkedCreate(
@@ -70,8 +63,31 @@ Predictions _$PredictionsFromJson(Map<String, dynamic> json) => $checkedCreate(
 
 Map<String, dynamic> _$PredictionsToJson(Predictions instance) =>
     <String, dynamic>{
-      'predictions': instance.predictions.map((e) => e.toJson()).toList(),
+      'predictions': instance.predictions,
       'date_created': instance.dateCreated.toIso8601String(),
+    };
+
+ObservationLocation _$ObservationLocationFromJson(Map<String, dynamic> json) =>
+    $checkedCreate(
+      'ObservationLocation',
+      json,
+      ($checkedConvert) {
+        final val = ObservationLocation(
+          lat: $checkedConvert('lat', (v) => (v as num).toDouble()),
+          lng: $checkedConvert('lng', (v) => (v as num).toDouble()),
+          placeName: $checkedConvert('place_name', (v) => v as String),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'placeName': 'place_name'},
+    );
+
+Map<String, dynamic> _$ObservationLocationToJson(
+        ObservationLocation instance) =>
+    <String, dynamic>{
+      'lat': instance.lat,
+      'lng': instance.lng,
+      'place_name': instance.placeName,
     };
 
 Prediction _$PredictionFromJson(Map<String, dynamic> json) => $checkedCreate(
