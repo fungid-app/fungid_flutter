@@ -1,19 +1,27 @@
 import 'dart:typed_data';
 
 import 'package:fungid_flutter/domain.dart';
+import 'package:fungid_flutter/providers/fungid_api_provider.dart';
 import 'package:fungid_flutter/providers/user_observation_provider.dart';
 import 'package:fungid_flutter/utils/images.dart';
 import 'package:uuid/uuid.dart';
 
 class UserObservationsRepository {
   const UserObservationsRepository({
-    required UserObservationsSharedPrefProvider provider,
-  }) : _provider = provider;
+    required UserObservationsSharedPrefProvider observationsProvider,
+    required FungidApiProvider fungidApiProvider,
+  })  : _observationsProvider = observationsProvider,
+        _fungidApiProvider = fungidApiProvider;
 
-  final UserObservationsSharedPrefProvider _provider;
+  final FungidApiProvider _fungidApiProvider;
+  final UserObservationsSharedPrefProvider _observationsProvider;
 
   Stream<List<UserObservation>> getAllObservations() {
-    return _provider.getObservations();
+    return _observationsProvider.getObservations();
+  }
+
+  UserObservation getObservation(String id) {
+    return _observationsProvider.getObservation(id);
   }
 
   UserObservation createObservation() {
@@ -25,7 +33,7 @@ class UserObservationsRepository {
         lng: 0.0,
         placeName: "",
       ),
-      dateCreated: DateTime.now(),
+      dateCreated: DateTime.now().toUtc(),
     );
 
     return obs;
@@ -51,14 +59,23 @@ class UserObservationsRepository {
   }
 
   Future<void> saveObservation(UserObservation obs) async {
-    return _provider.saveObservation(obs);
+    return _observationsProvider.saveObservation(obs);
   }
 
   Future<bool> clearObservations() async {
-    return _provider.clear();
+    return _observationsProvider.clear();
   }
 
   Future<void> deleteObservation(String id) async {
-    return _provider.deleteObservation(id);
+    return _observationsProvider.deleteObservation(id);
+  }
+
+  Future<Predictions> getPredictions(UserObservation observation) async {
+    return _fungidApiProvider.getPredictions(
+      observation.dateCreated,
+      observation.location.lat,
+      observation.location.lng,
+      observation.images,
+    );
   }
 }

@@ -3,16 +3,15 @@
 //
 
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:built_value/serializer.dart';
 import 'package:dio/dio.dart';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:fungid_api/src/api_util.dart';
-import 'package:fungid_api/src/model/http_validation_error.dart';
 
 class ClassifierApi {
-
   final Dio _dio;
 
   final Serializers _serializers;
@@ -20,13 +19,13 @@ class ClassifierApi {
   const ClassifierApi(this._dio, this._serializers);
 
   /// Evaluate Full Classifier
-  /// 
+  ///
   ///
   /// Parameters:
-  /// * [date] 
-  /// * [lat] 
-  /// * [lon] 
-  /// * [images] 
+  /// * [date]
+  /// * [lat]
+  /// * [lon]
+  /// * [images]
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request
@@ -36,7 +35,8 @@ class ClassifierApi {
   ///
   /// Returns a [Future] containing a [Response] with a [BuiltMap<String, num>] as data
   /// Throws [DioError] if API call or serialization fails
-  Future<Response<BuiltMap<String, num>>> evaluateFullClassifierClassifierFullPut({ 
+  Future<Response<BuiltMap<String, num>>>
+      evaluateFullClassifierClassifierFullPut({
     required DateTime date,
     required num lat,
     required num lon,
@@ -63,7 +63,8 @@ class ClassifierApi {
     );
 
     final _queryParameters = <String, dynamic>{
-      r'date': encodeQueryParameter(_serializers, date, const FullType(DateTime)),
+      r'date':
+          encodeQueryParameter(_serializers, date, const FullType(DateTime)),
       r'lat': encodeQueryParameter(_serializers, lat, const FullType(num)),
       r'lon': encodeQueryParameter(_serializers, lon, const FullType(num)),
     };
@@ -74,10 +75,9 @@ class ClassifierApi {
       _bodyData = FormData.fromMap(<String, dynamic>{
         r'images': images.toList(),
       });
-
-    } catch(error, stackTrace) {
+    } catch (error, stackTrace) {
       throw DioError(
-         requestOptions: _options.compose(
+        requestOptions: _options.compose(
           _dio.options,
           _path,
           queryParameters: _queryParameters,
@@ -100,13 +100,14 @@ class ClassifierApi {
     BuiltMap<String, num> _responseData;
 
     try {
-      const _responseType = FullType(BuiltMap, [FullType(String), FullType(num)]);
+      const _responseType =
+          FullType(BuiltMap, [FullType(String), FullType(num)]);
       _responseData = _serializers.deserialize(
         _response.data!,
         specifiedType: _responseType,
       ) as BuiltMap<String, num>;
-
     } catch (error, stackTrace) {
+      log(_response.toString());
       throw DioError(
         requestOptions: _response.requestOptions,
         response: _response,
@@ -128,10 +129,10 @@ class ClassifierApi {
   }
 
   /// Evaluate Image Classifier
-  /// 
+  ///
   ///
   /// Parameters:
-  /// * [images] 
+  /// * [images]
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request
@@ -141,7 +142,8 @@ class ClassifierApi {
   ///
   /// Returns a [Future] containing a [Response] with a [BuiltMap<String, num>] as data
   /// Throws [DioError] if API call or serialization fails
-  Future<Response<BuiltMap<String, num>>> evaluateImageClassifierClassifierImagePut({ 
+  Future<Response<BuiltMap<String, num>>>
+      evaluateImageClassifierClassifierImagePut({
     required BuiltList<MultipartFile> images,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
@@ -170,10 +172,9 @@ class ClassifierApi {
       _bodyData = FormData.fromMap(<String, dynamic>{
         r'images': images.toList(),
       });
-
-    } catch(error, stackTrace) {
+    } catch (error, stackTrace) {
       throw DioError(
-         requestOptions: _options.compose(
+        requestOptions: _options.compose(
           _dio.options,
           _path,
         ),
@@ -194,12 +195,12 @@ class ClassifierApi {
     BuiltMap<String, num> _responseData;
 
     try {
-      const _responseType = FullType(BuiltMap, [FullType(String), FullType(num)]);
+      const _responseType =
+          FullType(BuiltMap, [FullType(String), FullType(num)]);
       _responseData = _serializers.deserialize(
         _response.data!,
         specifiedType: _responseType,
       ) as BuiltMap<String, num>;
-
     } catch (error, stackTrace) {
       throw DioError(
         requestOptions: _response.requestOptions,
@@ -222,11 +223,11 @@ class ClassifierApi {
   }
 
   /// Evaluate Location Classifier
-  /// 
+  ///
   ///
   /// Parameters:
-  /// * [lat] 
-  /// * [lon] 
+  /// * [lat]
+  /// * [lon]
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request
@@ -236,7 +237,8 @@ class ClassifierApi {
   ///
   /// Returns a [Future] containing a [Response] with a [BuiltMap<String, num>] as data
   /// Throws [DioError] if API call or serialization fails
-  Future<Response<BuiltMap<String, num>>> evaluateLocationClassifierClassifierLocationGet({ 
+  Future<Response<BuiltMap<String, num>>>
+      evaluateLocationClassifierClassifierLocationGet({
     required num lat,
     required num lon,
     CancelToken? cancelToken,
@@ -276,12 +278,12 @@ class ClassifierApi {
     BuiltMap<String, num> _responseData;
 
     try {
-      const _responseType = FullType(BuiltMap, [FullType(String), FullType(num)]);
+      const _responseType =
+          FullType(BuiltMap, [FullType(String), FullType(num)]);
       _responseData = _serializers.deserialize(
         _response.data!,
         specifiedType: _responseType,
       ) as BuiltMap<String, num>;
-
     } catch (error, stackTrace) {
       throw DioError(
         requestOptions: _response.requestOptions,
@@ -304,12 +306,12 @@ class ClassifierApi {
   }
 
   /// Evaluate Tabular Classifier
-  /// 
+  ///
   ///
   /// Parameters:
-  /// * [date] 
-  /// * [lat] 
-  /// * [lon] 
+  /// * [date]
+  /// * [lat]
+  /// * [lon]
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request
@@ -319,7 +321,8 @@ class ClassifierApi {
   ///
   /// Returns a [Future] containing a [Response] with a [BuiltMap<String, num>] as data
   /// Throws [DioError] if API call or serialization fails
-  Future<Response<BuiltMap<String, num>>> evaluateTabularClassifierClassifierTabularGet({ 
+  Future<Response<BuiltMap<String, num>>>
+      evaluateTabularClassifierClassifierTabularGet({
     required DateTime date,
     required num lat,
     required num lon,
@@ -344,7 +347,8 @@ class ClassifierApi {
     );
 
     final _queryParameters = <String, dynamic>{
-      r'date': encodeQueryParameter(_serializers, date, const FullType(DateTime)),
+      r'date':
+          encodeQueryParameter(_serializers, date, const FullType(DateTime)),
       r'lat': encodeQueryParameter(_serializers, lat, const FullType(num)),
       r'lon': encodeQueryParameter(_serializers, lon, const FullType(num)),
     };
@@ -361,12 +365,12 @@ class ClassifierApi {
     BuiltMap<String, num> _responseData;
 
     try {
-      const _responseType = FullType(BuiltMap, [FullType(String), FullType(num)]);
+      const _responseType =
+          FullType(BuiltMap, [FullType(String), FullType(num)]);
       _responseData = _serializers.deserialize(
         _response.data!,
         specifiedType: _responseType,
       ) as BuiltMap<String, num>;
-
     } catch (error, stackTrace) {
       throw DioError(
         requestOptions: _response.requestOptions,
@@ -387,5 +391,4 @@ class ClassifierApi {
       extra: _response.extra,
     );
   }
-
 }

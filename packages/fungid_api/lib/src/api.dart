@@ -15,7 +15,7 @@ import 'package:fungid_api/src/api/observations_api.dart';
 import 'package:fungid_api/src/api/taxonomy_api.dart';
 
 class FungidApi {
-  static const String basePath = r'http://localhost';
+  static const String basePath = r'https://api.fungid.app';
 
   final Dio dio;
   final Serializers serializers;

@@ -6,8 +6,10 @@ import 'package:fungid_flutter/presentation/pages/observation_list.dart';
 import 'package:openapi_generator_annotations/openapi_generator_annotations.dart';
 
 @Openapi(
-    additionalProperties:
-        DioProperties(pubName: 'fungid_api', pubAuthor: 'Michael Weishuhn'),
+    additionalProperties: DioProperties(
+      pubName: 'fungid_api',
+      pubAuthor: 'Michael Weishuhn',
+    ),
     inputSpecFile: 'openapi-spec.json',
     generatorName: Generator.dio,
     alwaysRun: true,

@@ -54,8 +54,8 @@ class EditObservationBloc
 
       emit(state.copyWith(
         location: location,
-        dateCreated: DateTime.now(),
-        lastUpdated: DateTime.now(),
+        dateCreated: DateTime.now().toUtc(),
+        lastUpdated: DateTime.now().toUtc(),
         id: const Uuid().v4(),
       ));
     }

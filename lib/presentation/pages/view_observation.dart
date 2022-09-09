@@ -2,30 +2,40 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fungid_flutter/domain.dart';
 import 'package:fungid_flutter/presentation/bloc/view_observation_bloc.dart';
+import 'package:fungid_flutter/presentation/pages/edit_observation.dart';
 import 'package:fungid_flutter/presentation/widgets/image_carousel.dart';
 import 'package:fungid_flutter/repositories/user_observation_repository.dart';
 
 class ViewObservationPage extends StatelessWidget {
   const ViewObservationPage({Key? key}) : super(key: key);
 
-  static Route<void> route({required UserObservation observation}) {
+  static Route<void> route({required String id}) {
     return MaterialPageRoute(
       fullscreenDialog: true,
       builder: (context) => BlocProvider(
         create: (context) => ViewObservationBloc(
-          observation: observation,
+          id: id,
           observationRepository: context.read<UserObservationsRepository>(),
-        ),
-        child: const ViewObservationView(),
+        )..add(const ViewObservationSubscriptionRequested()),
+        child: const ViewObservationPage(),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return const ViewObservationView();
+    return BlocListener<ViewObservationBloc, ViewObservationState>(
+      listenWhen: (previous, current) =>
+          previous.status != current.status &&
+          current.status == ViewObservationStatus.deleted,
+      listener: (context, state) => Navigator.of(context).pop(),
+      child: const ViewObservationView(),
+    );
+    // return const ViewObservationView();
   }
 }
+
+enum Menu { edit, delete }
 
 class ViewObservationView extends StatelessWidget {
   const ViewObservationView({Key? key}) : super(key: key);
@@ -34,8 +44,13 @@ class ViewObservationView extends StatelessWidget {
   Widget build(BuildContext context) {
     final observation =
         context.select((ViewObservationBloc bloc) => bloc.state.observation);
-
-    var predicitons = _getPredictions(context, observation.predictions);
+    if (observation == null) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -48,6 +63,39 @@ class ViewObservationView extends StatelessWidget {
             color: Colors.white,
           ),
         ),
+        actions: <Widget>[
+          PopupMenuButton<Menu>(
+            onSelected: (Menu result) {
+              switch (result) {
+                case Menu.edit:
+                  Navigator.push(
+                    context,
+                    EditObservationPage.route(initialObservation: observation),
+                  );
+                  break;
+                case Menu.delete:
+                  _delete(context);
+                  break;
+              }
+            },
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<Menu>>[
+              const PopupMenuItem<Menu>(
+                value: Menu.edit,
+                child: ListTile(
+                  leading: Icon(Icons.edit),
+                  title: Text('Edit'),
+                ),
+              ),
+              const PopupMenuItem<Menu>(
+                value: Menu.delete,
+                child: ListTile(
+                  leading: Icon(Icons.delete),
+                  title: Text('Delete'),
+                ),
+              ),
+            ],
+          ),
+        ],
         title: const Text("Your Observation"),
       ),
       body: ListView(
@@ -62,16 +110,47 @@ class ViewObservationView extends StatelessWidget {
           ListTile(
             title: Text(observation.dateCreated.toString()),
           ),
-          ListTile(
-            title: Text(
-              "Predictions",
-              style: Theme.of(context).textTheme.headline5,
-            ),
-          ),
-          ...predicitons,
+          ..._getPredictionsWidget(context, observation),
         ],
       ),
     );
+  }
+
+  List<ListTile> _getPredictionsWidget(
+    BuildContext context,
+    UserObservation observation,
+  ) {
+    final status =
+        context.select((ViewObservationBloc bloc) => bloc.state.status);
+
+    var icon = status == ViewObservationStatus.predictionsLoading
+        ? null
+        : IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () {
+              context.read<ViewObservationBloc>().add(
+                    const ViewObservationGetPredctions(),
+                  );
+            },
+          );
+
+    var predicitons = status == ViewObservationStatus.predictionsLoading
+        ? [
+            const ListTile(
+              title: Center(child: CircularProgressIndicator()),
+            )
+          ]
+        : _getPredictions(context, observation.predictions);
+
+    return [
+      ListTile(
+          title: Text(
+            "Predictions",
+            style: Theme.of(context).textTheme.headline5,
+          ),
+          trailing: icon),
+      ...predicitons,
+    ];
   }
 
   List<ListTile> _getPredictions(
@@ -97,4 +176,32 @@ class ViewObservationView extends StatelessWidget {
             ))
         .toList();
   }
+}
+
+void _delete(BuildContext context) {
+  showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          title: const Text('Please Confirm'),
+          content:
+              const Text('Are you sure you want to delete the observation?'),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  // Close the dialog
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Cancel')),
+            TextButton(
+                onPressed: () {
+                  context.read<ViewObservationBloc>().add(
+                        const ViewObservationDelete(),
+                      );
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Delete')),
+          ],
+        );
+      });
 }

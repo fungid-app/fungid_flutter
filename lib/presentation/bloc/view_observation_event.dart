@@ -7,10 +7,18 @@ abstract class ViewObservationEvent extends Equatable {
   List<Object> get props => [];
 }
 
+class ViewObservationSubscriptionRequested extends ViewObservationEvent {
+  const ViewObservationSubscriptionRequested();
+}
+
 class ViewObservationGetPredctions extends ViewObservationEvent {
   const ViewObservationGetPredctions();
 }
 
 class ViewObservationSave extends ViewObservationEvent {
   const ViewObservationSave();
+}
+
+class ViewObservationDelete extends ViewObservationEvent {
+  const ViewObservationDelete();
 }

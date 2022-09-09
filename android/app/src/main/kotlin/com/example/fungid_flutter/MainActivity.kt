@@ -1,4 +1,4 @@
-package com.example.fungid_flutter
+package app.fungid.fungid_flutter
 
 import io.flutter.embedding.android.FlutterActivity
 

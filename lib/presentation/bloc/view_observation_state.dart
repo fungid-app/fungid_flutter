@@ -5,29 +5,35 @@ enum ViewObservationStatus {
   loading,
   success,
   failure,
+  deleted,
+  predictionsLoading,
 }
 
 class ViewObservationState extends Equatable {
   const ViewObservationState({
     this.status = ViewObservationStatus.initial,
-    required this.observation,
+    required this.id,
+    this.observation,
   });
 
+  final String id;
   final ViewObservationStatus status;
-  final UserObservation observation;
+  final UserObservation? observation;
 
   @override
   List<Object> get props => [
         status,
-        observation,
+        id,
       ];
 
   ViewObservationState copyWith({
-    ViewObservationStatus? status,
-    UserObservation? observation,
+    ViewObservationStatus Function()? status,
+    UserObservation Function()? observation,
+    String Function()? id,
   }) =>
       ViewObservationState(
-        status: status ?? this.status,
-        observation: observation ?? this.observation,
+        status: status != null ? status() : this.status,
+        id: id != null ? id() : this.id,
+        observation: observation != null ? observation() : this.observation,
       );
 }

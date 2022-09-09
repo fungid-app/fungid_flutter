@@ -46,11 +46,21 @@ class UserObservationsSharedPrefProvider {
     if (index >= 0) {
       observations[index] = obs;
     } else {
-      observations.add(obs);
+      observations.insert(0, obs);
     }
 
     _observationStreamController.add(observations);
     return _setValue(_obsevationCollectionsKey, json.encode(observations));
+  }
+
+  UserObservation getObservation(String id) {
+    final observations = [..._observationStreamController.value];
+    final index = observations.indexWhere((o) => o.id == id);
+    if (index >= 0) {
+      return observations[index];
+    } else {
+      throw Exception('Observation not found');
+    }
   }
 
   Future<void> deleteObservation(String id) async {

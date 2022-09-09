@@ -64,7 +64,7 @@ try {
 
 ## Documentation for API Endpoints
 
-All URIs are relative to *http://localhost*
+All URIs are relative to *https://api.fungid.app*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------

@@ -77,6 +77,9 @@ ListTile _observationCard(BuildContext context, UserObservation observation) {
       ),
     ),
     onTap: () => Navigator.push(
-        context, ViewObservationPage.route(observation: observation)),
+        context,
+        ViewObservationPage.route(
+          id: observation.id,
+        )),
   );
 }

@@ -1,0 +1,3 @@
+FungID - Free Mushroom ID
+The most accurate app for identifying mushrooms and other fungi.
+FungID is the most advanced mushroom identification app available.  We cover over 2,000 different species. Our image recognition model has been trained on over 4,000,000 high quality images and our location models using over 15,000,000 quality observations. 

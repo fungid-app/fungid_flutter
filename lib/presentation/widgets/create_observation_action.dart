@@ -7,7 +7,7 @@ FloatingActionButton createObservationAction(
     BuildContext context, UserObservation? observation) {
   ImagePicker imagePicker = ImagePicker();
 
-  Future<List<String>> _getImages(ImageSource source) async {
+  Future<List<String>> getImages(ImageSource source) async {
     List<XFile> images = [];
     if (source == ImageSource.camera) {
       XFile? image = await imagePicker.pickImage(
@@ -51,7 +51,7 @@ FloatingActionButton createObservationAction(
                     onPressed: () async {
                       var nav = Navigator.of(context);
                       nav.pop();
-                      var images = await _getImages(ImageSource.camera);
+                      var images = await getImages(ImageSource.camera);
                       if (images.isNotEmpty) {
                         nav.push(
                           EditObservationPage.route(
@@ -72,7 +72,7 @@ FloatingActionButton createObservationAction(
                     onPressed: () async {
                       var nav = Navigator.of(context);
                       nav.pop();
-                      var images = await _getImages(ImageSource.gallery);
+                      var images = await getImages(ImageSource.gallery);
                       if (images.isNotEmpty) {
                         nav.push(
                           EditObservationPage.route(

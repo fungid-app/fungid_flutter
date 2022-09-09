@@ -9,46 +9,83 @@ part 'view_observation_state.dart';
 class ViewObservationBloc
     extends Bloc<ViewObservationEvent, ViewObservationState> {
   ViewObservationBloc({
-    required UserObservation observation,
+    required String id,
     required this.observationRepository,
   }) : super(ViewObservationState(
-          observation: observation,
+          id: id,
           status: ViewObservationStatus.initial,
         )) {
     on<ViewObservationGetPredctions>(_onGetPredictions);
     on<ViewObservationSave>(_onSave);
+    on<ViewObservationDelete>(_onDelete);
+    on<ViewObservationSubscriptionRequested>(_onSubscriptionRequested);
   }
 
   final UserObservationsRepository observationRepository;
+
+  Future<void> _onSubscriptionRequested(
+    ViewObservationSubscriptionRequested event,
+    Emitter<ViewObservationState> emit,
+  ) async {
+    emit(state.copyWith(status: () => ViewObservationStatus.loading));
+
+    await emit.forEach<List<UserObservation>>(
+      observationRepository.getAllObservations(),
+      onData: (obs) {
+        var idx = obs.indexWhere((o) => o.id == state.id);
+        if (idx == -1) {
+          return state.copyWith(
+            status: () => ViewObservationStatus.deleted,
+          );
+        } else {
+          return state.copyWith(
+              status: () => ViewObservationStatus.success,
+              observation: () {
+                return obs[idx];
+              });
+        }
+      },
+      onError: (_, __) => state.copyWith(
+        status: () => ViewObservationStatus.failure,
+      ),
+    );
+  }
 
   Future<void> _onGetPredictions(
     ViewObservationGetPredctions event,
     Emitter<ViewObservationState> emit,
   ) async {
-    emit(state.copyWith(status: ViewObservationStatus.loading));
+    emit(
+        state.copyWith(status: () => ViewObservationStatus.predictionsLoading));
 
-    // final predictions = await observationRepository.getPredictions(
-    //   observation: state.observation,
-    // );
-
-    const predictions = null;
+    final predictions = await observationRepository.getPredictions(
+      state.observation!,
+    );
 
     emit(state.copyWith(
-      status: ViewObservationStatus.success,
-      observation: state.observation.copyWith(
+      status: () => ViewObservationStatus.success,
+      observation: () => state.observation!.copyWith(
         predictions: predictions,
       ),
     ));
+
+    add(const ViewObservationSave());
+  }
+
+  Future<void> _onDelete(
+    ViewObservationDelete event,
+    Emitter<ViewObservationState> emit,
+  ) async {
+    await observationRepository.deleteObservation(state.id);
+    emit(state.copyWith(status: () => ViewObservationStatus.deleted));
   }
 
   Future<void> _onSave(
     ViewObservationSave event,
     Emitter<ViewObservationState> emit,
   ) async {
-    emit(state.copyWith(status: ViewObservationStatus.loading));
+    await observationRepository.saveObservation(state.observation!);
 
-    await observationRepository.saveObservation(state.observation);
-
-    emit(state.copyWith(status: ViewObservationStatus.success));
+    emit(state.copyWith(status: () => ViewObservationStatus.success));
   }
 }

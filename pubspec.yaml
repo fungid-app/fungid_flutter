@@ -31,6 +31,7 @@ dependencies:
   dio: '>=4.0.1 <5.0.0'
   built_value: '>=8.1.0 <9.0.0'
   built_collection: '>=5.1.0 <6.0.0'
+  flutter_pretty_dio_logger: '2.0.2'
 
 dev_dependencies:
   flutter_test:
@@ -41,6 +42,23 @@ dev_dependencies:
   mocktail: ^0.2.0
   openapi_generator: ^4.0.0
   flutter_lints: ^2.0.0
+  flutter_launcher_icons: ^0.10.0
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: 'assets/logo/icon.png'
+  min_sdk_android: 21 # android min sdk min:16, default 21
+  remove_alpha_ios: true
+  web:
+    generate: true
+    image_path: 'assets/logo/icon.png'
+    background_color: '#hexcode'
+    theme_color: '#hexcode'
+  windows:
+    generate: true
+    image_path: 'assets/logo/icon.png'
+    icon_size: 48 # min:48, max:256, default: 48
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

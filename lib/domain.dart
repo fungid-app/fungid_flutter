@@ -20,7 +20,7 @@ UserObservation initializeObservation() {
       placeName: "",
     ),
     id: const Uuid().v4(),
-    dateCreated: DateTime.now(),
+    dateCreated: DateTime.now().toUtc(),
   );
 }
 
@@ -73,7 +73,7 @@ class UserObservation extends Equatable {
     required this.id,
     required this.dateCreated,
     this.predictions,
-  }) : lastUpdated = DateTime.now();
+  }) : lastUpdated = DateTime.now().toUtc();
 
   @override
   List<Object?> get props => [
@@ -175,7 +175,7 @@ class UserObservationImage extends Equatable {
   UserObservationImage({
     required this.imageBytes,
     required this.id,
-  }) : dateCreated = DateTime.now();
+  }) : dateCreated = DateTime.now().toUtc();
 
   @override
   List<Object?> get props => [id, imageBytes];

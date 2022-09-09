@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fungid_flutter/domain.dart';
 import 'package:fungid_flutter/presentation/bloc/edit_observation_bloc.dart';
+import 'package:fungid_flutter/presentation/pages/view_observation.dart';
 import 'package:fungid_flutter/presentation/widgets/image_carousel.dart';
 import 'package:fungid_flutter/repositories/location_repository.dart';
 import 'package:fungid_flutter/repositories/user_observation_repository.dart';
@@ -32,7 +33,13 @@ class EditObservationPage extends StatelessWidget {
       listenWhen: (previous, current) =>
           previous.status != current.status &&
           current.status == EditObservationStatus.success,
-      listener: (context, state) => Navigator.of(context).pop(),
+      listener: (context, state) => state.intialObservation == null
+          ? Navigator.pushAndRemoveUntil(
+              context,
+              ViewObservationPage.route(id: state.id!),
+              ModalRoute.withName('/'),
+            )
+          : Navigator.pop(context),
       child: const EditObservationView(),
     );
   }
