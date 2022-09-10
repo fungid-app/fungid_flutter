@@ -24,11 +24,25 @@ class ViewObservationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<ViewObservationBloc, ViewObservationState>(
-      listenWhen: (previous, current) =>
-          previous.status != current.status &&
-          current.status == ViewObservationStatus.deleted,
-      listener: (context, state) => Navigator.of(context).pop(),
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<ViewObservationBloc, ViewObservationState>(
+          listenWhen: (previous, current) =>
+              previous.status != current.status &&
+              current.status == ViewObservationStatus.deleted,
+          listener: (context, state) => Navigator.of(context).pop(),
+        ),
+        BlocListener<ViewObservationBloc, ViewObservationState>(
+          listenWhen: (previous, current) =>
+              previous.status != current.status &&
+              current.status == ViewObservationStatus.success &&
+              current.observation != null &&
+              current.observation?.predictions == null,
+          listener: (context, state) => context.read<ViewObservationBloc>().add(
+                const ViewObservationGetPredctions(),
+              ),
+        ),
+      ],
       child: const ViewObservationView(),
     );
     // return const ViewObservationView();
