@@ -5,14 +5,21 @@ import 'package:fungid_api/fungid_api.dart';
 import 'package:fungid_flutter/bootstrap.dart';
 import 'package:fungid_flutter/providers/fungid_api_provider.dart';
 import 'package:fungid_flutter/providers/user_observation_provider.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   final observationsApi = UserObservationsSharedPrefProvider(
     prefs: await SharedPreferences.getInstance(),
   );
+
   final fungidApiProvider = FungidApiProvider(
     FungidApi(
       dio: Dio(BaseOptions(
