@@ -16,6 +16,11 @@
 default_platform(:android)
 
 platform :android do
+  desc "Build"
+  lane :build do
+    gradle(task: "clean assembleRelease")
+  end
+
   desc "Runs all the tests"
   lane :test do
     gradle(task: "test")
@@ -24,7 +29,7 @@ platform :android do
   desc "Submit a new Beta Build to Crashlytics Beta"
   lane :beta do
     gradle(task: "clean assembleRelease")
-    # crashlytics
+    crashlytics
   
     # sh "your_script.sh"
     # You can also use other beta testing services here

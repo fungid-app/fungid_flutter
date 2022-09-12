@@ -204,7 +204,7 @@ class ViewObservationView extends StatelessWidget {
 
 Future<void> _launchUrl(String species) async {
   species = species.replaceAll(" ", "+");
-  Uri url = Uri.parse('https://www.google.com/search?q=$species&tbm=isch');
+  Uri url = Uri.parse('https://www.google.com/search?q=$species');
   if (!await launchUrl(url)) {
     throw 'Could not launch $url';
   }

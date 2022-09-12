@@ -38,7 +38,7 @@ class _ImageCarouselState extends State<ImageCarousel> {
               );
               return Container(
                   margin: const EdgeInsets.symmetric(horizontal: 6.0),
-                  decoration: const BoxDecoration(color: Colors.amber),
+                  decoration: const BoxDecoration(color: Colors.grey),
                   child: GestureDetector(
                       child: Image.memory(
                         image.imageBytes,
