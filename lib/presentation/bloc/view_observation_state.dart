@@ -4,6 +4,7 @@ enum ViewObservationStatus {
   initial,
   loading,
   success,
+  editing,
   failure,
   deleted,
   predictionsLoading,
@@ -24,6 +25,7 @@ class ViewObservationState extends Equatable {
   List<Object> get props => [
         status,
         id,
+        observation ?? '',
       ];
 
   ViewObservationState copyWith({

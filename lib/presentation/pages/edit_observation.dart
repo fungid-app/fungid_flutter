@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fungid_flutter/domain.dart';
@@ -52,52 +51,69 @@ class EditObservationView extends StatelessWidget {
   Widget build(BuildContext context) {
     final status =
         context.select((EditObservationBloc bloc) => bloc.state.status);
-    final isNewObservation = context
-        .select((EditObservationBloc bloc) => bloc.state.isNewObservation);
-    final images =
-        context.select((EditObservationBloc bloc) => bloc.state.images) ?? [];
 
-    final theme = Theme.of(context);
-    final floatingActionButtonTheme = theme.floatingActionButtonTheme;
-    final fabBackgroundColor = floatingActionButtonTheme.backgroundColor ??
-        theme.colorScheme.secondary;
-
-    return Scaffold(
-      appBar: AppBar(
-        title:
-            Text(isNewObservation ? "Create Observation" : "Edit Observation"),
-      ),
-      floatingActionButton: FloatingActionButton(
-        tooltip: "Save Observation",
-        shape: const ContinuousRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(32)),
+    if (status == EditObservationStatus.uninitialized) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
         ),
-        backgroundColor: status.isLoadingOrSuccess
-            ? fabBackgroundColor.withOpacity(0.5)
-            : fabBackgroundColor,
-        onPressed: status.isLoadingOrSuccess
-            ? null
-            : () => context
-                .read<EditObservationBloc>()
-                .add(const EditObservationSubmitted()),
-        child: status.isLoadingOrSuccess
-            ? const CupertinoActivityIndicator()
-            : const Icon(Icons.check_rounded),
-      ),
-      body: CupertinoScrollbar(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                ImageCarousel(images: images),
-                const _LocationField(),
-              ],
+      );
+    } else {
+      final isNewObservation = context
+          .select((EditObservationBloc bloc) => bloc.state.isNewObservation);
+      final images =
+          context.select((EditObservationBloc bloc) => bloc.state.images) ?? [];
+
+      final theme = Theme.of(context);
+      final floatingActionButtonTheme = theme.floatingActionButtonTheme;
+      final fabBackgroundColor = floatingActionButtonTheme.backgroundColor ??
+          theme.colorScheme.secondary;
+
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(
+              isNewObservation ? "Create Observation" : "Edit Observation"),
+        ),
+        floatingActionButton: FloatingActionButton(
+          tooltip: "Save Observation",
+          shape: const ContinuousRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(32)),
+          ),
+          backgroundColor: status.isLoading
+              ? fabBackgroundColor.withOpacity(0.5)
+              : fabBackgroundColor,
+          onPressed: status.isLoading
+              ? null
+              : () => context
+                  .read<EditObservationBloc>()
+                  .add(const EditObservationSubmitted()),
+          child: status.isLoading
+              ? const CircularProgressIndicator()
+              : const Icon(Icons.check_rounded),
+        ),
+        body: Scrollbar(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  ImageCarousel(
+                    images: images,
+                    onImagesAdded: (images) => context
+                        .read<EditObservationBloc>()
+                        .add(EditObservationAddImages(images: images)),
+                    onImageDeleted: (imageID) => context
+                        .read<EditObservationBloc>()
+                        .add(EditObservationDeleteImage(imageID: imageID)),
+                  ),
+                  const _LocationField(),
+                ],
+              ),
             ),
           ),
         ),
-      ),
-    );
+      );
+    }
   }
 }
 

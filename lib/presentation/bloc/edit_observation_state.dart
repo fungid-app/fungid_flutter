@@ -1,22 +1,23 @@
 part of 'edit_observation_bloc.dart';
 
 enum EditObservationStatus {
-  initial,
+  uninitialized,
+  ready,
   loading,
+  updating,
   success,
   failure,
 }
 
 extension EditObservationStatusX on EditObservationStatus {
-  bool get isLoadingOrSuccess => [
+  bool get isLoading => [
         EditObservationStatus.loading,
-        EditObservationStatus.success,
       ].contains(this);
 }
 
 class EditObservationState extends Equatable {
   const EditObservationState({
-    this.status = EditObservationStatus.initial,
+    this.status = EditObservationStatus.uninitialized,
     this.location,
     this.id,
     this.dateCreated,

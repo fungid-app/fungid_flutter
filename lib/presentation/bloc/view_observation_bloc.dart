@@ -19,6 +19,7 @@ class ViewObservationBloc
     on<ViewObservationSave>(_onSave);
     on<ViewObservationDelete>(_onDelete);
     on<ViewObservationSubscriptionRequested>(_onSubscriptionRequested);
+    on<ViewObservationEdit>(_onEdit);
   }
 
   final UserObservationsRepository observationRepository;
@@ -49,6 +50,13 @@ class ViewObservationBloc
         status: () => ViewObservationStatus.failure,
       ),
     );
+  }
+
+  Future<void> _onEdit(
+    ViewObservationEdit event,
+    Emitter<ViewObservationState> emit,
+  ) async {
+    emit(state.copyWith(status: () => ViewObservationStatus.editing));
   }
 
   Future<void> _onGetPredictions(

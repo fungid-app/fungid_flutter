@@ -53,6 +53,12 @@
 		<string>$(GOOGLE_MAPS_API_KEY)</string>
 		<key>NSLocationWhenInUseUsageDescription</key>
 		<string>This app needs access to location when open to geolocation observations.</string>
+		<key>LSApplicationQueriesSchemes</key>
+		<array>
+			<string>sms</string>
+			<string>tel</string>
+		</array>
+
 		<!-- <key>NSLocationAlwaysUsageDescription</key>
 		<string>This app needs access to location when in the background.</string>
 		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>

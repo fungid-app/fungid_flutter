@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pretty_dio_logger/flutter_pretty_dio_logger.dart';
 import 'package:fungid_api/fungid_api.dart';
@@ -10,45 +13,56 @@ import 'firebase_options.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  runZonedGuarded<Future<void>>(
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
 
-  final observationsApi = UserObservationsSharedPrefProvider(
-    prefs: await SharedPreferences.getInstance(),
-  );
+      // Pass all uncaught errors from the framework to Crashlytics.
+      FlutterError.onError =
+          FirebaseCrashlytics.instance.recordFlutterFatalError;
 
-  final fungidApiProvider = FungidApiProvider(
-    FungidApi(
-      dio: Dio(BaseOptions(
-        // Production
-        baseUrl: 'https://api.fungid.app',
-        // Web Site/Desktop/iOS
-        // baseUrl: 'http://0.0.0.0:8080',
-        // Android Phone Emulator
-        // baseUrl: 'https://10.0.2.2:8080',
-        // LocalIp
-        // baseUrl: 'http://192.168.0.186:8080',
-        connectTimeout: 50000,
-        receiveTimeout: 30000,
-      )),
-      interceptors: [
-        PrettyDioLogger(
-          requestHeader: true,
-          requestBody: true,
-          responseBody: true,
-          responseHeader: false,
-          error: true,
+      final observationsApi = UserObservationsSharedPrefProvider(
+        prefs: await SharedPreferences.getInstance(),
+      );
+
+      final fungidApiProvider = FungidApiProvider(
+        FungidApi(
+          dio: Dio(BaseOptions(
+            // Production
+            baseUrl: 'https://api.fungid.app',
+            // Web Site/Desktop/iOS
+            // baseUrl: 'http://0.0.0.0:8080',
+            // Android Phone Emulator
+            // baseUrl: 'https://10.0.2.2:8080',
+            // LocalIp
+            // baseUrl: 'http://192.168.0.186:8080',
+            connectTimeout: 50000,
+            receiveTimeout: 30000,
+          )),
+          interceptors: [
+            PrettyDioLogger(
+              requestHeader: true,
+              requestBody: true,
+              responseBody: true,
+              responseHeader: false,
+              error: true,
+            ),
+          ],
         ),
-      ],
-    ),
-  );
+      );
 
-  // observationsApi.clear();
-  bootstrap(
-    observationsProvider: observationsApi,
-    fungidApiProvider: fungidApiProvider,
+      // observationsApi.clear();
+
+      bootstrap(
+        observationsProvider: observationsApi,
+        fungidApiProvider: fungidApiProvider,
+      );
+    },
+    (error, stack) =>
+        FirebaseCrashlytics.instance.recordError(error, stack, fatal: true),
   );
 }

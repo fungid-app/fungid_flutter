@@ -5,6 +5,7 @@ import 'package:fungid_flutter/presentation/bloc/view_observation_bloc.dart';
 import 'package:fungid_flutter/presentation/pages/edit_observation.dart';
 import 'package:fungid_flutter/presentation/widgets/image_carousel.dart';
 import 'package:fungid_flutter/repositories/user_observation_repository.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ViewObservationPage extends StatelessWidget {
   const ViewObservationPage({Key? key}) : super(key: key);
@@ -26,6 +27,15 @@ class ViewObservationPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocListener(
       listeners: [
+        BlocListener<ViewObservationBloc, ViewObservationState>(
+          listenWhen: (previous, current) =>
+              previous.status != current.status &&
+              current.status == ViewObservationStatus.editing,
+          listener: (context, state) => Navigator.push(
+            context,
+            EditObservationPage.route(initialObservation: state.observation),
+          ),
+        ),
         BlocListener<ViewObservationBloc, ViewObservationState>(
           listenWhen: (previous, current) =>
               previous.status != current.status &&
@@ -82,10 +92,9 @@ class ViewObservationView extends StatelessWidget {
             onSelected: (Menu result) {
               switch (result) {
                 case Menu.edit:
-                  Navigator.push(
-                    context,
-                    EditObservationPage.route(initialObservation: observation),
-                  );
+                  context.read<ViewObservationBloc>().add(
+                        const ViewObservationEdit(),
+                      );
                   break;
                 case Menu.delete:
                   _delete(context);
@@ -185,10 +194,19 @@ class ViewObservationView extends StatelessWidget {
 
     return predictions.predictions
         .map((pred) => ListTile(
+              onTap: () => _launchUrl(pred.species),
               title: Text(pred.species),
               subtitle: Text(pred.probability.toString()),
             ))
         .toList();
+  }
+}
+
+Future<void> _launchUrl(String species) async {
+  species = species.replaceAll(" ", "+");
+  Uri url = Uri.parse('https://www.google.com/search?q=$species&tbm=isch');
+  if (!await launchUrl(url)) {
+    throw 'Could not launch $url';
   }
 }
 

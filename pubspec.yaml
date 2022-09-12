@@ -34,6 +34,7 @@ dependencies:
   flutter_pretty_dio_logger: '2.0.2'
   firebase_core: ^1.22.0
   firebase_crashlytics: ^2.8.10
+  url_launcher: ^6.1.5
 
 dev_dependencies:
   flutter_test:

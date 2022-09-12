@@ -11,6 +11,10 @@ class ViewObservationSubscriptionRequested extends ViewObservationEvent {
   const ViewObservationSubscriptionRequested();
 }
 
+class ViewObservationEdit extends ViewObservationEvent {
+  const ViewObservationEdit();
+}
+
 class ViewObservationGetPredctions extends ViewObservationEvent {
   const ViewObservationGetPredctions();
 }

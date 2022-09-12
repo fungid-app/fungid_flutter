@@ -18,7 +18,7 @@ class EditObservationBloc
     required this.locationRepository,
     required this.intialObservation,
   }) : super(EditObservationState(
-          status: EditObservationStatus.initial,
+          status: EditObservationStatus.uninitialized,
           location: intialObservation?.location,
           id: intialObservation?.id,
           dateCreated: intialObservation?.dateCreated,
@@ -43,7 +43,7 @@ class EditObservationBloc
     InitializeBloc event,
     Emitter<EditObservationState> emit,
   ) async {
-    if (state.status != EditObservationStatus.initial) {
+    if (state.status != EditObservationStatus.uninitialized) {
       emit(state.copyWith(
         status: EditObservationStatus.failure,
       ));
@@ -63,6 +63,10 @@ class EditObservationBloc
     if (event.images != null) {
       add(EditObservationAddImages(images: event.images!));
     }
+
+    emit(
+      state.copyWith(status: EditObservationStatus.ready),
+    );
   }
 
   void _onEditObservationLocationChanged(
@@ -74,6 +78,8 @@ class EditObservationBloc
 
   void _onEditObservationAddImages(
       EditObservationAddImages event, Emitter<EditObservationState> emit) {
+    emit(state.copyWith(status: EditObservationStatus.updating));
+
     List<UserObservationImage> converted = event.images
         .map((i) => getBytesFromFile(i))
         .whereType<Uint8List>()
@@ -82,17 +88,27 @@ class EditObservationBloc
         )
         .toList();
 
-    converted.addAll(state.images ?? []);
+    var images = (state.images ?? []);
 
-    emit(state.copyWith(images: converted));
+    images.addAll(converted);
+
+    emit(state.copyWith(
+      images: images,
+      status: EditObservationStatus.ready,
+    ));
   }
 
   void _onEditObservationDeleteImage(
       EditObservationDeleteImage event, Emitter<EditObservationState> emit) {
+    emit(state.copyWith(status: EditObservationStatus.updating));
+
     var images = (state.images ?? []);
     images.removeWhere((element) => element.id == event.imageID);
 
-    emit(state.copyWith(images: images));
+    emit(state.copyWith(
+      images: images,
+      status: EditObservationStatus.ready,
+    ));
   }
 
   void _onEditObservationDateChanged(

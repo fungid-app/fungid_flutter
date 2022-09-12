@@ -1,6 +1,4 @@
-import 'dart:async';
-import 'dart:developer';
-
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fungid_flutter/app/app.dart';
@@ -14,9 +12,7 @@ void bootstrap({
   required UserObservationsSharedPrefProvider observationsProvider,
   required FungidApiProvider fungidApiProvider,
 }) {
-  FlutterError.onError = (details) {
-    log(details.exceptionAsString(), stackTrace: details.stack);
-  };
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
 
   final observationsRepository = UserObservationsRepository(
     observationsProvider: observationsProvider,
@@ -24,19 +20,12 @@ void bootstrap({
   );
 
   final locationRepository = LocationRepository();
+  Bloc.observer = BlocMonitor();
 
-  runZonedGuarded(
-    () async {
-      BlocOverrides.runZoned(
-        () => runApp(
-          FungIDApp(
-            observationsRepsoitory: observationsRepository,
-            locationRepository: locationRepository,
-          ),
-        ),
-        blocObserver: BlocMonitor(),
-      );
-    },
-    (error, stackTrace) => log(error.toString(), stackTrace: stackTrace),
+  runApp(
+    FungIDApp(
+      observationsRepsoitory: observationsRepository,
+      locationRepository: locationRepository,
+    ),
   );
 }

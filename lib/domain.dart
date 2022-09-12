@@ -168,7 +168,7 @@ class Prediction extends Equatable {
 }
 
 class UserObservationImage extends Equatable {
-  final String? id;
+  final String id;
   final Uint8List imageBytes;
   final DateTime dateCreated;
 
@@ -178,7 +178,7 @@ class UserObservationImage extends Equatable {
   }) : dateCreated = DateTime.now().toUtc();
 
   @override
-  List<Object?> get props => [id, imageBytes];
+  List<Object?> get props => [id, imageBytes, dateCreated];
 
   factory UserObservationImage.fromJson(Map<String, dynamic> json) {
     return UserObservationImage(
