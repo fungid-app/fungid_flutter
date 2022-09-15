@@ -2,7 +2,6 @@ import 'package:fungid_flutter/domain.dart';
 import 'package:fungid_flutter/providers/fungid_api_provider.dart';
 import 'package:fungid_flutter/providers/user_observation_image_provider.dart';
 import 'package:fungid_flutter/providers/user_observation_provider.dart';
-import 'package:uuid/uuid.dart';
 
 class UserObservationsRepository {
   const UserObservationsRepository({
@@ -23,21 +22,6 @@ class UserObservationsRepository {
 
   UserObservation? getObservation(String id) {
     return _observationsProvider.getObservation(id);
-  }
-
-  UserObservation createObservation() {
-    final obs = UserObservation(
-      id: const Uuid().v4(),
-      images: const [],
-      location: const ObservationLocation(
-        lat: 0.0,
-        lng: 0.0,
-        placeName: "",
-      ),
-      dateCreated: DateTime.now().toUtc(),
-    );
-
-    return obs;
   }
 
   Future<void> saveObservation(UserObservation obs) async {

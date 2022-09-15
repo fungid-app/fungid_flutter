@@ -10,19 +10,6 @@ part 'domain.g.dart';
 const maxImages = 10;
 const maxImageSize = 1000;
 
-UserObservation initializeObservation() {
-  return UserObservation(
-    images: const [],
-    location: const ObservationLocation(
-      lat: 0.0,
-      lng: 0.0,
-      placeName: "",
-    ),
-    id: const Uuid().v4(),
-    dateCreated: DateTime.now().toUtc(),
-  );
-}
-
 UserObservation addImageToObservation(
   UserObservation obs,
   String imagePath,
@@ -62,6 +49,7 @@ class UserObservation extends Equatable {
   final ObservationLocation location;
   final String id;
   final DateTime dateCreated;
+  final DateTime observationDate;
   final DateTime lastUpdated;
   final List<UserObservationImage> images;
   final Predictions? predictions;
@@ -71,6 +59,7 @@ class UserObservation extends Equatable {
     required this.images,
     required this.id,
     required this.dateCreated,
+    required this.observationDate,
     this.predictions,
   }) : lastUpdated = DateTime.now().toUtc();
 
@@ -79,6 +68,7 @@ class UserObservation extends Equatable {
         id,
         location,
         dateCreated,
+        observationDate,
         images,
         predictions,
       ];
@@ -87,10 +77,9 @@ class UserObservation extends Equatable {
   factory UserObservation.fromJson(Map<String, dynamic> json) =>
       _$UserObservationFromJson(json);
 
-  DateTime localDate() => dateCreated.toLocal();
-  String dayCreated() {
-    final DateFormat formatter = DateFormat('yyyy-MM-dd');
-    return formatter.format(dateCreated);
+  DateTime localDate() => observationDate.toLocal();
+  String dayObserved() {
+    return DateFormat.yMMMd().format(observationDate);
   }
 
   Map<String, dynamic> toJson() => _$UserObservationToJson(this);
@@ -99,6 +88,7 @@ class UserObservation extends Equatable {
     ObservationLocation? location,
     String? id,
     DateTime? dateCreated,
+    DateTime? observationDate,
     DateTime? lastUpdated,
     List<UserObservationImage>? images,
     Predictions? predictions,
@@ -107,6 +97,7 @@ class UserObservation extends Equatable {
       location: location ?? this.location,
       id: id ?? this.id,
       dateCreated: dateCreated ?? this.dateCreated,
+      observationDate: observationDate ?? this.observationDate,
       images: images ?? this.images,
       predictions: predictions ?? this.predictions,
     );
@@ -145,7 +136,13 @@ class ObservationLocation extends Equatable {
   });
 
   @override
-  List<Object?> get props => [lat, lng];
+  List<Object?> get props => [
+        lat,
+        lng,
+      ];
+
+  get latLngDisplay =>
+      '${lat.toStringAsPrecision(7)}, ${lng.toStringAsPrecision(7)}';
 
   factory ObservationLocation.fromJson(Map<String, dynamic> json) =>
       _$ObservationLocationFromJson(json);
@@ -191,7 +188,11 @@ class UserObservationImage extends Equatable {
   }) : dateCreated = dateCreated ?? DateTime.now().toUtc();
 
   @override
-  List<Object?> get props => [id, filename, dateCreated];
+  List<Object?> get props => [
+        id,
+        filename,
+        dateCreated,
+      ];
 
   factory UserObservationImage.fromJson(Map<String, dynamic> json) =>
       _$UserObservationImageFromJson(json);

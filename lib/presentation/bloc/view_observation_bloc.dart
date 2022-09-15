@@ -72,6 +72,7 @@ class ViewObservationBloc
       final predictions = await observationRepository.getPredictions(
         state.observation!,
       );
+
       emit(state.copyWith(
         status: () => ViewObservationStatus.success,
         observation: () => state.observation!.copyWith(

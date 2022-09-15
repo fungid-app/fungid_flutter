@@ -65,21 +65,15 @@ class ObservationListView extends StatelessWidget {
 ListTile _observationCard(BuildContext context, UserObservation observation) {
   return ListTile(
     leading: SizedBox(
-      width: 50,
-      child: Center(
-        child: Image.file(
-          observation.images.first.getFile(),
-          fit: BoxFit.cover,
-        ),
+      width: 60,
+      child: Image.file(
+        observation.images.first.getFile(),
+        fit: BoxFit.cover,
       ),
     ),
-    title: Text(
-      observation.dayCreated(),
-      style: const TextStyle(
-        fontSize: 18.0,
-        fontWeight: FontWeight.bold,
-      ),
-    ),
+    minLeadingWidth: 0,
+    title: Text(observation.dayObserved()),
+    subtitle: Text(observation.location.placeName),
     onTap: () => Navigator.push(
         context,
         ViewObservationPage.route(

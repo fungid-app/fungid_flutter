@@ -23,6 +23,8 @@ UserObservation _$UserObservationFromJson(Map<String, dynamic> json) =>
           id: $checkedConvert('id', (v) => v as String),
           dateCreated: $checkedConvert(
               'date_created', (v) => DateTime.parse(v as String)),
+          observationDate: $checkedConvert(
+              'observation_date', (v) => DateTime.parse(v as String)),
           predictions: $checkedConvert(
               'predictions',
               (v) => v == null
@@ -31,7 +33,10 @@ UserObservation _$UserObservationFromJson(Map<String, dynamic> json) =>
         );
         return val;
       },
-      fieldKeyMap: const {'dateCreated': 'date_created'},
+      fieldKeyMap: const {
+        'dateCreated': 'date_created',
+        'observationDate': 'observation_date'
+      },
     );
 
 Map<String, dynamic> _$UserObservationToJson(UserObservation instance) =>
@@ -39,6 +44,7 @@ Map<String, dynamic> _$UserObservationToJson(UserObservation instance) =>
       'location': instance.location,
       'id': instance.id,
       'date_created': instance.dateCreated.toIso8601String(),
+      'observation_date': instance.observationDate.toIso8601String(),
       'images': instance.images,
       'predictions': instance.predictions,
     };

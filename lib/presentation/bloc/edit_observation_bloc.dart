@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:fungid_flutter/repositories/location_repository.dart';
 import 'package:fungid_flutter/repositories/user_observation_repository.dart';
 import 'package:fungid_flutter/domain.dart';
+import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
 part 'edit_observation_event.dart';
@@ -19,6 +20,7 @@ class EditObservationBloc
           location: intialObservation?.location,
           id: intialObservation?.id,
           dateCreated: intialObservation?.dateCreated,
+          observationDate: intialObservation?.observationDate,
           lastUpdated: intialObservation?.lastUpdated,
           images: intialObservation?.images,
           predictions: intialObservation?.predictions,
@@ -48,11 +50,13 @@ class EditObservationBloc
 
     if (state.isNewObservation) {
       var location = await locationRepository.determinePosition();
+      var now = DateTime.now();
 
       emit(state.copyWith(
         location: location,
-        dateCreated: DateTime.now().toUtc(),
-        lastUpdated: DateTime.now().toUtc(),
+        dateCreated: now.toUtc(),
+        observationDate: DateTime(now.year, now.month, now.day),
+        lastUpdated: DateTime.now(),
         id: const Uuid().v4(),
       ));
     }
@@ -109,7 +113,7 @@ class EditObservationBloc
 
   void _onEditObservationDateChanged(
       EditObservationDateChanged event, Emitter<EditObservationState> emit) {
-    emit(state.copyWith(dateCreated: event.date));
+    emit(state.copyWith(observationDate: event.date));
   }
 
   Future<void> _onEditObservationSubmitted(
@@ -122,6 +126,7 @@ class EditObservationBloc
       id: state.intialObservation?.id ?? state.id!,
       location: state.location!,
       dateCreated: state.dateCreated!,
+      observationDate: state.observationDate ?? state.dateCreated!,
       images: state.images!,
       predictions: state.predictions,
     );

@@ -1,3 +1,6 @@
+import 'dart:developer';
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fungid_flutter/domain.dart';
@@ -5,7 +8,6 @@ import 'package:fungid_flutter/presentation/bloc/view_observation_bloc.dart';
 import 'package:fungid_flutter/presentation/pages/edit_observation.dart';
 import 'package:fungid_flutter/presentation/widgets/image_carousel.dart';
 import 'package:fungid_flutter/repositories/user_observation_repository.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ViewObservationPage extends StatelessWidget {
@@ -129,12 +131,14 @@ class ViewObservationView extends StatelessWidget {
             images: observation.images,
           ),
           ListTile(
+            minLeadingWidth: 0,
             leading: const Icon(Icons.location_on_outlined),
             title: Text(observation.location.placeName),
           ),
           ListTile(
+            minLeadingWidth: 0,
             leading: const Icon(Icons.date_range),
-            title: Text(observation.dayCreated()),
+            title: Text(observation.dayObserved()),
           ),
           const Divider(
             indent: 20,
@@ -167,6 +171,7 @@ class ViewObservationView extends StatelessWidget {
 
     var tiles = [
       ListTile(
+          minLeadingWidth: 0,
           leading: const Icon(Icons.batch_prediction_sharp),
           title: Text(
             "Predictions",
@@ -183,50 +188,82 @@ class ViewObservationView extends StatelessWidget {
       var errorMessage = context
               .select((ViewObservationBloc bloc) => bloc.state.errorMessage) ??
           "Error getting predictions";
+
       tiles.add(ListTile(
         title: Center(
           child: Text(errorMessage),
         ),
       ));
     } else {
-      var predictions = _getPredictions(context, observation.predictions);
+      if (observation.predictions == null) {
+        tiles.add(
+          ListTile(
+            minLeadingWidth: 0,
+            title: const Text("No predictions available"),
+            subtitle: const Text("Tap to generate"),
+            onTap: () => context
+                .read<ViewObservationBloc>()
+                .add(const ViewObservationGetPredctions()),
+          ),
+        );
+      }
+
+      if (observation.lastUpdated
+          .subtract(
+            const Duration(seconds: 1),
+          )
+          .isAfter(observation.predictions!.dateCreated)) {
+        log(observation.lastUpdated.toString());
+        log(observation.predictions!.dateCreated.toString());
+
+        tiles.add(ListTile(
+          tileColor: Colors.yellow,
+          leading: const Icon(Icons.warning),
+          trailing: const Icon(Icons.refresh),
+          title: const Text("Predictions are out of date"),
+          subtitle: const Text("Tap to refresh"),
+          onTap: () => context
+              .read<ViewObservationBloc>()
+              .add(const ViewObservationGetPredctions()),
+        ));
+      }
+
+      var predictions = _getPredictionTiles(context, observation.predictions!);
       tiles.addAll(predictions);
     }
 
     return tiles;
   }
 
-  List<ListTile> _getPredictions(
+  List<ListTile> _getPredictionTiles(
     BuildContext context,
-    Predictions? predictions,
+    Predictions predictions,
   ) {
-    if (predictions == null) {
-      return [
-        ListTile(
-          title: const Text("No predictions available"),
-          subtitle: const Text("Tap to generate"),
-          onTap: () => context
-              .read<ViewObservationBloc>()
-              .add(const ViewObservationGetPredctions()),
-        ),
-      ];
-    }
-
     return predictions.predictions
         .map((pred) => ListTile(
               onTap: () => _launchUrl(pred.species),
-              leading: CircularPercentIndicator(
-                radius: 20.0,
-                lineWidth: 10.0,
-                percent: pred.probability,
-                // center: const Text("100%"),
-                progressColor: Colors.green,
+              minLeadingWidth: 0,
+              title: Text('${pred.species} - ${pred.displayProbabilty()}'),
+              subtitle: LinearProgressIndicator(
+                value: pred.probability,
+                backgroundColor: Colors.grey,
+                minHeight: 8,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  HSLColor.fromAHSL(
+                    1,
+                    _getHueFromProbability(pred.probability),
+                    .75,
+                    .5,
+                  ).toColor(),
+                ),
               ),
-              title: Text(pred.species),
-              subtitle: Text(pred.displayProbabilty()),
             ))
         .toList();
   }
+}
+
+double _getHueFromProbability(double probability) {
+  return 100 * (math.pow(2 * probability, 3) / math.pow(2, 3));
 }
 
 Future<void> _launchUrl(String species) async {

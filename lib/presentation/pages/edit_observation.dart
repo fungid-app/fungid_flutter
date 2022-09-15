@@ -98,6 +98,7 @@ class EditObservationView extends StatelessWidget {
                 child: ListView(
                   children: const [
                     _ImageField(),
+                    _DateField(),
                     _LocationField(),
                   ],
                 ),
@@ -107,6 +108,42 @@ class EditObservationView extends StatelessWidget {
         ),
       );
     }
+  }
+}
+
+class _DateField extends StatelessWidget {
+  const _DateField({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final date = context
+            .select((EditObservationBloc bloc) => bloc.state.observationDate) ??
+        DateTime.now();
+    final displayDate =
+        context.select((EditObservationBloc bloc) => bloc.state.formattedDate);
+
+    return ListTile(
+      leading: const SizedBox(
+        height: double.infinity,
+        child: Icon(Icons.calendar_month),
+      ),
+      minLeadingWidth: 0,
+      title: Text(displayDate),
+      onTap: () async {
+        var bloc = context.read<EditObservationBloc>();
+
+        final newDate = await showDatePicker(
+          context: context,
+          initialDate: date,
+          firstDate: DateTime(2000),
+          lastDate: DateTime.now(),
+        );
+
+        if (newDate != null) {
+          bloc.add(EditObservationDateChanged(date: newDate));
+        }
+      },
+    );
   }
 }
 
@@ -147,20 +184,6 @@ class _LocationField extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    var pos = LatLng(state.location!.lat, state.location!.lng);
-
-    var marker = Marker(
-      markerId: MarkerId(state.location!.placeName),
-      position: pos,
-      onTap: () =>
-          _navigateToMap(context, state.location!.lat, state.location!.lng),
-    );
-
-    CameraPosition kCurrentLocation = CameraPosition(
-      target: pos,
-      zoom: 14.4746,
-    );
-
     return Column(children: [
       ListTile(
         leading: const SizedBox(
@@ -175,32 +198,47 @@ class _LocationField extends StatelessWidget {
         onTap: () =>
             _navigateToMap(context, state.location!.lat, state.location!.lng),
       ),
-      ListTile(
-        leading: const SizedBox(
-          height: double.infinity,
-          child: Icon(Icons.map),
-        ),
-        minLeadingWidth: 0,
-        onTap: () =>
-            _navigateToMap(context, state.location!.lat, state.location!.lng),
-        title: SizedBox(
-          height: 200,
-          child: GoogleMap(
-            key: Key('map-${state.location!.lat}-${state.location!.lng}'),
-            initialCameraPosition: kCurrentLocation,
-            markers: {
-              marker,
-            },
-            mapType: MapType.normal,
-            scrollGesturesEnabled: false,
-            zoomGesturesEnabled: false,
-            zoomControlsEnabled: false,
-            onTap: (_) => _navigateToMap(
-                context, state.location!.lat, state.location!.lng),
-          ),
+      _getMap(context, state.location!),
+    ]);
+  }
+
+  ListTile _getMap(BuildContext context, ObservationLocation location) {
+    var pos = LatLng(location.lat, location.lng);
+
+    var marker = Marker(
+      markerId: MarkerId(location.placeName),
+      position: pos,
+      onTap: () => _navigateToMap(context, location.lat, location.lng),
+    );
+
+    CameraPosition kCurrentLocation = CameraPosition(
+      target: pos,
+      zoom: 14.4746,
+    );
+
+    return ListTile(
+      leading: const SizedBox(
+        height: double.infinity,
+        child: Icon(Icons.map),
+      ),
+      minLeadingWidth: 0,
+      onTap: () => _navigateToMap(context, location.lat, location.lng),
+      title: SizedBox(
+        height: 200,
+        child: GoogleMap(
+          key: Key('map-${location.lat}-${location.lng}'),
+          initialCameraPosition: kCurrentLocation,
+          markers: {
+            marker,
+          },
+          mapType: MapType.normal,
+          scrollGesturesEnabled: false,
+          zoomGesturesEnabled: false,
+          zoomControlsEnabled: false,
+          onTap: (_) => _navigateToMap(context, location.lat, location.lng),
         ),
       ),
-    ]);
+    );
   }
 
   void _navigateToMap(BuildContext context, double latitute, double longitude) {

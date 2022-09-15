@@ -21,6 +21,7 @@ class EditObservationState extends Equatable {
     this.location,
     this.id,
     this.dateCreated,
+    this.observationDate,
     this.lastUpdated,
     this.images,
     this.predictions,
@@ -30,6 +31,7 @@ class EditObservationState extends Equatable {
   final ObservationLocation? location;
   final String? id;
   final DateTime? dateCreated;
+  final DateTime? observationDate;
   final DateTime? lastUpdated;
   final List<UserObservationImage>? images;
   final Predictions? predictions;
@@ -38,10 +40,15 @@ class EditObservationState extends Equatable {
 
   bool get isNewObservation => intialObservation == null;
 
+  String get formattedDate => observationDate == null
+      ? ""
+      : DateFormat.yMMMd().format(observationDate!);
+
   EditObservationState copyWith({
     ObservationLocation? location,
     String? id,
     DateTime? dateCreated,
+    DateTime? observationDate,
     DateTime? lastUpdated,
     List<UserObservationImage>? images,
     Predictions? predictions,
@@ -52,6 +59,7 @@ class EditObservationState extends Equatable {
       location: location ?? this.location,
       id: id ?? this.id,
       dateCreated: dateCreated ?? this.dateCreated,
+      observationDate: observationDate ?? this.observationDate,
       lastUpdated: lastUpdated ?? this.lastUpdated,
       images: images ?? this.images,
       predictions: predictions ?? this.predictions,
@@ -65,6 +73,7 @@ class EditObservationState extends Equatable {
         location,
         id,
         dateCreated,
+        observationDate,
         lastUpdated,
         images,
         predictions,
