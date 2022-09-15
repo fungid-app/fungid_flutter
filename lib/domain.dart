@@ -1,8 +1,7 @@
-import 'dart:typed_data';
+import 'dart:io';
 
 import 'package:equatable/equatable.dart';
-import 'package:fungid_flutter/utils/images.dart';
-import 'package:image/image.dart';
+import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -28,12 +27,12 @@ UserObservation addImageToObservation(
   UserObservation obs,
   String imagePath,
 ) {
-  Image? image = resizeFromFile(imagePath, maxImageSize);
+  // Image? image = resizeFromFile(imagePath, maxImageSize);
 
-  if (image == null) return obs;
+  // if (image == null) return obs;
 
   obs.images.add(UserObservationImage(
-    imageBytes: image.getBytes(),
+    filename: imagePath,
     id: const Uuid().v4(),
   ));
 
@@ -87,6 +86,12 @@ class UserObservation extends Equatable {
   static List<UserObservation> observations = [];
   factory UserObservation.fromJson(Map<String, dynamic> json) =>
       _$UserObservationFromJson(json);
+
+  DateTime localDate() => dateCreated.toLocal();
+  String dayCreated() {
+    final DateFormat formatter = DateFormat('yyyy-MM-dd');
+    return formatter.format(dateCreated);
+  }
 
   Map<String, dynamic> toJson() => _$UserObservationToJson(this);
 
@@ -158,6 +163,10 @@ class Prediction extends Equatable {
     required this.probability,
   });
 
+  String displayProbabilty() {
+    return "${(probability * 100).toStringAsFixed(4)}%";
+  }
+
   @override
   List<Object?> get props => [species, probability];
 
@@ -167,35 +176,39 @@ class Prediction extends Equatable {
   Map<String, dynamic> toJson() => _$PredictionToJson(this);
 }
 
+@JsonSerializable()
 class UserObservationImage extends Equatable {
   final String id;
-  final Uint8List imageBytes;
+  final String filename;
   final DateTime dateCreated;
 
+  File getFile() => File(filename);
+
   UserObservationImage({
-    required this.imageBytes,
+    required this.filename,
     required this.id,
-  }) : dateCreated = DateTime.now().toUtc();
+    DateTime? dateCreated,
+  }) : dateCreated = dateCreated ?? DateTime.now().toUtc();
 
   @override
-  List<Object?> get props => [id, imageBytes, dateCreated];
+  List<Object?> get props => [id, filename, dateCreated];
 
-  factory UserObservationImage.fromJson(Map<String, dynamic> json) {
+  factory UserObservationImage.fromJson(Map<String, dynamic> json) =>
+      _$UserObservationImageFromJson(json);
+
+  Map<String, dynamic> toJson() => _$UserObservationImageToJson(this);
+
+  UserObservationImage copyWith({
+    String? id,
+    String? filename,
+    DateTime? dateCreated,
+  }) {
     return UserObservationImage(
-      id: json['id'],
-      imageBytes: dataFromBase64String(json['image']),
+      id: id ?? this.id,
+      filename: filename ?? this.filename,
+      dateCreated: dateCreated ?? this.dateCreated,
     );
   }
-
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'image': base64String(imageBytes),
-      };
-
-  // factory UserObservationImage.fromJson(Map<String, dynamic> json) =>
-  //     _$UserObservationImageFromJson(json);
-
-  // Map<String, dynamic> toJson() => _$UserObservationImageToJson(this);
 }
 
 @JsonSerializable()

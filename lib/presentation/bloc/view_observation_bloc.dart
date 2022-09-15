@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:fungid_flutter/domain.dart';
@@ -66,16 +68,24 @@ class ViewObservationBloc
     emit(
         state.copyWith(status: () => ViewObservationStatus.predictionsLoading));
 
-    final predictions = await observationRepository.getPredictions(
-      state.observation!,
-    );
-
-    emit(state.copyWith(
-      status: () => ViewObservationStatus.success,
-      observation: () => state.observation!.copyWith(
-        predictions: predictions,
-      ),
-    ));
+    try {
+      final predictions = await observationRepository.getPredictions(
+        state.observation!,
+      );
+      emit(state.copyWith(
+        status: () => ViewObservationStatus.success,
+        observation: () => state.observation!.copyWith(
+          predictions: predictions,
+        ),
+      ));
+    } catch (e) {
+      emit(state.copyWith(
+        status: () => ViewObservationStatus.predictionsFailed,
+        errorMessage: () => e.toString(),
+      ));
+      log(e.toString());
+      rethrow;
+    }
 
     add(const ViewObservationSave());
   }

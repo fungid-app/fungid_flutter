@@ -35,6 +35,9 @@ dependencies:
   firebase_core: ^1.22.0
   firebase_crashlytics: ^2.8.10
   url_launcher: ^6.1.5
+  image_gallery_saver: ^1.7.1
+  intl: ^0.17.0
+  percent_indicator: ^4.2.2
 
 dev_dependencies:
   flutter_test:

@@ -30,20 +30,25 @@ class LocationRepository {
     }
 
     Position pos = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.best);
+        desiredAccuracy: LocationAccuracy.bestForNavigation);
 
-    var data = await placemarkFromCoordinates(
-      pos.latitude,
-      pos.longitude,
-    );
-    var first = data.first;
+    String place = "";
+    try {
+      var data = await placemarkFromCoordinates(
+        pos.latitude,
+        pos.longitude,
+      );
 
-    var name = "${first.name}";
+      var first = data.first;
+      place = "${first.street}, ${first.locality}, ${first.isoCountryCode}";
+    } catch (e) {
+      place = "Unknown";
+    }
 
     return ObservationLocation(
       lat: pos.latitude,
       lng: pos.longitude,
-      placeName: name,
+      placeName: place,
     );
   }
 }

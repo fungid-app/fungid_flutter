@@ -8,10 +8,12 @@ import 'package:built_value/serializer.dart';
 import 'package:dio/dio.dart';
 
 import 'package:fungid_api/src/api_util.dart';
+import 'package:fungid_api/src/model/http_validation_error.dart';
 import 'package:fungid_api/src/model/page_species.dart';
 import 'package:fungid_api/src/model/species.dart';
 
 class TaxonomyApi {
+
   final Dio _dio;
 
   final Serializers _serializers;
@@ -19,11 +21,11 @@ class TaxonomyApi {
   const TaxonomyApi(this._dio, this._serializers);
 
   /// Get All Species
-  ///
+  /// 
   ///
   /// Parameters:
-  /// * [page]
-  /// * [size]
+  /// * [page] 
+  /// * [size] 
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request
@@ -33,7 +35,7 @@ class TaxonomyApi {
   ///
   /// Returns a [Future] containing a [Response] with a [PageSpecies] as data
   /// Throws [DioError] if API call or serialization fails
-  Future<Response<PageSpecies>> getAllSpeciesTaxonomySpeciesGet({
+  Future<Response<PageSpecies>> getAllSpeciesTaxonomySpeciesGet({ 
     int? page = 1,
     int? size = 50,
     CancelToken? cancelToken,
@@ -57,10 +59,8 @@ class TaxonomyApi {
     );
 
     final _queryParameters = <String, dynamic>{
-      if (page != null)
-        r'page': encodeQueryParameter(_serializers, page, const FullType(int)),
-      if (size != null)
-        r'size': encodeQueryParameter(_serializers, size, const FullType(int)),
+      if (page != null) r'page': encodeQueryParameter(_serializers, page, const FullType(int)),
+      if (size != null) r'size': encodeQueryParameter(_serializers, size, const FullType(int)),
     };
 
     final _response = await _dio.request<Object>(
@@ -80,6 +80,7 @@ class TaxonomyApi {
         _response.data!,
         specifiedType: _responseType,
       ) as PageSpecies;
+
     } catch (error, stackTrace) {
       throw DioError(
         requestOptions: _response.requestOptions,
@@ -102,10 +103,10 @@ class TaxonomyApi {
   }
 
   /// Get Species
-  ///
+  /// 
   ///
   /// Parameters:
-  /// * [nameOrId]
+  /// * [nameOrId] 
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request
@@ -115,7 +116,7 @@ class TaxonomyApi {
   ///
   /// Returns a [Future] containing a [Response] with a [Species] as data
   /// Throws [DioError] if API call or serialization fails
-  Future<Response<Species>> getSpeciesTaxonomySpeciesNameOrIdGet({
+  Future<Response<Species>> getSpeciesTaxonomySpeciesNameOrIdGet({ 
     required String nameOrId,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
@@ -124,8 +125,7 @@ class TaxonomyApi {
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) async {
-    final _path = r'/taxonomy/species/{name_or_id}'
-        .replaceAll('{' r'name_or_id' '}', nameOrId.toString());
+    final _path = r'/taxonomy/species/{name_or_id}'.replaceAll('{' r'name_or_id' '}', nameOrId.toString());
     final _options = Options(
       method: r'GET',
       headers: <String, dynamic>{
@@ -154,6 +154,7 @@ class TaxonomyApi {
         _response.data!,
         specifiedType: _responseType,
       ) as Species;
+
     } catch (error, stackTrace) {
       throw DioError(
         requestOptions: _response.requestOptions,
@@ -174,4 +175,5 @@ class TaxonomyApi {
       extra: _response.extra,
     );
   }
+
 }

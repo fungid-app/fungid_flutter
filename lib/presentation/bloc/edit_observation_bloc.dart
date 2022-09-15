@@ -1,11 +1,8 @@
-import 'dart:typed_data';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:fungid_flutter/repositories/location_repository.dart';
 import 'package:fungid_flutter/repositories/user_observation_repository.dart';
 import 'package:fungid_flutter/domain.dart';
-import 'package:fungid_flutter/utils/images.dart';
 import 'package:uuid/uuid.dart';
 
 part 'edit_observation_event.dart';
@@ -78,13 +75,9 @@ class EditObservationBloc
 
   void _onEditObservationAddImages(
       EditObservationAddImages event, Emitter<EditObservationState> emit) {
-    emit(state.copyWith(status: EditObservationStatus.updating));
-
     List<UserObservationImage> converted = event.images
-        .map((i) => getBytesFromFile(i))
-        .whereType<Uint8List>()
         .map(
-          (e) => UserObservationImage(imageBytes: e, id: const Uuid().v4()),
+          (e) => UserObservationImage(filename: e, id: const Uuid().v4()),
         )
         .toList();
 
@@ -94,20 +87,16 @@ class EditObservationBloc
 
     emit(state.copyWith(
       images: images,
-      status: EditObservationStatus.ready,
     ));
   }
 
   void _onEditObservationDeleteImage(
       EditObservationDeleteImage event, Emitter<EditObservationState> emit) {
-    emit(state.copyWith(status: EditObservationStatus.updating));
-
     var images = (state.images ?? []);
     images.removeWhere((element) => element.id == event.imageID);
 
     emit(state.copyWith(
       images: images,
-      status: EditObservationStatus.ready,
     ));
   }
 
@@ -122,20 +111,20 @@ class EditObservationBloc
   ) async {
     emit(state.copyWith(status: EditObservationStatus.loading));
 
-    final observation = state.intialObservation ??
-        UserObservation(
-          id: state.id!,
-          location: state.location!,
-          dateCreated: state.dateCreated!,
-          images: state.images!,
-          predictions: state.predictions,
-        );
+    final observation = UserObservation(
+      id: state.intialObservation?.id ?? state.id!,
+      location: state.location!,
+      dateCreated: state.dateCreated!,
+      images: state.images!,
+      predictions: state.predictions,
+    );
 
     try {
       await observationRepository.saveObservation(observation);
       emit(state.copyWith(status: EditObservationStatus.success));
     } catch (e) {
       emit(state.copyWith(status: EditObservationStatus.failure));
+      rethrow;
     }
   }
 }

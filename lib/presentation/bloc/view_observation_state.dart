@@ -8,6 +8,7 @@ enum ViewObservationStatus {
   failure,
   deleted,
   predictionsLoading,
+  predictionsFailed,
 }
 
 class ViewObservationState extends Equatable {
@@ -15,11 +16,13 @@ class ViewObservationState extends Equatable {
     this.status = ViewObservationStatus.initial,
     required this.id,
     this.observation,
+    this.errorMessage,
   });
 
   final String id;
   final ViewObservationStatus status;
   final UserObservation? observation;
+  final String? errorMessage;
 
   @override
   List<Object> get props => [
@@ -32,10 +35,12 @@ class ViewObservationState extends Equatable {
     ViewObservationStatus Function()? status,
     UserObservation Function()? observation,
     String Function()? id,
+    String Function()? errorMessage,
   }) =>
       ViewObservationState(
         status: status != null ? status() : this.status,
         id: id != null ? id() : this.id,
         observation: observation != null ? observation() : this.observation,
+        errorMessage: errorMessage != null ? errorMessage() : this.errorMessage,
       );
 }

@@ -58,6 +58,13 @@
 			<string>sms</string>
 			<string>tel</string>
 		</array>
+		<!-- https://stackoverflow.com/questions/55220612/how-to-save-a-text-file-in-external-storage-in-ios-using-flutter -->
+		<key>LSSupportsOpeningDocumentsInPlace</key>
+		<true />
+		<key>UIFileSharingEnabled</key>
+		<true />
+		<key>NSPhotoLibraryAddUsageDescription</key>
+		<string>After users take the images they can more easily share them and upload them to other sites for identification verification.</string>
 
 		<!-- <key>NSLocationAlwaysUsageDescription</key>
 		<string>This app needs access to location when in the background.</string>

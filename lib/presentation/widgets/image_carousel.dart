@@ -32,16 +32,12 @@ class _ImageCarouselState extends State<ImageCarousel> {
         .map(
           (image) => Builder(
             builder: (BuildContext context) {
-              var i = Image.memory(
-                image.imageBytes,
-                fit: BoxFit.scaleDown,
-              );
               return Container(
                   margin: const EdgeInsets.symmetric(horizontal: 6.0),
                   decoration: const BoxDecoration(color: Colors.grey),
                   child: GestureDetector(
-                      child: Image.memory(
-                        image.imageBytes,
+                      child: Image.file(
+                        image.getFile(),
                         fit: BoxFit.cover,
                       ),
                       onTap: () {
@@ -50,7 +46,10 @@ class _ImageCarouselState extends State<ImageCarousel> {
                           MaterialPageRoute(
                             builder: (context) => ImageScreen(
                               image: image,
-                              onImageDeleted: widget.onImageDeleted,
+                              onImageDeleted: (id) {
+                                widget.onImageDeleted!(id);
+                                _controller.jumpToPage(0);
+                              },
                             ),
                           ),
                         );
@@ -156,8 +155,8 @@ class MyImageScreen extends State<ImageScreen> {
               child: const Icon(Icons.delete),
             ),
       body: Center(
-        child: Image.memory(
-          widget.image.imageBytes,
+        child: Image.file(
+          widget.image.getFile(),
           fit: BoxFit.scaleDown,
         ),
       ),

@@ -5,6 +5,7 @@ import 'package:fungid_flutter/presentation/bloc/view_observation_bloc.dart';
 import 'package:fungid_flutter/presentation/pages/edit_observation.dart';
 import 'package:fungid_flutter/presentation/widgets/image_carousel.dart';
 import 'package:fungid_flutter/repositories/user_observation_repository.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ViewObservationPage extends StatelessWidget {
@@ -128,10 +129,12 @@ class ViewObservationView extends StatelessWidget {
             images: observation.images,
           ),
           ListTile(
+            leading: const Icon(Icons.location_on_outlined),
             title: Text(observation.location.placeName),
           ),
           ListTile(
-            title: Text(observation.dateCreated.toString()),
+            leading: const Icon(Icons.date_range),
+            title: Text(observation.dayCreated()),
           ),
           ..._getPredictionsWidget(context, observation),
         ],
@@ -157,23 +160,35 @@ class ViewObservationView extends StatelessWidget {
             },
           );
 
-    var predicitons = status == ViewObservationStatus.predictionsLoading
-        ? [
-            const ListTile(
-              title: Center(child: CircularProgressIndicator()),
-            )
-          ]
-        : _getPredictions(context, observation.predictions);
-
-    return [
+    var tiles = [
       ListTile(
+          leading: const Icon(Icons.batch_prediction_sharp),
           title: Text(
             "Predictions",
             style: Theme.of(context).textTheme.headline5,
           ),
           trailing: icon),
-      ...predicitons,
     ];
+
+    if (status == ViewObservationStatus.predictionsLoading) {
+      tiles.add(const ListTile(
+        title: Center(child: CircularProgressIndicator()),
+      ));
+    } else if (status == ViewObservationStatus.predictionsFailed) {
+      var errorMessage = context
+              .select((ViewObservationBloc bloc) => bloc.state.errorMessage) ??
+          "Error getting predictions";
+      tiles.add(ListTile(
+        title: Center(
+          child: Text(errorMessage),
+        ),
+      ));
+    } else {
+      var predictions = _getPredictions(context, observation.predictions);
+      tiles.addAll(predictions);
+    }
+
+    return tiles;
   }
 
   List<ListTile> _getPredictions(
@@ -195,8 +210,15 @@ class ViewObservationView extends StatelessWidget {
     return predictions.predictions
         .map((pred) => ListTile(
               onTap: () => _launchUrl(pred.species),
+              leading: CircularPercentIndicator(
+                radius: 20.0,
+                lineWidth: 10.0,
+                percent: pred.probability,
+                // center: const Text("100%"),
+                progressColor: Colors.green,
+              ),
               title: Text(pred.species),
-              subtitle: Text(pred.probability.toString()),
+              subtitle: Text(pred.displayProbabilty()),
             ))
         .toList();
   }

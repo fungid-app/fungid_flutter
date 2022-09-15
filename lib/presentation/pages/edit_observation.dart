@@ -98,6 +98,7 @@ class EditObservationView extends StatelessWidget {
               child: Column(
                 children: [
                   ImageCarousel(
+                    key: Key('${images.length}-image-carousel'),
                     images: images,
                     onImagesAdded: (images) => context
                         .read<EditObservationBloc>()

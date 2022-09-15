@@ -1,26 +1,27 @@
-import 'dart:typed_data';
-
 import 'package:fungid_flutter/domain.dart';
 import 'package:fungid_flutter/providers/fungid_api_provider.dart';
+import 'package:fungid_flutter/providers/user_observation_image_provider.dart';
 import 'package:fungid_flutter/providers/user_observation_provider.dart';
-import 'package:fungid_flutter/utils/images.dart';
 import 'package:uuid/uuid.dart';
 
 class UserObservationsRepository {
   const UserObservationsRepository({
     required UserObservationsSharedPrefProvider observationsProvider,
+    required UserObservationImageFileSystemProvider imageProvider,
     required FungidApiProvider fungidApiProvider,
   })  : _observationsProvider = observationsProvider,
-        _fungidApiProvider = fungidApiProvider;
+        _fungidApiProvider = fungidApiProvider,
+        _imageProvider = imageProvider;
 
   final FungidApiProvider _fungidApiProvider;
   final UserObservationsSharedPrefProvider _observationsProvider;
+  final UserObservationImageFileSystemProvider _imageProvider;
 
   Stream<List<UserObservation>> getAllObservations() {
     return _observationsProvider.getObservations();
   }
 
-  UserObservation getObservation(String id) {
+  UserObservation? getObservation(String id) {
     return _observationsProvider.getObservation(id);
   }
 
@@ -39,27 +40,27 @@ class UserObservationsRepository {
     return obs;
   }
 
-  UserObservation addImagesToObservation(
-      UserObservation observation, List<String> images) {
-    List<UserObservationImage> converted = _convertImages(images);
-    observation.images.addAll(converted);
-
-    return observation;
-  }
-
-  List<UserObservationImage> _convertImages(List<String> images) {
-    var converted = images
-        .map((i) => prepareImageFile(i, 1000))
-        .whereType<Uint8List>()
-        .map(
-          (e) => UserObservationImage(imageBytes: e, id: const Uuid().v4()),
-        )
-        .toList();
-    return converted;
-  }
-
   Future<void> saveObservation(UserObservation obs) async {
-    return _observationsProvider.saveObservation(obs);
+    var prevObs = getObservation(obs.id);
+
+    // Save new images
+    var images = await Future.wait(obs.images.map((img) async {
+      var path = await _imageProvider.saveImage(img);
+      return img.copyWith(filename: path);
+    }));
+
+    if (prevObs != null) {
+      // Delete old images
+      for (var img in prevObs.images) {
+        if (!obs.images.any((element) => element.id == img.id)) {
+          _imageProvider.deleteImage(img.filename);
+        }
+      }
+    }
+
+    return _observationsProvider.saveObservation(obs.copyWith(
+      images: images,
+    ));
   }
 
   Future<bool> clearObservations() async {

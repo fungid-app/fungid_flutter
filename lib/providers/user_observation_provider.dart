@@ -53,13 +53,13 @@ class UserObservationsSharedPrefProvider {
     return _setValue(_obsevationCollectionsKey, json.encode(observations));
   }
 
-  UserObservation getObservation(String id) {
+  UserObservation? getObservation(String id) {
     final observations = [..._observationStreamController.value];
     final index = observations.indexWhere((o) => o.id == id);
     if (index >= 0) {
       return observations[index];
     } else {
-      throw Exception('Observation not found');
+      return null;
     }
   }
 

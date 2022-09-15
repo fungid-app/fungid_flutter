@@ -40,14 +40,17 @@ class ObservationListView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ListView.separated(
-                  shrinkWrap: true,
-                  itemCount: state.observations.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return _observationCard(context, state.observations[index]);
-                  },
-                  separatorBuilder: (context, index) => const Divider(
-                    color: Colors.grey,
+                Expanded(
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    itemCount: state.observations.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return _observationCard(
+                          context, state.observations[index]);
+                    },
+                    separatorBuilder: (context, index) => const Divider(
+                      color: Colors.grey,
+                    ),
                   ),
                 ),
               ],
@@ -64,14 +67,14 @@ ListTile _observationCard(BuildContext context, UserObservation observation) {
     leading: SizedBox(
       width: 50,
       child: Center(
-        child: Image.memory(
-          observation.images.first.imageBytes,
+        child: Image.file(
+          observation.images.first.getFile(),
           fit: BoxFit.cover,
         ),
       ),
     ),
     title: Text(
-      observation.dateCreated.toString(),
+      observation.dayCreated(),
       style: const TextStyle(
         fontSize: 18.0,
         fontWeight: FontWeight.bold,
