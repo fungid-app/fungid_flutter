@@ -10,7 +10,7 @@ import 'package:openapi_generator_annotations/openapi_generator_annotations.dart
       pubName: 'fungid_api',
       pubAuthor: 'Michael Weishuhn',
     ),
-    inputSpecFile: 'openapi-spec.json',
+    inputSpecFile: 'fungid-openapi.json',
     generatorName: Generator.dio,
     alwaysRun: true,
     outputDirectory: 'packages/fungid_api')

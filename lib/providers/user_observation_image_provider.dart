@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:fungid_flutter/domain.dart';
@@ -35,7 +36,7 @@ class UserObservationImageFileSystemProvider {
 
   Future<String> saveImage(UserObservationImage img) async {
     String path = "${fileDirectory.path}/${img.id}.jpg";
-
+    log("Saving image from ${img.filename} to $path");
     if (path != img.filename) {
       await File(img.filename).copy(path);
       await ImageGallerySaver.saveFile(path);
@@ -46,6 +47,7 @@ class UserObservationImageFileSystemProvider {
 
   Future<void> deleteImage(String imagePath) async {
     var file = File(imagePath);
+    log("Deleting image $imagePath");
     await file.delete();
   }
 }

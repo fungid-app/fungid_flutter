@@ -136,6 +136,11 @@ class ViewObservationView extends StatelessWidget {
             leading: const Icon(Icons.date_range),
             title: Text(observation.dayCreated()),
           ),
+          const Divider(
+            indent: 20,
+            endIndent: 20,
+            thickness: 2,
+          ),
           ..._getPredictionsWidget(context, observation),
         ],
       ),

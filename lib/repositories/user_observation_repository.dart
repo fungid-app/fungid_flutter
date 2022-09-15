@@ -68,6 +68,15 @@ class UserObservationsRepository {
   }
 
   Future<void> deleteObservation(String id) async {
+    var prevObs = getObservation(id);
+
+    // Delete old images
+    if (prevObs != null) {
+      for (var img in prevObs.images) {
+        _imageProvider.deleteImage(img.filename);
+      }
+    }
+
     return _observationsProvider.deleteObservation(id);
   }
 

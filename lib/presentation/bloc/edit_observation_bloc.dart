@@ -66,11 +66,18 @@ class EditObservationBloc
     );
   }
 
-  void _onEditObservationLocationChanged(
+  Future<void> _onEditObservationLocationChanged(
     EditObservationLocationChanged event,
     Emitter<EditObservationState> emit,
-  ) {
-    emit(state.copyWith(location: event.location));
+  ) async {
+    ObservationLocation location = ObservationLocation(
+      lat: event.latitude,
+      lng: event.longitude,
+      placeName: await locationRepository.getLocationName(
+          event.latitude, event.longitude),
+    );
+
+    emit(state.copyWith(location: location));
   }
 
   void _onEditObservationAddImages(

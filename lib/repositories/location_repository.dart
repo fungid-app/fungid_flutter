@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:fungid_flutter/domain.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
@@ -5,7 +7,22 @@ import 'package:geolocator/geolocator.dart';
 class LocationRepository {
   LocationRepository();
 
-  Future<ObservationLocation> determinePosition() async {
+  Future<String> getLocationName(double latitude, double longitude) async {
+    try {
+      var data = await placemarkFromCoordinates(
+        latitude,
+        longitude,
+      );
+
+      var first = data.first;
+      return "${first.street}, ${first.locality}, ${first.administrativeArea}, ${first.isoCountryCode}";
+    } catch (e) {
+      log(e.toString());
+      return "Unknown";
+    }
+  }
+
+  Future<void> checkPermissions() async {
     bool serviceEnabled;
     LocationPermission permission;
 
@@ -28,27 +45,16 @@ class LocationRepository {
       return Future.error(
           'Location permissions are permanently denied, we cannot request permissions.');
     }
+  }
 
+  Future<ObservationLocation> determinePosition() async {
     Position pos = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.bestForNavigation);
-
-    String place = "";
-    try {
-      var data = await placemarkFromCoordinates(
-        pos.latitude,
-        pos.longitude,
-      );
-
-      var first = data.first;
-      place = "${first.street}, ${first.locality}, ${first.isoCountryCode}";
-    } catch (e) {
-      place = "Unknown";
-    }
 
     return ObservationLocation(
       lat: pos.latitude,
       lng: pos.longitude,
-      placeName: place,
+      placeName: await getLocationName(pos.latitude, pos.longitude),
     );
   }
 }

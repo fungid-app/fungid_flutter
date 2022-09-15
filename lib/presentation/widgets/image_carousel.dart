@@ -82,7 +82,7 @@ class _ImageCarouselState extends State<ImageCarousel> {
     }
 
     return SizedBox(
-      height: 200,
+      // height: 127,
       child: Column(children: [
         CarouselSlider(
           items: items,
@@ -92,7 +92,7 @@ class _ImageCarouselState extends State<ImageCarousel> {
             aspectRatio: 1,
             viewportFraction: .3,
             enlargeCenterPage: true,
-            height: 172,
+            height: 100,
             enableInfiniteScroll: false,
             onPageChanged: (index, reason) {
               setState(() {

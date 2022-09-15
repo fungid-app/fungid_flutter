@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fungid_flutter/domain.dart';
 import 'package:fungid_flutter/presentation/bloc/edit_observation_bloc.dart';
+import 'package:fungid_flutter/presentation/pages/location_picker.dart';
 import 'package:fungid_flutter/presentation/pages/view_observation.dart';
 import 'package:fungid_flutter/presentation/widgets/image_carousel.dart';
 import 'package:fungid_flutter/repositories/location_repository.dart';
@@ -61,8 +62,6 @@ class EditObservationView extends StatelessWidget {
     } else {
       final isNewObservation = context
           .select((EditObservationBloc bloc) => bloc.state.isNewObservation);
-      final images =
-          context.select((EditObservationBloc bloc) => bloc.state.images) ?? [];
 
       final theme = Theme.of(context);
       final floatingActionButtonTheme = theme.floatingActionButtonTheme;
@@ -91,30 +90,49 @@ class EditObservationView extends StatelessWidget {
               ? const CircularProgressIndicator()
               : const Icon(Icons.check_rounded),
         ),
-        body: Scrollbar(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  ImageCarousel(
-                    key: Key('${images.length}-image-carousel'),
-                    images: images,
-                    onImagesAdded: (images) => context
-                        .read<EditObservationBloc>()
-                        .add(EditObservationAddImages(images: images)),
-                    onImageDeleted: (imageID) => context
-                        .read<EditObservationBloc>()
-                        .add(EditObservationDeleteImage(imageID: imageID)),
-                  ),
-                  const _LocationField(),
-                ],
+        body: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              Expanded(
+                child: ListView(
+                  children: const [
+                    _ImageField(),
+                    _LocationField(),
+                  ],
+                ),
               ),
-            ),
+            ],
           ),
         ),
       );
     }
+  }
+}
+
+class _ImageField extends StatelessWidget {
+  const _ImageField({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final images =
+        context.select((EditObservationBloc bloc) => bloc.state.images) ?? [];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ImageCarousel(
+          key: Key('${images.length}-image-carousel'),
+          images: images,
+          onImagesAdded: (images) => context
+              .read<EditObservationBloc>()
+              .add(EditObservationAddImages(images: images)),
+          onImageDeleted: (imageID) => context
+              .read<EditObservationBloc>()
+              .add(EditObservationDeleteImage(imageID: imageID)),
+        ),
+      ],
+    );
   }
 }
 
@@ -134,6 +152,8 @@ class _LocationField extends StatelessWidget {
     var marker = Marker(
       markerId: MarkerId(state.location!.placeName),
       position: pos,
+      onTap: () =>
+          _navigateToMap(context, state.location!.lat, state.location!.lng),
     );
 
     CameraPosition kCurrentLocation = CameraPosition(
@@ -142,22 +162,61 @@ class _LocationField extends StatelessWidget {
     );
 
     return Column(children: [
-      Text(
-        state.location!.placeName,
-        key: const Key('location'),
-      ),
-      SizedBox(
-        height: 200,
-        child: GoogleMap(
-          initialCameraPosition: kCurrentLocation,
-          markers: {
-            marker,
-          },
-          mapType: MapType.normal,
-          scrollGesturesEnabled: false,
-          zoomGesturesEnabled: false,
+      ListTile(
+        leading: const SizedBox(
+          height: double.infinity,
+          child: Icon(Icons.location_on),
         ),
-      )
+        minLeadingWidth: 0,
+        title: Text(
+          state.location!.placeName,
+        ),
+        subtitle: Text('${state.location!.lat}, ${state.location!.lng}'),
+        onTap: () =>
+            _navigateToMap(context, state.location!.lat, state.location!.lng),
+      ),
+      ListTile(
+        leading: const SizedBox(
+          height: double.infinity,
+          child: Icon(Icons.map),
+        ),
+        minLeadingWidth: 0,
+        onTap: () =>
+            _navigateToMap(context, state.location!.lat, state.location!.lng),
+        title: SizedBox(
+          height: 200,
+          child: GoogleMap(
+            key: Key('map-${state.location!.lat}-${state.location!.lng}'),
+            initialCameraPosition: kCurrentLocation,
+            markers: {
+              marker,
+            },
+            mapType: MapType.normal,
+            scrollGesturesEnabled: false,
+            zoomGesturesEnabled: false,
+            zoomControlsEnabled: false,
+            onTap: (_) => _navigateToMap(
+                context, state.location!.lat, state.location!.lng),
+          ),
+        ),
+      ),
     ]);
+  }
+
+  void _navigateToMap(BuildContext context, double latitute, double longitude) {
+    Navigator.push(
+      context,
+      LocationPicker.route(
+        latitude: latitute,
+        longitude: longitude,
+        onLocationChanged: (lat, long) =>
+            context.read<EditObservationBloc>().add(
+                  EditObservationLocationChanged(
+                    latitude: lat,
+                    longitude: long,
+                  ),
+                ),
+      ),
+    );
   }
 }
