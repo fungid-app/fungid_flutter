@@ -1,4 +1,3 @@
-import 'package:fungid_flutter/domain/sqlite.dart';
 import 'package:sqflite/sqlite_api.dart';
 
 class SqliteProvider {
@@ -8,9 +7,9 @@ class SqliteProvider {
 
   final Database _db;
 
-  Future<List<ClassifierSpecies>> getSpecies() async {
-    var result = await _db.rawQuery('SELECT * FROM species');
+  // Future<List<ClassifierSpecies>> getSpecies() async {
+  //   var result = await _db.rawQuery('SELECT * FROM species');
 
-    return result.map((e) => ClassifierSpecies.fromMap(e)).toList();
-  }
+  //   return result.map((e) => ClassifierSpecies.fromMap(e)).toList();
+  // }
 }
