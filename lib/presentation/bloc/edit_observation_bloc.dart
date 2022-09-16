@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:fungid_flutter/domain/observations.dart';
 import 'package:fungid_flutter/repositories/location_repository.dart';
 import 'package:fungid_flutter/repositories/user_observation_repository.dart';
-import 'package:fungid_flutter/domain.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
@@ -23,7 +23,6 @@ class EditObservationBloc
           observationDate: intialObservation?.observationDate,
           lastUpdated: intialObservation?.lastUpdated,
           images: intialObservation?.images,
-          predictions: intialObservation?.predictions,
           intialObservation: intialObservation,
         )) {
     on<InitializeBloc>(_onInitializeBloc);
@@ -56,7 +55,7 @@ class EditObservationBloc
         location: location,
         dateCreated: now.toUtc(),
         observationDate: DateTime(now.year, now.month, now.day),
-        lastUpdated: DateTime.now(),
+        lastUpdated: now.toUtc(),
         id: const Uuid().v4(),
       ));
     }
@@ -128,7 +127,7 @@ class EditObservationBloc
       dateCreated: state.dateCreated!,
       observationDate: state.observationDate ?? state.dateCreated!,
       images: state.images!,
-      predictions: state.predictions,
+      lastUpdated: DateTime.now().toUtc(),
     );
 
     try {

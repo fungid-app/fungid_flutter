@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:fungid_flutter/domain.dart';
+import 'package:fungid_flutter/domain/observations.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 

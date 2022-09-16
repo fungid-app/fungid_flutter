@@ -85,9 +85,12 @@ Class | Method | HTTP request | Description
 
 ## Documentation For Models
 
+ - [FullPrediction](doc/FullPrediction.md)
+ - [FullPredictions](doc/FullPredictions.md)
  - [GbifObservation](doc/GbifObservation.md)
  - [GbifObservationImage](doc/GbifObservationImage.md)
  - [HTTPValidationError](doc/HTTPValidationError.md)
+ - [InferredData](doc/InferredData.md)
  - [LocationInner](doc/LocationInner.md)
  - [PageGbifObservation](doc/PageGbifObservation.md)
  - [PageGbifObservationImage](doc/PageGbifObservationImage.md)

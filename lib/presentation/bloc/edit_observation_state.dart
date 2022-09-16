@@ -24,7 +24,6 @@ class EditObservationState extends Equatable {
     this.observationDate,
     this.lastUpdated,
     this.images,
-    this.predictions,
     this.intialObservation,
   });
 
@@ -34,7 +33,6 @@ class EditObservationState extends Equatable {
   final DateTime? observationDate;
   final DateTime? lastUpdated;
   final List<UserObservationImage>? images;
-  final Predictions? predictions;
   final UserObservation? intialObservation;
   final EditObservationStatus status;
 
@@ -51,7 +49,6 @@ class EditObservationState extends Equatable {
     DateTime? observationDate,
     DateTime? lastUpdated,
     List<UserObservationImage>? images,
-    Predictions? predictions,
     UserObservation? intialObservation,
     EditObservationStatus? status,
   }) {
@@ -62,7 +59,6 @@ class EditObservationState extends Equatable {
       observationDate: observationDate ?? this.observationDate,
       lastUpdated: lastUpdated ?? this.lastUpdated,
       images: images ?? this.images,
-      predictions: predictions ?? this.predictions,
       intialObservation: intialObservation ?? this.intialObservation,
       status: status ?? this.status,
     );
@@ -76,7 +72,6 @@ class EditObservationState extends Equatable {
         observationDate,
         lastUpdated,
         images,
-        predictions,
         status,
       ];
 }

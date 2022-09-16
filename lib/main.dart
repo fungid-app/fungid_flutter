@@ -7,6 +7,7 @@ import 'package:flutter_pretty_dio_logger/flutter_pretty_dio_logger.dart';
 import 'package:fungid_api/fungid_api.dart';
 import 'package:fungid_flutter/bootstrap.dart';
 import 'package:fungid_flutter/providers/fungid_api_provider.dart';
+import 'package:fungid_flutter/providers/predictions_provider.dart';
 import 'package:fungid_flutter/providers/user_observation_image_provider.dart';
 import 'package:fungid_flutter/providers/user_observation_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -56,12 +57,16 @@ Future<void> main() async {
         ),
       );
 
+      final predictionsProvider = PredictionsSharedPrefProvider(
+        prefs: await SharedPreferences.getInstance(),
+      );
       // observationsApi.clear();
 
       bootstrap(
         observationsProvider: observationsApi,
         fungidApiProvider: fungidApiProvider,
         imageProvider: UserObservationImageFileSystemProvider(),
+        predictionsProvider: predictionsProvider,
       );
     },
     (error, stack) =>

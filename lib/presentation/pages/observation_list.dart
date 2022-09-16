@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fungid_flutter/domain.dart';
+import 'package:fungid_flutter/domain/observations.dart';
 import 'package:fungid_flutter/presentation/bloc/observation_list_bloc.dart';
 import 'package:fungid_flutter/presentation/pages/edit_observation.dart';
 import 'package:fungid_flutter/presentation/pages/view_observation.dart';

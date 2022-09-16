@@ -16,7 +16,7 @@ Method | HTTP request | Description
 
 
 # **evaluateFullClassifierClassifierFullPut**
-> BuiltMap<String, num> evaluateFullClassifierClassifierFullPut(date, lat, lon, images)
+> FullPredictions evaluateFullClassifierClassifierFullPut(date, lat, lon, images)
 
 Evaluate Full Classifier
 
@@ -49,7 +49,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-**BuiltMap&lt;String, num&gt;**
+[**FullPredictions**](FullPredictions.md)
 
 ### Authorization
 

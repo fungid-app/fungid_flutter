@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'domain.g.dart';
+part 'observations.g.dart';
 
 const maxImages = 10;
 const maxImageSize = 1000;
@@ -14,10 +14,6 @@ UserObservation addImageToObservation(
   UserObservation obs,
   String imagePath,
 ) {
-  // Image? image = resizeFromFile(imagePath, maxImageSize);
-
-  // if (image == null) return obs;
-
   obs.images.add(UserObservationImage(
     filename: imagePath,
     id: const Uuid().v4(),
@@ -52,16 +48,15 @@ class UserObservation extends Equatable {
   final DateTime observationDate;
   final DateTime lastUpdated;
   final List<UserObservationImage> images;
-  final Predictions? predictions;
 
-  UserObservation({
+  const UserObservation({
     required this.location,
     required this.images,
     required this.id,
     required this.dateCreated,
     required this.observationDate,
-    this.predictions,
-  }) : lastUpdated = DateTime.now().toUtc();
+    required this.lastUpdated,
+  });
 
   @override
   List<Object?> get props => [
@@ -70,7 +65,7 @@ class UserObservation extends Equatable {
         dateCreated,
         observationDate,
         images,
-        predictions,
+        lastUpdated,
       ];
 
   static List<UserObservation> observations = [];
@@ -89,9 +84,8 @@ class UserObservation extends Equatable {
     String? id,
     DateTime? dateCreated,
     DateTime? observationDate,
-    DateTime? lastUpdated,
     List<UserObservationImage>? images,
-    Predictions? predictions,
+    DateTime? lastUpdated,
   }) {
     return UserObservation(
       location: location ?? this.location,
@@ -99,28 +93,9 @@ class UserObservation extends Equatable {
       dateCreated: dateCreated ?? this.dateCreated,
       observationDate: observationDate ?? this.observationDate,
       images: images ?? this.images,
-      predictions: predictions ?? this.predictions,
+      lastUpdated: lastUpdated ?? this.lastUpdated,
     );
   }
-}
-
-@JsonSerializable()
-class Predictions extends Equatable {
-  final List<Prediction> predictions;
-  final DateTime dateCreated;
-
-  const Predictions({
-    required this.predictions,
-    required this.dateCreated,
-  });
-
-  @override
-  List<Object?> get props => [predictions, dateCreated];
-
-  factory Predictions.fromJson(Map<String, dynamic> json) =>
-      _$PredictionsFromJson(json);
-
-  Map<String, dynamic> toJson() => _$PredictionsToJson(this);
 }
 
 @JsonSerializable()
@@ -148,29 +123,6 @@ class ObservationLocation extends Equatable {
       _$ObservationLocationFromJson(json);
 
   Map<String, dynamic> toJson() => _$ObservationLocationToJson(this);
-}
-
-@JsonSerializable()
-class Prediction extends Equatable {
-  final String species;
-  final double probability;
-
-  const Prediction({
-    required this.species,
-    required this.probability,
-  });
-
-  String displayProbabilty() {
-    return "${(probability * 100).toStringAsFixed(4)}%";
-  }
-
-  @override
-  List<Object?> get props => [species, probability];
-
-  factory Prediction.fromJson(Map<String, dynamic> json) =>
-      _$PredictionFromJson(json);
-
-  Map<String, dynamic> toJson() => _$PredictionToJson(this);
 }
 
 @JsonSerializable()
@@ -210,39 +162,4 @@ class UserObservationImage extends Equatable {
       dateCreated: dateCreated ?? this.dateCreated,
     );
   }
-}
-
-@JsonSerializable()
-class Species extends Equatable {
-  final String id;
-  final String phylum;
-  final String classname;
-  final String order;
-  final String family;
-  final String genus;
-  final String species;
-  final String description;
-  final bool includedInClassifier;
-  final int numberOfObservations;
-
-  const Species({
-    required this.id,
-    required this.phylum,
-    required this.classname,
-    required this.order,
-    required this.family,
-    required this.genus,
-    required this.species,
-    required this.description,
-    required this.includedInClassifier,
-    required this.numberOfObservations,
-  });
-
-  @override
-  List<Object?> get props => [id, species];
-
-  factory Species.fromJson(Map<String, dynamic> json) =>
-      _$SpeciesFromJson(json);
-
-  Map<String, dynamic> toJson() => _$SpeciesToJson(this);
 }

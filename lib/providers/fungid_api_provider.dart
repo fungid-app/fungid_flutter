@@ -4,7 +4,8 @@ import 'package:built_collection/built_collection.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:fungid_api/fungid_api.dart';
-import 'package:fungid_flutter/domain.dart';
+import 'package:fungid_flutter/domain/observations.dart';
+import 'package:fungid_flutter/domain/predictions.dart';
 import 'package:fungid_flutter/utils/images.dart';
 
 class FungidApiProvider {
@@ -23,6 +24,7 @@ class FungidApiProvider {
   }
 
   Future<Predictions> getPredictions(
+    String observationID,
     DateTime date,
     num lat,
     num lon,
@@ -52,32 +54,12 @@ class FungidApiProvider {
 
     if (result.statusCode == 200) {
       var data = result.data;
-      List<Prediction> preds = [];
 
       if (data != null) {
-        for (var pred in data.entries) {
-          var species = pred.key;
-          var probability = pred.value.toDouble();
-
-          if (probability < .0001) {
-            break;
-          }
-
-          preds.add(Prediction(
-            species: species,
-            probability: probability,
-          ));
-
-          if (preds.length > 100) {
-            break;
-          }
-        }
+        return Predictions.fromApi(data, observationID);
+      } else {
+        throw Exception('No data returned');
       }
-
-      return Predictions(
-        dateCreated: DateTime.now().toUtc(),
-        predictions: preds,
-      );
     } else {
       log(result.toString());
       throw Exception(['Error getting predictions', result]);

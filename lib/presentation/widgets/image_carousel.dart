@@ -1,6 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:fungid_flutter/domain.dart';
+import 'package:fungid_flutter/domain/observations.dart';
 import 'package:fungid_flutter/presentation/widgets/add_image_sheet.dart';
 
 class ImageCarousel extends StatefulWidget {

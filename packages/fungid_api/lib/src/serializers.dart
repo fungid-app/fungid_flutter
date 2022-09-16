@@ -12,9 +12,12 @@ import 'package:built_value/iso_8601_date_time_serializer.dart';
 import 'package:fungid_api/src/date_serializer.dart';
 import 'package:fungid_api/src/model/date.dart';
 
+import 'package:fungid_api/src/model/full_prediction.dart';
+import 'package:fungid_api/src/model/full_predictions.dart';
 import 'package:fungid_api/src/model/gbif_observation.dart';
 import 'package:fungid_api/src/model/gbif_observation_image.dart';
 import 'package:fungid_api/src/model/http_validation_error.dart';
+import 'package:fungid_api/src/model/inferred_data.dart';
 import 'package:fungid_api/src/model/location_inner.dart';
 import 'package:fungid_api/src/model/page_gbif_observation.dart';
 import 'package:fungid_api/src/model/page_gbif_observation_image.dart';
@@ -25,9 +28,12 @@ import 'package:fungid_api/src/model/validation_error.dart';
 part 'serializers.g.dart';
 
 @SerializersFor([
+  FullPrediction,
+  FullPredictions,
   GbifObservation,
   GbifObservationImage,
   HTTPValidationError,
+  InferredData,
   LocationInner,
   PageGbifObservation,
   PageGbifObservationImage,

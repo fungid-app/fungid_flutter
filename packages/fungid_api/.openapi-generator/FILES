@@ -3,9 +3,12 @@ README.md
 analysis_options.yaml
 doc/ClassifierApi.md
 doc/DefaultApi.md
+doc/FullPrediction.md
+doc/FullPredictions.md
 doc/GbifObservation.md
 doc/GbifObservationImage.md
 doc/HTTPValidationError.md
+doc/InferredData.md
 doc/LocationInner.md
 doc/ObservationsApi.md
 doc/PageGbifObservation.md
@@ -28,9 +31,12 @@ lib/src/auth/bearer_auth.dart
 lib/src/auth/oauth.dart
 lib/src/date_serializer.dart
 lib/src/model/date.dart
+lib/src/model/full_prediction.dart
+lib/src/model/full_predictions.dart
 lib/src/model/gbif_observation.dart
 lib/src/model/gbif_observation_image.dart
 lib/src/model/http_validation_error.dart
+lib/src/model/inferred_data.dart
 lib/src/model/location_inner.dart
 lib/src/model/page_gbif_observation.dart
 lib/src/model/page_gbif_observation_image.dart

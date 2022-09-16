@@ -10,6 +10,8 @@
 .svn/
 keys/
 migrate_working_dir/
+assets_staging/
+assets/app.sqlite
 
 .vscode/launch.json
 local.properties

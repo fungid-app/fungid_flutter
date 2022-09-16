@@ -9,6 +9,7 @@ import 'package:dio/dio.dart';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:fungid_api/src/api_util.dart';
+import 'package:fungid_api/src/model/full_predictions.dart';
 import 'package:fungid_api/src/model/http_validation_error.dart';
 
 class ClassifierApi {
@@ -34,9 +35,9 @@ class ClassifierApi {
   /// * [onSendProgress] - A [ProgressCallback] that can be used to get the send progress
   /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
   ///
-  /// Returns a [Future] containing a [Response] with a [BuiltMap<String, num>] as data
+  /// Returns a [Future] containing a [Response] with a [FullPredictions] as data
   /// Throws [DioError] if API call or serialization fails
-  Future<Response<BuiltMap<String, num>>> evaluateFullClassifierClassifierFullPut({ 
+  Future<Response<FullPredictions>> evaluateFullClassifierClassifierFullPut({ 
     required DateTime date,
     required num lat,
     required num lon,
@@ -97,14 +98,14 @@ class ClassifierApi {
       onReceiveProgress: onReceiveProgress,
     );
 
-    BuiltMap<String, num> _responseData;
+    FullPredictions _responseData;
 
     try {
-      const _responseType = FullType(BuiltMap, [FullType(String), FullType(num)]);
+      const _responseType = FullType(FullPredictions);
       _responseData = _serializers.deserialize(
         _response.data!,
         specifiedType: _responseType,
-      ) as BuiltMap<String, num>;
+      ) as FullPredictions;
 
     } catch (error, stackTrace) {
       throw DioError(
@@ -115,7 +116,7 @@ class ClassifierApi {
       )..stackTrace = stackTrace;
     }
 
-    return Response<BuiltMap<String, num>>(
+    return Response<FullPredictions>(
       data: _responseData,
       headers: _response.headers,
       isRedirect: _response.isRedirect,

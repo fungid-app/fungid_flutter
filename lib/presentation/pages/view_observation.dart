@@ -3,10 +3,12 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fungid_flutter/domain.dart';
+import 'package:fungid_flutter/domain/observations.dart';
+import 'package:fungid_flutter/domain/predictions.dart';
 import 'package:fungid_flutter/presentation/bloc/view_observation_bloc.dart';
 import 'package:fungid_flutter/presentation/pages/edit_observation.dart';
 import 'package:fungid_flutter/presentation/widgets/image_carousel.dart';
+import 'package:fungid_flutter/repositories/predictions_repository.dart';
 import 'package:fungid_flutter/repositories/user_observation_repository.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -16,11 +18,16 @@ class ViewObservationPage extends StatelessWidget {
   static Route<void> route({required String id}) {
     return MaterialPageRoute(
       fullscreenDialog: true,
-      builder: (context) => BlocProvider(
-        create: (context) => ViewObservationBloc(
-          id: id,
-          observationRepository: context.read<UserObservationsRepository>(),
-        )..add(const ViewObservationSubscriptionRequested()),
+      builder: (context) => MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) => ViewObservationBloc(
+              id: id,
+              observationRepository: context.read<UserObservationsRepository>(),
+              predictionsRepository: context.read<PredictionsRepository>(),
+            )..add(const ViewObservationSubscriptionRequested()),
+          ),
+        ],
         child: const ViewObservationPage(),
       ),
     );
@@ -50,7 +57,7 @@ class ViewObservationPage extends StatelessWidget {
               previous.status != current.status &&
               current.status == ViewObservationStatus.success &&
               current.observation != null &&
-              current.observation?.predictions == null,
+              current.predictions == null,
           listener: (context, state) => context.read<ViewObservationBloc>().add(
                 const ViewObservationGetPredctions(),
               ),
@@ -71,6 +78,7 @@ class ViewObservationView extends StatelessWidget {
   Widget build(BuildContext context) {
     final observation =
         context.select((ViewObservationBloc bloc) => bloc.state.observation);
+
     if (observation == null) {
       return const Scaffold(
         body: Center(
@@ -78,6 +86,9 @@ class ViewObservationView extends StatelessWidget {
         ),
       );
     }
+
+    final predictions =
+        context.select((ViewObservationBloc bloc) => bloc.state.predictions);
 
     return Scaffold(
       appBar: AppBar(
@@ -145,7 +156,7 @@ class ViewObservationView extends StatelessWidget {
             endIndent: 20,
             thickness: 2,
           ),
-          ..._getPredictionsWidget(context, observation),
+          ..._getPredictionsWidget(context, observation, predictions),
         ],
       ),
     );
@@ -154,6 +165,7 @@ class ViewObservationView extends StatelessWidget {
   List<ListTile> _getPredictionsWidget(
     BuildContext context,
     UserObservation observation,
+    Predictions? predictions,
   ) {
     final status =
         context.select((ViewObservationBloc bloc) => bloc.state.status);
@@ -164,7 +176,7 @@ class ViewObservationView extends StatelessWidget {
             icon: const Icon(Icons.refresh),
             onPressed: () {
               context.read<ViewObservationBloc>().add(
-                    const ViewObservationGetPredctions(),
+                    const ViewObservationRefreshPredctions(),
                   );
             },
           );
@@ -195,7 +207,7 @@ class ViewObservationView extends StatelessWidget {
         ),
       ));
     } else {
-      if (observation.predictions == null) {
+      if (predictions == null) {
         tiles.add(
           ListTile(
             minLeadingWidth: 0,
@@ -203,33 +215,33 @@ class ViewObservationView extends StatelessWidget {
             subtitle: const Text("Tap to generate"),
             onTap: () => context
                 .read<ViewObservationBloc>()
-                .add(const ViewObservationGetPredctions()),
+                .add(const ViewObservationRefreshPredctions()),
           ),
         );
+      } else {
+        if (observation.lastUpdated
+            .subtract(
+              const Duration(seconds: 1),
+            )
+            .isAfter(predictions.dateCreated)) {
+          log(observation.lastUpdated.toString());
+          log(predictions.dateCreated.toString());
+
+          tiles.add(ListTile(
+            tileColor: Colors.yellow,
+            leading: const Icon(Icons.warning),
+            trailing: const Icon(Icons.refresh),
+            title: const Text("Predictions are out of date"),
+            subtitle: const Text("Tap to refresh"),
+            onTap: () => context
+                .read<ViewObservationBloc>()
+                .add(const ViewObservationRefreshPredctions()),
+          ));
+        }
+
+        var predictionTiles = _getPredictionTiles(context, predictions);
+        tiles.addAll(predictionTiles);
       }
-
-      if (observation.lastUpdated
-          .subtract(
-            const Duration(seconds: 1),
-          )
-          .isAfter(observation.predictions!.dateCreated)) {
-        log(observation.lastUpdated.toString());
-        log(observation.predictions!.dateCreated.toString());
-
-        tiles.add(ListTile(
-          tileColor: Colors.yellow,
-          leading: const Icon(Icons.warning),
-          trailing: const Icon(Icons.refresh),
-          title: const Text("Predictions are out of date"),
-          subtitle: const Text("Tap to refresh"),
-          onTap: () => context
-              .read<ViewObservationBloc>()
-              .add(const ViewObservationGetPredctions()),
-        ));
-      }
-
-      var predictions = _getPredictionTiles(context, observation.predictions!);
-      tiles.addAll(predictions);
     }
 
     return tiles;

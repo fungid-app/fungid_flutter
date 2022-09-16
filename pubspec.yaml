@@ -38,6 +38,7 @@ dependencies:
   image_gallery_saver: ^1.7.1
   intl: ^0.17.0
   percent_indicator: ^4.2.2
+  sqflite: ^2.0.3+1
 
 dev_dependencies:
   flutter_test:

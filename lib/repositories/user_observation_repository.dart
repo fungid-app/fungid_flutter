@@ -1,4 +1,5 @@
-import 'package:fungid_flutter/domain.dart';
+import 'package:fungid_flutter/domain/observations.dart';
+import 'package:fungid_flutter/domain/predictions.dart';
 import 'package:fungid_flutter/providers/fungid_api_provider.dart';
 import 'package:fungid_flutter/providers/user_observation_image_provider.dart';
 import 'package:fungid_flutter/providers/user_observation_provider.dart';
@@ -66,6 +67,7 @@ class UserObservationsRepository {
 
   Future<Predictions> getPredictions(UserObservation observation) async {
     return _fungidApiProvider.getPredictions(
+      observation.id,
       observation.dateCreated,
       observation.location.lat,
       observation.location.lng,
