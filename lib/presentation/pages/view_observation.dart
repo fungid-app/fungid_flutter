@@ -219,7 +219,7 @@ class ViewObservationView extends StatelessWidget {
           ),
         );
       } else {
-        if (observation.lastUpdated
+        if ((observation.lastUpdated ?? DateTime.now())
             .subtract(
               const Duration(seconds: 1),
             )

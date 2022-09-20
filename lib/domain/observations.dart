@@ -46,7 +46,7 @@ class UserObservation extends Equatable {
   final String id;
   final DateTime dateCreated;
   final DateTime observationDate;
-  final DateTime lastUpdated;
+  final DateTime? lastUpdated;
   final List<UserObservationImage> images;
 
   const UserObservation({

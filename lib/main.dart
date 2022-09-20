@@ -43,7 +43,7 @@ Future<void> main() async {
             // LocalIp
             // baseUrl: 'http://192.168.0.186:8080',
             connectTimeout: 50000,
-            receiveTimeout: 30000,
+            receiveTimeout: 60000,
           )),
           interceptors: [
             PrettyDioLogger(

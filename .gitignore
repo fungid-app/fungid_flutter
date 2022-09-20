@@ -8,7 +8,7 @@
 .buildlog/
 .history
 .svn/
-keys/
+**/keys/
 migrate_working_dir/
 assets_staging/
 assets/app.sqlite
