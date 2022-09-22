@@ -1,0 +1,5 @@
+Beta:  This app is currently under beta testing.  Please understand that some things in the app may not work properly. 
+
+We've built the most advanced mushroom identification app on the market.  It combines over 4,000,000 high quality images,  with 15,000,000 high quality identifications and state of the art deep learning models to give you the best possible results.  
+
+Our app will always be free as we want to encourage people to go out and freely explore nature with confidence. 
