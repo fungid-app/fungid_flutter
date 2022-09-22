@@ -286,7 +286,7 @@ double _getHueFromProbability(double probability) {
 Future<void> _launchUrl(String species) async {
   species = species.replaceAll(" ", "+");
   Uri url = Uri.parse('https://www.google.com/search?q=$species');
-  if (!await launchUrl(url)) {
+  if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
     throw 'Could not launch $url';
   }
 }

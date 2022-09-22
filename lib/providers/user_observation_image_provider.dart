@@ -38,8 +38,8 @@ class UserObservationImageFileSystemProvider {
     String path = "${fileDirectory.path}/${img.id}.jpg";
     log("Saving image from ${img.filename} to $path");
     if (path != img.filename) {
-      await File(img.filename).copy(path);
-      await ImageGallerySaver.saveFile(path);
+      var file = await File(img.filename).copy(path);
+      await ImageGallerySaver.saveFile(file.path);
     }
 
     return path;

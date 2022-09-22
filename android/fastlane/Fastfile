@@ -21,12 +21,12 @@ platform :android do
     gradle(task: "test")
   end
 
-  desc "Submit a new Beta Build to Crashlytics Beta"
-  lane :beta do
+  lane :draft do
     # crashlytics
   
     upload_to_play_store(
-      track: 'beta', 
+      track: 'beta',
+      release_status: 'draft',
       aab: "../build/app/outputs/bundle/release/app-release.aab"
     )
   end

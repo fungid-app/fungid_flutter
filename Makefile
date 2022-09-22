@@ -21,4 +21,4 @@ deploy-ios:
 deploy-android:
 	flutter build appbundle \
 	&& cd android \
-	&& fastlane android internal
+	&& fastlane android draft

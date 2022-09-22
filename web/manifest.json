@@ -1,6 +1,6 @@
 {
   "name": "fungid_flutter",
-  "short_name": "fungid_flutter",
+  "short_name": "FungID",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#hexcode",

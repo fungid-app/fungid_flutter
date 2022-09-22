@@ -27,12 +27,19 @@ class UserObservationsRepository {
 
   Future<void> saveObservation(UserObservation obs) async {
     var prevObs = getObservation(obs.id);
+    List<UserObservationImage> images = [];
 
     // Save new images
-    var images = await Future.wait(obs.images.map((img) async {
-      var path = await _imageProvider.saveImage(img);
-      return img.copyWith(filename: path);
-    }));
+    for (var image in obs.images) {
+      var path = await _imageProvider.saveImage(image);
+      images.add(image.copyWith(filename: path));
+    }
+
+    // Using Future.wait froze on ios. Not sure why.
+    // var images = await Future.wait(obs.images.map((img) async {
+    //   var path = await _imageProvider.saveImage(img);
+    //   return img.copyWith(filename: path);
+    // }));
 
     if (prevObs != null) {
       // Delete old images
