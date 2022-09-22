@@ -25,6 +25,7 @@ class EditObservationState extends Equatable {
     this.lastUpdated,
     this.images,
     this.intialObservation,
+    this.notes,
   });
 
   final ObservationLocation? location;
@@ -35,6 +36,7 @@ class EditObservationState extends Equatable {
   final List<UserObservationImage>? images;
   final UserObservation? intialObservation;
   final EditObservationStatus status;
+  final String? notes;
 
   bool get isNewObservation => intialObservation == null;
 
@@ -51,6 +53,7 @@ class EditObservationState extends Equatable {
     List<UserObservationImage>? images,
     UserObservation? intialObservation,
     EditObservationStatus? status,
+    String? notes,
   }) {
     return EditObservationState(
       location: location ?? this.location,
@@ -61,6 +64,7 @@ class EditObservationState extends Equatable {
       images: images ?? this.images,
       intialObservation: intialObservation ?? this.intialObservation,
       status: status ?? this.status,
+      notes: notes ?? this.notes,
     );
   }
 
@@ -73,5 +77,6 @@ class EditObservationState extends Equatable {
         lastUpdated,
         images,
         status,
+        notes,
       ];
 }

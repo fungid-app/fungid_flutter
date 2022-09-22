@@ -24,6 +24,7 @@ class EditObservationBloc
           lastUpdated: intialObservation?.lastUpdated,
           images: intialObservation?.images,
           intialObservation: intialObservation,
+          notes: intialObservation?.notes,
         )) {
     on<InitializeBloc>(_onInitializeBloc);
     on<EditObservationLocationChanged>(_onEditObservationLocationChanged);
@@ -31,6 +32,7 @@ class EditObservationBloc
     on<EditObservationDateChanged>(_onEditObservationDateChanged);
     on<EditObservationSubmitted>(_onEditObservationSubmitted);
     on<EditObservationDeleteImage>(_onEditObservationDeleteImage);
+    on<EditObservationNotesChanged>(_onEditObservationNotesChanged);
   }
 
   final UserObservationsRepository observationRepository;
@@ -83,6 +85,13 @@ class EditObservationBloc
     emit(state.copyWith(location: location));
   }
 
+  void _onEditObservationNotesChanged(
+    EditObservationNotesChanged event,
+    Emitter<EditObservationState> emit,
+  ) {
+    emit(state.copyWith(notes: event.notes));
+  }
+
   void _onEditObservationAddImages(
       EditObservationAddImages event, Emitter<EditObservationState> emit) {
     List<UserObservationImage> converted = event.images
@@ -128,6 +137,7 @@ class EditObservationBloc
       observationDate: state.observationDate ?? state.dateCreated!,
       images: state.images!,
       lastUpdated: DateTime.now().toUtc(),
+      notes: state.notes,
     );
 
     try {

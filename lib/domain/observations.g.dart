@@ -27,6 +27,7 @@ UserObservation _$UserObservationFromJson(Map<String, dynamic> json) =>
               'observation_date', (v) => DateTime.parse(v as String)),
           lastUpdated: $checkedConvert('last_updated',
               (v) => v == null ? null : DateTime.parse(v as String)),
+          notes: $checkedConvert('notes', (v) => v as String?),
         );
         return val;
       },
@@ -44,6 +45,7 @@ Map<String, dynamic> _$UserObservationToJson(UserObservation instance) =>
       'date_created': instance.dateCreated.toIso8601String(),
       'observation_date': instance.observationDate.toIso8601String(),
       'last_updated': instance.lastUpdated?.toIso8601String(),
+      'notes': instance.notes,
       'images': instance.images,
     };
 

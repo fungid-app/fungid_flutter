@@ -47,6 +47,7 @@ class UserObservation extends Equatable {
   final DateTime dateCreated;
   final DateTime observationDate;
   final DateTime? lastUpdated;
+  final String? notes;
   final List<UserObservationImage> images;
 
   const UserObservation({
@@ -56,6 +57,7 @@ class UserObservation extends Equatable {
     required this.dateCreated,
     required this.observationDate,
     required this.lastUpdated,
+    required this.notes,
   });
 
   @override
@@ -66,6 +68,7 @@ class UserObservation extends Equatable {
         observationDate,
         images,
         lastUpdated,
+        notes,
       ];
 
   static List<UserObservation> observations = [];
@@ -86,6 +89,7 @@ class UserObservation extends Equatable {
     DateTime? observationDate,
     List<UserObservationImage>? images,
     DateTime? lastUpdated,
+    String? notes,
   }) {
     return UserObservation(
       location: location ?? this.location,
@@ -94,6 +98,7 @@ class UserObservation extends Equatable {
       observationDate: observationDate ?? this.observationDate,
       images: images ?? this.images,
       lastUpdated: lastUpdated ?? this.lastUpdated,
+      notes: notes ?? this.notes,
     );
   }
 }

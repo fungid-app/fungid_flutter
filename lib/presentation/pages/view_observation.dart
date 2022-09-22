@@ -151,6 +151,11 @@ class ViewObservationView extends StatelessWidget {
             leading: const Icon(Icons.date_range),
             title: Text(observation.dayObserved()),
           ),
+          ListTile(
+            minLeadingWidth: 0,
+            leading: const Icon(Icons.notes),
+            title: Text(observation.notes ?? ""),
+          ),
           const Divider(
             indent: 20,
             endIndent: 20,

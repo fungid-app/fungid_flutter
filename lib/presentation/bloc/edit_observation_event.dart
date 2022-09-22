@@ -30,6 +30,18 @@ class EditObservationLocationChanged extends EditObservationEvent {
       ];
 }
 
+class EditObservationNotesChanged extends EditObservationEvent {
+  const EditObservationNotesChanged({
+    required this.notes,
+  });
+  final String notes;
+
+  @override
+  List<Object> get props => [
+        notes,
+      ];
+}
+
 class EditObservationAddImages extends EditObservationEvent {
   const EditObservationAddImages({
     required this.images,

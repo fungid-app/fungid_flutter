@@ -45,4 +45,8 @@ DROP TABLE classifier_observations;
 
 DROP TABLE gbif_observation_images;
 
+DROP TABLE mapped_props;
+DROP TABLE species;
+DROP TABLE common_names;
+
 VACUUM;

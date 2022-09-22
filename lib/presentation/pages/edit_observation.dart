@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fungid_flutter/domain/observations.dart';
@@ -7,7 +9,6 @@ import 'package:fungid_flutter/presentation/pages/view_observation.dart';
 import 'package:fungid_flutter/presentation/widgets/image_carousel.dart';
 import 'package:fungid_flutter/repositories/location_repository.dart';
 import 'package:fungid_flutter/repositories/user_observation_repository.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class EditObservationPage extends StatelessWidget {
   const EditObservationPage({Key? key}) : super(key: key);
@@ -100,6 +101,7 @@ class EditObservationView extends StatelessWidget {
                     _ImageField(),
                     _DateField(),
                     _LocationField(),
+                    _NotesField(),
                   ],
                 ),
               ),
@@ -173,6 +175,36 @@ class _ImageField extends StatelessWidget {
   }
 }
 
+class _NotesField extends StatelessWidget {
+  const _NotesField({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final notes =
+        context.select((EditObservationBloc bloc) => bloc.state.notes) ?? "";
+
+    log(notes);
+    return ListTile(
+      leading: const SizedBox(
+        height: double.infinity,
+        child: Icon(Icons.notes),
+      ),
+      minLeadingWidth: 0,
+      title: TextFormField(
+        initialValue: notes,
+        decoration: const InputDecoration(
+          labelText: "Notes",
+          border: OutlineInputBorder(),
+        ),
+        maxLines: 5,
+        onChanged: (value) => context
+            .read<EditObservationBloc>()
+            .add(EditObservationNotesChanged(notes: value)),
+      ),
+    );
+  }
+}
+
 class _LocationField extends StatelessWidget {
   const _LocationField({Key? key}) : super(key: key);
 
@@ -198,48 +230,48 @@ class _LocationField extends StatelessWidget {
         onTap: () =>
             _navigateToMap(context, state.location!.lat, state.location!.lng),
       ),
-      _getMap(context, state.location!),
+      // _getMap(context, state.location!),
     ]);
   }
 
-  ListTile _getMap(BuildContext context, ObservationLocation location) {
-    var pos = LatLng(location.lat, location.lng);
+  // ListTile _getMap(BuildContext context, ObservationLocation location) {
+  //   var pos = LatLng(location.lat, location.lng);
 
-    var marker = Marker(
-      markerId: MarkerId(location.placeName),
-      position: pos,
-      onTap: () => _navigateToMap(context, location.lat, location.lng),
-    );
+  //   var marker = Marker(
+  //     markerId: MarkerId(location.placeName),
+  //     position: pos,
+  //     onTap: () => _navigateToMap(context, location.lat, location.lng),
+  //   );
 
-    CameraPosition kCurrentLocation = CameraPosition(
-      target: pos,
-      zoom: 14.4746,
-    );
+  //   CameraPosition kCurrentLocation = CameraPosition(
+  //     target: pos,
+  //     zoom: 14.4746,
+  //   );
 
-    return ListTile(
-      leading: const SizedBox(
-        height: double.infinity,
-        child: Icon(Icons.map),
-      ),
-      minLeadingWidth: 0,
-      onTap: () => _navigateToMap(context, location.lat, location.lng),
-      title: SizedBox(
-        height: 200,
-        child: GoogleMap(
-          key: Key('map-${location.lat}-${location.lng}'),
-          initialCameraPosition: kCurrentLocation,
-          markers: {
-            marker,
-          },
-          mapType: MapType.normal,
-          scrollGesturesEnabled: false,
-          zoomGesturesEnabled: false,
-          zoomControlsEnabled: false,
-          onTap: (_) => _navigateToMap(context, location.lat, location.lng),
-        ),
-      ),
-    );
-  }
+  //   return ListTile(
+  //     leading: const SizedBox(
+  //       height: double.infinity,
+  //       child: Icon(Icons.map),
+  //     ),
+  //     minLeadingWidth: 0,
+  //     onTap: () => _navigateToMap(context, location.lat, location.lng),
+  //     title: SizedBox(
+  //       height: 200,
+  //       child: GoogleMap(
+  //         key: Key('map-${location.lat}-${location.lng}'),
+  //         initialCameraPosition: kCurrentLocation,
+  //         markers: {
+  //           marker,
+  //         },
+  //         mapType: MapType.normal,
+  //         scrollGesturesEnabled: false,
+  //         zoomGesturesEnabled: false,
+  //         zoomControlsEnabled: false,
+  //         onTap: (_) => _navigateToMap(context, location.lat, location.lng),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   void _navigateToMap(BuildContext context, double latitute, double longitude) {
     Navigator.push(

@@ -11,17 +11,15 @@ void createAddImageSheet({
     List<XFile> images = [];
     if (source == ImageSource.camera) {
       XFile? image = await imagePicker.pickImage(
-          source: source,
-          imageQuality: 50,
-          preferredCameraDevice: CameraDevice.rear);
+        source: source,
+        preferredCameraDevice: CameraDevice.rear,
+      );
 
       if (image != null) {
         images.add(image);
       }
     } else {
-      List<XFile>? imageList = await imagePicker.pickMultiImage(
-        imageQuality: 50,
-      );
+      List<XFile>? imageList = await imagePicker.pickMultiImage();
       if (imageList != null) {
         images.addAll(imageList);
       }
