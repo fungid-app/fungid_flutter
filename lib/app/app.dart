@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fungid_flutter/repositories/location_repository.dart';
 import 'package:fungid_flutter/repositories/predictions_repository.dart';
+import 'package:fungid_flutter/repositories/species_repository.dart';
 import 'package:fungid_flutter/repositories/user_observation_repository.dart';
 import 'package:fungid_flutter/presentation/pages/observation_list.dart';
 import 'package:openapi_generator_annotations/openapi_generator_annotations.dart';
@@ -21,11 +22,13 @@ class FungIDApp extends StatelessWidget {
     required this.observationsRepsoitory,
     required this.locationRepository,
     required this.predictionsRepository,
+    required this.speciesRepository,
   });
 
   final UserObservationsRepository observationsRepsoitory;
   final LocationRepository locationRepository;
   final PredictionsRepository predictionsRepository;
+  final SpeciesRepository speciesRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +41,9 @@ class FungIDApp extends StatelessWidget {
       ),
       RepositoryProvider.value(
         value: predictionsRepository,
+      ),
+      RepositoryProvider.value(
+        value: speciesRepository,
       ),
     ], child: const AppView());
   }

@@ -4,7 +4,9 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:fungid_flutter/domain/observations.dart';
 import 'package:fungid_flutter/domain/predictions.dart';
+import 'package:fungid_flutter/domain/species.dart';
 import 'package:fungid_flutter/repositories/predictions_repository.dart';
+import 'package:fungid_flutter/repositories/species_repository.dart';
 import 'package:fungid_flutter/repositories/user_observation_repository.dart';
 
 part 'view_observation_event.dart';
@@ -16,6 +18,7 @@ class ViewObservationBloc
     required String id,
     required this.observationRepository,
     required this.predictionsRepository,
+    required this.speciesRepository,
   }) : super(ViewObservationState(
           id: id,
           status: ViewObservationStatus.initial,
@@ -30,6 +33,7 @@ class ViewObservationBloc
 
   final UserObservationsRepository observationRepository;
   final PredictionsRepository predictionsRepository;
+  final SpeciesRepository speciesRepository;
 
   Future<void> _onSubscriptionRequested(
     ViewObservationSubscriptionRequested event,
@@ -94,12 +98,17 @@ class ViewObservationBloc
         state.copyWith(status: () => ViewObservationStatus.predictionsLoading));
 
     try {
-      final predictions = await loadFunc();
+      final preds = await loadFunc();
+
+      final speciesMap = await speciesRepository.getSpeciesMap(
+        species: preds.predictions.map((e) => e.species).toList(),
+      );
 
       emit(
         state.copyWith(
           status: () => ViewObservationStatus.success,
-          predictions: () => predictions,
+          predictions: () => preds,
+          speciesMap: () => speciesMap,
         ),
       );
     } catch (e) {

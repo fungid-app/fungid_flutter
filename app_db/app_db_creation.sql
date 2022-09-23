@@ -50,3 +50,23 @@ DROP TABLE species;
 DROP TABLE common_names;
 
 VACUUM;
+
+
+SELECT prop, value FROM classifier_species_props css GROUP BY 1,2 ORDER BY 1,2
+
+
+SELECT prop FROM classifier_species_props css GROUP BY 1 ORDER BY 1
+
+SELECT stat FROM classifier_species_stats css GROUP BY 1 ORDER BY 1
+
+
+SELECT * FROM classifier_species_stats css;
+
+SELECT 
+SELECT * FROM classifier_species cs ;
+
+SELECT * FROM classifier_species cs  ;
+
+SELECT * FROM classifier_names cn;
+
+SELECT * FROM classifier_species_images csi;

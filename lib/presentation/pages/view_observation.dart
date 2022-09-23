@@ -1,14 +1,17 @@
 import 'dart:developer';
 import 'dart:math' as math;
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fungid_flutter/domain/observations.dart';
 import 'package:fungid_flutter/domain/predictions.dart';
+import 'package:fungid_flutter/domain/species.dart';
 import 'package:fungid_flutter/presentation/bloc/view_observation_bloc.dart';
 import 'package:fungid_flutter/presentation/pages/edit_observation.dart';
 import 'package:fungid_flutter/presentation/widgets/image_carousel.dart';
 import 'package:fungid_flutter/repositories/predictions_repository.dart';
+import 'package:fungid_flutter/repositories/species_repository.dart';
 import 'package:fungid_flutter/repositories/user_observation_repository.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -25,6 +28,7 @@ class ViewObservationPage extends StatelessWidget {
               id: id,
               observationRepository: context.read<UserObservationsRepository>(),
               predictionsRepository: context.read<PredictionsRepository>(),
+              speciesRepository: context.read<SpeciesRepository>(),
             )..add(const ViewObservationSubscriptionRequested()),
           ),
         ],
@@ -86,9 +90,6 @@ class ViewObservationView extends StatelessWidget {
         ),
       );
     }
-
-    final predictions =
-        context.select((ViewObservationBloc bloc) => bloc.state.predictions);
 
     return Scaffold(
       appBar: AppBar(
@@ -161,7 +162,7 @@ class ViewObservationView extends StatelessWidget {
             endIndent: 20,
             thickness: 2,
           ),
-          ..._getPredictionsWidget(context, observation, predictions),
+          ..._getPredictionsWidget(context, observation),
         ],
       ),
     );
@@ -170,7 +171,6 @@ class ViewObservationView extends StatelessWidget {
   List<ListTile> _getPredictionsWidget(
     BuildContext context,
     UserObservation observation,
-    Predictions? predictions,
   ) {
     final status =
         context.select((ViewObservationBloc bloc) => bloc.state.status);
@@ -212,6 +212,9 @@ class ViewObservationView extends StatelessWidget {
         ),
       ));
     } else {
+      final predictions =
+          context.select((ViewObservationBloc bloc) => bloc.state.predictions);
+
       if (predictions == null) {
         tiles.add(
           ListTile(
@@ -243,8 +246,12 @@ class ViewObservationView extends StatelessWidget {
                 .add(const ViewObservationRefreshPredctions()),
           ));
         }
+        final speciesMap = context
+                .select((ViewObservationBloc bloc) => bloc.state.speciesMap) ??
+            {};
 
-        var predictionTiles = _getPredictionTiles(context, predictions);
+        var predictionTiles =
+            _getPredictionTiles(context, predictions, speciesMap);
         tiles.addAll(predictionTiles);
       }
     }
@@ -255,27 +262,49 @@ class ViewObservationView extends StatelessWidget {
   List<ListTile> _getPredictionTiles(
     BuildContext context,
     Predictions predictions,
+    Map<String, Species> speciesMap,
   ) {
-    return predictions.predictions
-        .map((pred) => ListTile(
-              onTap: () => _launchUrl(pred.species),
-              minLeadingWidth: 0,
-              title: Text('${pred.species} - ${pred.displayProbabilty()}'),
-              subtitle: LinearProgressIndicator(
-                value: pred.probability,
-                backgroundColor: Colors.grey,
-                minHeight: 8,
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  HSLColor.fromAHSL(
-                    1,
-                    _getHueFromProbability(pred.probability),
-                    .75,
-                    .5,
-                  ).toColor(),
-                ),
+    return predictions.predictions.map(
+      (pred) {
+        return getPredictionTile(pred, speciesMap[pred.species]);
+      },
+    ).toList();
+  }
+
+  ListTile getPredictionTile(
+    Prediction pred,
+    Species? species,
+  ) {
+    return ListTile(
+      leading: SizedBox(
+        width: 60,
+        child: species == null
+            ? null
+            : CachedNetworkImage(
+                fit: BoxFit.cover,
+                imageUrl: species.images.first.externalUrl,
+                placeholder: (context, url) =>
+                    const CircularProgressIndicator(),
+                errorWidget: (context, url, error) => const Icon(Icons.error),
               ),
-            ))
-        .toList();
+      ),
+      onTap: () => _launchUrl(pred.species),
+      minLeadingWidth: 0,
+      title: Text('${pred.species} - ${pred.displayProbabilty()}'),
+      subtitle: LinearProgressIndicator(
+        value: pred.probability,
+        backgroundColor: Colors.grey,
+        minHeight: 8,
+        valueColor: AlwaysStoppedAnimation<Color>(
+          HSLColor.fromAHSL(
+            1,
+            _getHueFromProbability(pred.probability),
+            .75,
+            .5,
+          ).toColor(),
+        ),
+      ),
+    );
   }
 }
 

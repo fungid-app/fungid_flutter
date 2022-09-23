@@ -1,0 +1,16 @@
+name: local_db
+description: FungID local_db
+version: 0.0.1
+
+environment:
+  sdk: '>=2.18.0 <3.0.0'
+
+dependencies:
+  equatable: '^2.0.5'
+  sqflite: ^2.0.3+1
+  path: ^1.8.2
+# dev_dependencies:
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
