@@ -12,4 +12,5 @@ class SqliteProvider {
 
   //   return result.map((e) => ClassifierSpecies.fromMap(e)).toList();
   // }
+
 }

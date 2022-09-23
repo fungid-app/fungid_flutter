@@ -54,26 +54,28 @@ class EditObservationView extends StatelessWidget {
     final status =
         context.select((EditObservationBloc bloc) => bloc.state.status);
 
+    final isNewObservation = context
+        .select((EditObservationBloc bloc) => bloc.state.isNewObservation);
+
+    var appBar = AppBar(
+      title: Text(isNewObservation ? "Create Observation" : "Edit Observation"),
+    );
+
     if (status == EditObservationStatus.uninitialized) {
-      return const Scaffold(
-        body: Center(
+      return Scaffold(
+        appBar: appBar,
+        body: const Center(
           child: CircularProgressIndicator(),
         ),
       );
     } else {
-      final isNewObservation = context
-          .select((EditObservationBloc bloc) => bloc.state.isNewObservation);
-
       final theme = Theme.of(context);
       final floatingActionButtonTheme = theme.floatingActionButtonTheme;
       final fabBackgroundColor = floatingActionButtonTheme.backgroundColor ??
           theme.colorScheme.secondary;
 
       return Scaffold(
-        appBar: AppBar(
-          title: Text(
-              isNewObservation ? "Create Observation" : "Edit Observation"),
-        ),
+        appBar: appBar,
         floatingActionButton: FloatingActionButton(
           tooltip: "Save Observation",
           shape: const ContinuousRectangleBorder(

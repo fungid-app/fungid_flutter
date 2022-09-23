@@ -28,6 +28,17 @@ class _ImageCarouselState extends State<ImageCarousel> {
 
   @override
   Widget build(BuildContext context) {
+    Function(String)? onImageDeleted;
+
+    if (widget.onImageDeleted != null) {
+      onImageDeleted = (String id) {
+        widget.onImageDeleted!(id);
+        setState(() {
+          _current = _current - 1;
+        });
+      };
+    }
+
     var items = (widget.images)
         .map(
           (image) => Builder(
@@ -46,10 +57,7 @@ class _ImageCarouselState extends State<ImageCarousel> {
                           MaterialPageRoute(
                             builder: (context) => ImageScreen(
                               image: image,
-                              onImageDeleted: (id) {
-                                widget.onImageDeleted!(id);
-                                _controller.jumpToPage(0);
-                              },
+                              onImageDeleted: onImageDeleted,
                             ),
                           ),
                         );
@@ -144,20 +152,31 @@ class MyImageScreen extends State<ImageScreen> {
   MyImageScreen();
   @override
   Widget build(BuildContext context) {
+    List<Widget> actions = [];
+    if (widget.onImageDeleted != null) {
+      actions.add(
+        IconButton(
+          icon: const Icon(Icons.delete),
+          onPressed: () {
+            deleteImage(context, widget.onImageDeleted!, widget.image.id);
+          },
+        ),
+      );
+    }
+
     return Scaffold(
+      appBar: AppBar(
+        actions: actions,
+      ),
       backgroundColor: Colors.black,
-      floatingActionButton: widget.onImageDeleted == null
-          ? null
-          : FloatingActionButton(
-              onPressed: () {
-                deleteImage(context, widget.onImageDeleted!, widget.image.id);
-              },
-              child: const Icon(Icons.delete),
-            ),
       body: Center(
-        child: Image.file(
-          widget.image.getFile(),
-          fit: BoxFit.scaleDown,
+        child: InteractiveViewer(
+          clipBehavior: Clip.none,
+          maxScale: 10,
+          child: Image.file(
+            widget.image.getFile(),
+            fit: BoxFit.scaleDown,
+          ),
         ),
       ),
     );
