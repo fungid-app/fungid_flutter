@@ -50,17 +50,28 @@ class SpeciesLocalDatabaseProvider {
     return _buildImages(images);
   }
 
+  Future<SpeciesImage?> getImage(int speciesKey) async {
+    var image = await _db.getSpeciesImage(speciesKey);
+    return image == null ? null : _buildImage(image);
+  }
+
   List<SpeciesImage> _buildImages(List<ClassifierSpeciesImages> dbImages) {
     return dbImages
-        .map((dbImg) => SpeciesImage(
-              gbifid: dbImg.gbifid,
-              imgid: dbImg.imgid,
-              creator: dbImg.creator,
-              externalUrl: dbImg.externalUrl,
-              license: dbImg.license,
-              rightsHolder: dbImg.rightsHolder,
-            ))
+        .map(
+          (dbImg) => _buildImage(dbImg),
+        )
         .toList();
+  }
+
+  SpeciesImage _buildImage(ClassifierSpeciesImages dbImg) {
+    return SpeciesImage(
+      gbifid: dbImg.gbifid,
+      imgid: dbImg.imgid,
+      creator: dbImg.creator,
+      externalUrl: dbImg.externalUrl,
+      license: dbImg.license,
+      rightsHolder: dbImg.rightsHolder,
+    );
   }
 
   Future<List<CommonName>> getCommonNames(int speciesKey) async {
@@ -115,20 +126,18 @@ class SpeciesLocalDatabaseProvider {
 
   SpeciesProperties _buildProperties(List<ClassifierSpeciesProp> dbProps) {
     return SpeciesProperties(
-      capShape:
-          _buildPropertiesList(dbProps, 'capshape', CapShapeOption.values),
+      capShape: _buildPropertiesList(dbProps, 'capshape', CapShape.values),
       ecologicalType: _buildPropertiesList(
-          dbProps, 'ecologicaltype', EcologicalTypeOption.values),
-      howEdible:
-          _buildPropertiesList(dbProps, 'howedible', HowEdibleOption.values),
-      hymeniumType: _buildPropertiesList(
-          dbProps, 'hymeniumtype', HymeniumTypeOption.values),
+          dbProps, 'ecologicaltype', EcologicalType.values),
+      howEdible: _buildPropertiesList(dbProps, 'howedible', HowEdible.values),
+      hymeniumType:
+          _buildPropertiesList(dbProps, 'hymeniumtype', HymeniumType.values),
       sporePrintColor: _buildPropertiesList(
-          dbProps, 'sporeprintcolor', SporePrintColorOption.values),
+          dbProps, 'sporeprintcolor', SporePrintColor.values),
       stipeCharacter: _buildPropertiesList(
-          dbProps, 'stipecharacter', StipeCharacterOption.values),
+          dbProps, 'stipecharacter', StipeCharacter.values),
       whichGills:
-          _buildPropertiesList(dbProps, 'whichgills', WhichGillsOption.values),
+          _buildPropertiesList(dbProps, 'whichgills', WhichGills.values),
     );
   }
 

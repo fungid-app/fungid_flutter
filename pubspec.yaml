@@ -41,6 +41,8 @@ dependencies:
   image_gallery_saver: ^1.7.1
   intl: ^0.17.0
   cached_network_image: 3.2.2
+  collection: ^1.16.0
+  fl_chart: ^0.55.2
 
 dev_dependencies:
   flutter_test:

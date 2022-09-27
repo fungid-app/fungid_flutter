@@ -13,19 +13,22 @@ class SpeciesRepository {
     return await _speciesProvider.getSpecies(species);
   }
 
-  Future<Map<String, Species>> getSpeciesMap({
+  Future<Map<String, SpeciesImage>> getImageMap({
     required List<String> species,
   }) async {
-    final speciesMap = <String, Species>{};
+    final imageMap = <String, SpeciesImage>{};
 
     for (final s in species) {
-      final sp = await getSpecies(s);
-      if (sp != null) {
-        speciesMap[s] = sp;
+      final key = await _speciesProvider.getSpeciesKey(s);
+      if (key != null) {
+        final image = await _speciesProvider.getImage(key);
+        if (image != null) {
+          imageMap[s] = image;
+        }
       }
     }
 
-    return speciesMap;
+    return imageMap;
   }
 
   Future<SpeciesProperties?> getProperties(String species) async {

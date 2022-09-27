@@ -1,5 +1,6 @@
 import 'package:local_db/local_db.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:collection/collection.dart';
 
 Future<Database> initializeDatabase(String dbPath) async {
   return openDatabase(
@@ -65,6 +66,18 @@ class DatabaseHandler {
         whereArgs: [speciesKey]);
 
     return maps.map((e) => ClassifierSpeciesImages.fromMap(e)).toList();
+  }
+
+  Future<ClassifierSpeciesImages?> getSpeciesImage(int speciesKey) async {
+    final db = await this.database;
+
+    final List<Map<String, dynamic>> maps = await db.query(
+        'classifier_species_images',
+        where: 'specieskey = ?',
+        whereArgs: [speciesKey],
+        limit: 1);
+
+    return maps.map((e) => ClassifierSpeciesImages.fromMap(e)).firstOrNull;
   }
 
   Future<List<ClassifierSpeciesProp>> getSpeciesProps(int speciesKey) async {

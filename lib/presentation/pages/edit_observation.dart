@@ -6,7 +6,7 @@ import 'package:fungid_flutter/domain/observations.dart';
 import 'package:fungid_flutter/presentation/bloc/edit_observation_bloc.dart';
 import 'package:fungid_flutter/presentation/pages/location_picker.dart';
 import 'package:fungid_flutter/presentation/pages/view_observation.dart';
-import 'package:fungid_flutter/presentation/widgets/image_carousel.dart';
+import 'package:fungid_flutter/presentation/widgets/observation_image_carousel.dart';
 import 'package:fungid_flutter/repositories/location_repository.dart';
 import 'package:fungid_flutter/repositories/user_observation_repository.dart';
 
@@ -162,7 +162,7 @@ class _ImageField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ImageCarousel(
+        ObservationImageCarousel(
           key: Key('${images.length}-image-carousel'),
           images: images,
           onImagesAdded: (images) => context

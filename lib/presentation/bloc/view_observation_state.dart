@@ -18,7 +18,7 @@ class ViewObservationState extends Equatable {
     this.observation,
     this.errorMessage,
     this.predictions,
-    this.speciesMap,
+    this.imageMap,
   });
 
   final String id;
@@ -26,7 +26,7 @@ class ViewObservationState extends Equatable {
   final UserObservation? observation;
   final String? errorMessage;
   final Predictions? predictions;
-  final Map<String, Species>? speciesMap;
+  final Map<String, SpeciesImage>? imageMap;
 
   @override
   List<Object> get props => [
@@ -41,7 +41,7 @@ class ViewObservationState extends Equatable {
     String Function()? id,
     String Function()? errorMessage,
     Predictions Function()? predictions,
-    Map<String, Species> Function()? speciesMap,
+    Map<String, SpeciesImage> Function()? imageMap,
   }) =>
       ViewObservationState(
         status: status != null ? status() : this.status,
@@ -49,6 +49,6 @@ class ViewObservationState extends Equatable {
         observation: observation != null ? observation() : this.observation,
         errorMessage: errorMessage != null ? errorMessage() : this.errorMessage,
         predictions: predictions != null ? predictions() : this.predictions,
-        speciesMap: speciesMap != null ? speciesMap() : this.speciesMap,
+        imageMap: imageMap != null ? imageMap() : this.imageMap,
       );
 }

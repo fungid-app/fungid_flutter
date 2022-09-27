@@ -2,9 +2,10 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:fungid_flutter/domain/observations.dart';
 import 'package:fungid_flutter/presentation/widgets/add_image_sheet.dart';
+import 'package:fungid_flutter/presentation/pages/view_image_page.dart';
 
-class ImageCarousel extends StatefulWidget {
-  const ImageCarousel({
+class ObservationImageCarousel extends StatefulWidget {
+  const ObservationImageCarousel({
     Key? key,
     required this.images,
     this.onImagesAdded,
@@ -17,12 +18,12 @@ class ImageCarousel extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return _ImageCarouselState();
+    return _ObservationImageCarouselState();
   }
 }
 
-class _ImageCarouselState extends State<ImageCarousel> {
-  _ImageCarouselState();
+class _ObservationImageCarouselState extends State<ObservationImageCarousel> {
+  _ObservationImageCarouselState();
   int _current = 0;
   final CarouselController _controller = CarouselController();
 
@@ -50,12 +51,13 @@ class _ImageCarouselState extends State<ImageCarousel> {
                       child: Image.file(
                         image.getFile(),
                         fit: BoxFit.cover,
+                        cacheWidth: 120,
                       ),
                       onTap: () {
                         Navigator.push<Widget>(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ImageScreen(
+                            builder: (context) => ViewObservationImagePage(
                               image: image,
                               onImageDeleted: onImageDeleted,
                             ),
@@ -132,83 +134,4 @@ class _ImageCarouselState extends State<ImageCarousel> {
       ]),
     );
   }
-}
-
-//https://stackoverflow.com/questions/55413525/flutter-carousel-image-slider-open-separate-page-during-on-tap-event-is-called
-class ImageScreen extends StatefulWidget {
-  final UserObservationImage image;
-  final Function(String)? onImageDeleted;
-  const ImageScreen({
-    Key? key,
-    required this.image,
-    this.onImageDeleted,
-  }) : super(key: key);
-
-  @override
-  MyImageScreen createState() => MyImageScreen();
-}
-
-class MyImageScreen extends State<ImageScreen> {
-  MyImageScreen();
-  @override
-  Widget build(BuildContext context) {
-    List<Widget> actions = [];
-    if (widget.onImageDeleted != null) {
-      actions.add(
-        IconButton(
-          icon: const Icon(Icons.delete),
-          onPressed: () {
-            deleteImage(context, widget.onImageDeleted!, widget.image.id);
-          },
-        ),
-      );
-    }
-
-    return Scaffold(
-      appBar: AppBar(
-        actions: actions,
-      ),
-      backgroundColor: Colors.black,
-      body: Center(
-        child: InteractiveViewer(
-          clipBehavior: Clip.none,
-          maxScale: 10,
-          child: Image.file(
-            widget.image.getFile(),
-            fit: BoxFit.scaleDown,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-void deleteImage(
-  BuildContext context,
-  Function(String) onImageDeleted,
-  String id,
-) {
-  showDialog(
-      context: context,
-      builder: (BuildContext ctx) {
-        return AlertDialog(
-          title: const Text('Please Confirm'),
-          content: const Text('Are you sure you want to delete the image?'),
-          actions: [
-            TextButton(
-                onPressed: () {
-                  // Close the dialog
-                  Navigator.of(context).pop();
-                },
-                child: const Text('Cancel')),
-            TextButton(
-                onPressed: () {
-                  onImageDeleted(id);
-                  int count = 0;
-                  Navigator.of(context).popUntil((_) => count++ >= 2);
-                },
-                child: const Text('Delete')),
-          ],
-        );
-      });
 }

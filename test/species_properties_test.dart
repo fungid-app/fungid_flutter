@@ -11,8 +11,8 @@ void main() {
     );
 
     expect(
-      SpeciesProperties.stringToEnum(string, StipeCharacterOption.values),
-      equals(StipeCharacterOption.ringAndVolva),
+      SpeciesProperties.stringToEnum(string, StipeCharacter.values),
+      equals(StipeCharacter.ringAndVolva),
     );
   });
 
@@ -25,8 +25,8 @@ void main() {
     );
 
     expect(
-      SpeciesProperties.stringToEnum(string, SporePrintColorOption.values),
-      equals(SporePrintColorOption.purpleBlack),
+      SpeciesProperties.stringToEnum(string, SporePrintColor.values),
+      equals(SporePrintColor.purpleBlack),
     );
   });
 
@@ -39,8 +39,16 @@ void main() {
     );
 
     expect(
-      SpeciesProperties.stringToEnum(string, StipeCharacterOption.values),
-      equals(StipeCharacterOption.na),
+      SpeciesProperties.stringToEnum(string, StipeCharacter.values),
+      equals(StipeCharacter.na),
+    );
+  });
+
+  test('Test Icon Conversion', () {
+    expect(
+      SpeciesProperties.iconUrl(StipeCharacter.bare),
+      equals(
+          'https://api.fungid.app/static/properties/stipecharacter/bare.png'),
     );
   });
 }

@@ -1,7 +1,6 @@
 import 'dart:developer';
 import 'dart:math' as math;
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fungid_flutter/domain/observations.dart';
@@ -9,11 +8,12 @@ import 'package:fungid_flutter/domain/predictions.dart';
 import 'package:fungid_flutter/domain/species.dart';
 import 'package:fungid_flutter/presentation/bloc/view_observation_bloc.dart';
 import 'package:fungid_flutter/presentation/pages/edit_observation.dart';
-import 'package:fungid_flutter/presentation/widgets/image_carousel.dart';
+import 'package:fungid_flutter/presentation/pages/view_species.dart';
+import 'package:fungid_flutter/presentation/widgets/observation_image_carousel.dart';
+import 'package:fungid_flutter/presentation/widgets/species_image.dart';
 import 'package:fungid_flutter/repositories/predictions_repository.dart';
 import 'package:fungid_flutter/repositories/species_repository.dart';
 import 'package:fungid_flutter/repositories/user_observation_repository.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class ViewObservationPage extends StatelessWidget {
   const ViewObservationPage({Key? key}) : super(key: key);
@@ -139,7 +139,7 @@ class ViewObservationView extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.symmetric(vertical: 16),
         children: [
-          ImageCarousel(
+          ObservationImageCarousel(
             images: observation.images,
           ),
           ListTile(
@@ -246,12 +246,8 @@ class ViewObservationView extends StatelessWidget {
                 .add(const ViewObservationRefreshPredctions()),
           ));
         }
-        final speciesMap = context
-                .select((ViewObservationBloc bloc) => bloc.state.speciesMap) ??
-            {};
 
-        var predictionTiles =
-            _getPredictionTiles(context, predictions, speciesMap);
+        var predictionTiles = _getPredictionTiles(context, predictions);
         tiles.addAll(predictionTiles);
       }
     }
@@ -262,33 +258,40 @@ class ViewObservationView extends StatelessWidget {
   List<ListTile> _getPredictionTiles(
     BuildContext context,
     Predictions predictions,
-    Map<String, Species> speciesMap,
   ) {
+    final imageMap =
+        context.select((ViewObservationBloc bloc) => bloc.state.imageMap) ?? {};
+
     return predictions.predictions.map(
       (pred) {
-        return getPredictionTile(pred, speciesMap[pred.species]);
+        return getPredictionTile(context, pred, imageMap[pred.species]);
       },
     ).toList();
   }
 
   ListTile getPredictionTile(
+    BuildContext context,
     Prediction pred,
-    Species? species,
+    SpeciesImage? image,
   ) {
     return ListTile(
-      leading: SizedBox(
-        width: 60,
-        child: species == null
-            ? null
-            : CachedNetworkImage(
-                fit: BoxFit.cover,
-                imageUrl: species.images.first.externalUrl,
-                placeholder: (context, url) =>
-                    const CircularProgressIndicator(),
-                errorWidget: (context, url, error) => const Icon(Icons.error),
-              ),
-      ),
-      onTap: () => _launchUrl(pred.species),
+      leading: image == null
+          ? null
+          : SpeciesImageDisplay(
+              image: image,
+              width: 50,
+              height: 50,
+              fit: BoxFit.cover,
+            ),
+      onTap: () => {
+        Navigator.push(
+          context,
+          ViewSpeciesPage.route(
+            species: pred.species,
+            observation: null,
+          ),
+        )
+      },
       minLeadingWidth: 0,
       title: Text('${pred.species} - ${pred.displayProbabilty()}'),
       subtitle: LinearProgressIndicator(
@@ -310,14 +313,6 @@ class ViewObservationView extends StatelessWidget {
 
 double _getHueFromProbability(double probability) {
   return 100 * (math.pow(2 * probability, 3) / math.pow(2, 3));
-}
-
-Future<void> _launchUrl(String species) async {
-  species = species.replaceAll(" ", "+");
-  Uri url = Uri.parse('https://www.google.com/search?q=$species');
-  if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
-    throw 'Could not launch $url';
-  }
 }
 
 void _delete(BuildContext context) {

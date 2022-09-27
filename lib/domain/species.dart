@@ -26,6 +26,9 @@ class SpeciesImage {
     required this.creator,
     required this.license,
   });
+
+  get fungidUrl =>
+      'https://api.fungid.app/images/observations/$gbifid-$imgid.jpg';
 }
 
 class SpeciesStat {

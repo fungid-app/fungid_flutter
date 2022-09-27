@@ -69,6 +69,7 @@ ListTile _observationCard(BuildContext context, UserObservation observation) {
       child: Image.file(
         observation.images.first.getFile(),
         fit: BoxFit.cover,
+        cacheWidth: 60,
       ),
     ),
     minLeadingWidth: 0,

@@ -1,4 +1,4 @@
-enum CapShapeOption {
+enum CapShape {
   na,
   campanulate,
   conical,
@@ -12,13 +12,13 @@ enum CapShapeOption {
   umbonate,
 }
 
-enum EcologicalTypeOption {
+enum EcologicalType {
   mycorrhizal,
   parasitic,
   saprotrophic,
 }
 
-enum HowEdibleOption {
+enum HowEdible {
   allergenic,
   caution,
   choice,
@@ -31,7 +31,7 @@ enum HowEdibleOption {
   unpalatable,
 }
 
-enum HymeniumTypeOption {
+enum HymeniumType {
   gills,
   gleba,
   pores,
@@ -40,7 +40,7 @@ enum HymeniumTypeOption {
   teeth,
 }
 
-enum SporePrintColorOption {
+enum SporePrintColor {
   black,
   blackishBrown,
   brown,
@@ -64,7 +64,7 @@ enum SporePrintColorOption {
   yellowOrange,
 }
 
-enum StipeCharacterOption {
+enum StipeCharacter {
   na,
   bare,
   cortina,
@@ -73,7 +73,7 @@ enum StipeCharacterOption {
   volva,
 }
 
-enum WhichGillsOption {
+enum WhichGills {
   na,
   adnate,
   adnexed,
@@ -87,13 +87,13 @@ enum WhichGillsOption {
 }
 
 class SpeciesProperties {
-  final List<CapShapeOption> capShape;
-  final List<EcologicalTypeOption> ecologicalType;
-  final List<HowEdibleOption> howEdible;
-  final List<HymeniumTypeOption> hymeniumType;
-  final List<SporePrintColorOption> sporePrintColor;
-  final List<StipeCharacterOption> stipeCharacter;
-  final List<WhichGillsOption> whichGills;
+  final List<CapShape> capShape;
+  final List<EcologicalType> ecologicalType;
+  final List<HowEdible> howEdible;
+  final List<HymeniumType> hymeniumType;
+  final List<SporePrintColor> sporePrintColor;
+  final List<StipeCharacter> stipeCharacter;
+  final List<WhichGills> whichGills;
 
   SpeciesProperties({
     required this.capShape,
@@ -109,6 +109,11 @@ class SpeciesProperties {
     return values.firstWhere(
       (v) => v.toString().split('.').last == massageDBValue(str),
     );
+  }
+
+  static String iconUrl<T extends Enum>(T value) {
+    return 'https://api.fungid.app/static/properties/${value.toString().split('.').join('/')}.png'
+        .toLowerCase();
   }
 
   // The database values are not always the same as the enum values.

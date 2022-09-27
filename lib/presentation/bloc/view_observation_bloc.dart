@@ -100,7 +100,7 @@ class ViewObservationBloc
     try {
       final preds = await loadFunc();
 
-      final speciesMap = await speciesRepository.getSpeciesMap(
+      final speciesMap = await speciesRepository.getImageMap(
         species: preds.predictions.map((e) => e.species).toList(),
       );
 
@@ -108,7 +108,7 @@ class ViewObservationBloc
         state.copyWith(
           status: () => ViewObservationStatus.success,
           predictions: () => preds,
-          speciesMap: () => speciesMap,
+          imageMap: () => speciesMap,
         ),
       );
     } catch (e) {
