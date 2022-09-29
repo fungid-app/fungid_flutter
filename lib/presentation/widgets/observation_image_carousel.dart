@@ -4,8 +4,8 @@ import 'package:fungid_flutter/domain/observations.dart';
 import 'package:fungid_flutter/presentation/widgets/add_image_sheet.dart';
 import 'package:fungid_flutter/presentation/pages/view_image_page.dart';
 
-class ObservationImageCarousel extends StatefulWidget {
-  const ObservationImageCarousel({
+class ImageCarousel extends StatefulWidget {
+  const ImageCarousel({
     Key? key,
     required this.images,
     this.onImagesAdded,
@@ -18,12 +18,12 @@ class ObservationImageCarousel extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return _ObservationImageCarouselState();
+    return _ImageCarouselState();
   }
 }
 
-class _ObservationImageCarouselState extends State<ObservationImageCarousel> {
-  _ObservationImageCarouselState();
+class _ImageCarouselState extends State<ImageCarousel> {
+  _ImageCarouselState();
   int _current = 0;
   final CarouselController _controller = CarouselController();
 

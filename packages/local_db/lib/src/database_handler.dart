@@ -96,7 +96,7 @@ class DatabaseHandler {
 
     final List<Map<String, dynamic>> maps = await db.query(
         'classifier_species_stats',
-        where: 'species = ?',
+        where: 'species = ? AND value != "" AND VALUE IS NOT NULL',
         whereArgs: [species]);
 
     return maps.map((e) => ClassifierSpeciesStat.fromMap(e)).toList();

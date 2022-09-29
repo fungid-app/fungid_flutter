@@ -2,6 +2,39 @@ import 'package:fungid_flutter/domain/species.dart';
 import 'package:fungid_flutter/domain/species_properties.dart';
 import 'package:local_db/local_db.dart';
 
+final Map<String, String> kgNames = {
+  "1": "Tropical, rainforest",
+  "2": "Tropical, monsoon",
+  "3": "Tropical, savannah",
+  "4": "Arid, desert, hot",
+  "5": "Arid, desert, cold",
+  "6": "Arid, steppe, hot",
+  "7": "Arid, steppe, cold",
+  "8": "Temperate, dry summer, hot summer",
+  "9": "Temperate, dry summer, warm summer",
+  "10": "Temperate, dry summer, cold summer",
+  "11": "Temperate, dry winter, hot summer",
+  "12": "Temperate, dry winter, warm summer",
+  "13": "Temperate, dry winter, cold summer",
+  "14": "Temperate, no dry season, hot summer",
+  "15": "Temperate, no dry season, warm summer",
+  "16": "Temperate, no dry season, cold summer",
+  "17": "Cold, dry summer, hot summer",
+  "18": "Cold, dry summer, warm summer",
+  "19": "Cold, dry summer, cold summer",
+  "20": "Cold, dry summer, very cold winter",
+  "21": "Cold, dry winter, hot summer",
+  "22": "Cold, dry winter, warm summer",
+  "23": "Cold, dry winter, cold summer",
+  "24": "Cold, dry winter, very cold winter",
+  "25": "Cold, no dry season, hot summer",
+  "26": "Cold, no dry season, warm summer",
+  "27": "Cold, no dry season, cold summer",
+  "28": "Cold, no dry season, very cold winter",
+  "29": "Polar, tundra",
+  "30": "Polar, frost",
+};
+
 class SpeciesLocalDatabaseProvider {
   const SpeciesLocalDatabaseProvider(
     DatabaseHandler db,
@@ -98,7 +131,14 @@ class SpeciesLocalDatabaseProvider {
       eluClass1Stats: _buildStatsList(dbStats, "elu_class1"),
       eluClass2Stats: _buildStatsList(dbStats, "elu_class2"),
       eluClass3Stats: _buildStatsList(dbStats, "elu_class3"),
-      kgStats: _buildStatsList(dbStats, "kg"),
+      kgStats: _buildStatsList(dbStats, "kg")
+          .map(
+            (e) => SpeciesStat(
+              value: kgNames[e.value] ?? e.value,
+              likelihood: e.likelihood,
+            ),
+          )
+          .toList(),
       normalizedMonthStats: _buildStatsList(dbStats, "normalizedmonth"),
       seasonStats: _buildStatsList(dbStats, "season"),
     );

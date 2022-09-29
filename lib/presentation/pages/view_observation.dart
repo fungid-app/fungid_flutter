@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -99,7 +98,6 @@ class ViewObservationView extends StatelessWidget {
           },
           child: const Icon(
             Icons.arrow_back,
-            color: Colors.white,
           ),
         ),
         actions: <Widget>[
@@ -136,10 +134,9 @@ class ViewObservationView extends StatelessWidget {
         ],
         title: const Text("Your Observation"),
       ),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(vertical: 16),
+      body: Column(
         children: [
-          ObservationImageCarousel(
+          ImageCarousel(
             images: observation.images,
           ),
           ListTile(
@@ -152,23 +149,27 @@ class ViewObservationView extends StatelessWidget {
             leading: const Icon(Icons.date_range),
             title: Text(observation.dayObserved()),
           ),
-          ListTile(
-            minLeadingWidth: 0,
-            leading: const Icon(Icons.notes),
-            title: Text(observation.notes ?? ""),
-          ),
+          observation.notes == null
+              ? const SizedBox.shrink()
+              : ListTile(
+                  minLeadingWidth: 0,
+                  leading: const Icon(Icons.notes),
+                  title: Text(observation.notes ?? ""),
+                ),
           const Divider(
             indent: 20,
             endIndent: 20,
             thickness: 2,
           ),
-          ..._getPredictionsWidget(context, observation),
+          Expanded(
+            child: _getPredictionsWidget(context, observation),
+          ),
         ],
       ),
     );
   }
 
-  List<ListTile> _getPredictionsWidget(
+  Widget _getPredictionsWidget(
     BuildContext context,
     UserObservation observation,
   ) {
@@ -186,87 +187,95 @@ class ViewObservationView extends StatelessWidget {
             },
           );
 
-    var tiles = [
-      ListTile(
-          minLeadingWidth: 0,
-          leading: const Icon(Icons.batch_prediction_sharp),
-          title: Text(
-            "Predictions",
-            style: Theme.of(context).textTheme.headline5,
-          ),
-          trailing: icon),
-    ];
+    var header = ListTile(
+        minLeadingWidth: 0,
+        leading: const Icon(Icons.batch_prediction_sharp),
+        title: Text(
+          "Predictions",
+          style: Theme.of(context).textTheme.headline5,
+        ),
+        trailing: icon);
+
+    final predictions =
+        context.select((ViewObservationBloc bloc) => bloc.state.predictions);
+
+    var isStale = (observation.lastUpdated ?? DateTime.now())
+        .subtract(
+          const Duration(seconds: 1),
+        )
+        .isAfter(predictions?.dateCreated ?? DateTime.now());
+
+    return Column(
+      children: [
+        header,
+        !isStale
+            ? const SizedBox.shrink()
+            : ListTile(
+                leading: const Icon(Icons.warning),
+                trailing: const Icon(Icons.refresh),
+                title: const Text("Predictions are out of date"),
+                subtitle: const Text("Tap to refresh"),
+                onTap: () => context
+                    .read<ViewObservationBloc>()
+                    .add(const ViewObservationRefreshPredctions()),
+              ),
+        Expanded(
+          child: _getPredictionsBody(context, observation),
+        ),
+      ],
+    );
+  }
+
+  Widget _getPredictionsBody(
+    BuildContext context,
+    UserObservation observation,
+  ) {
+    final status =
+        context.select((ViewObservationBloc bloc) => bloc.state.status);
 
     if (status == ViewObservationStatus.predictionsLoading) {
-      tiles.add(const ListTile(
-        title: Center(child: CircularProgressIndicator()),
-      ));
-    } else if (status == ViewObservationStatus.predictionsFailed) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (status == ViewObservationStatus.predictionsFailed) {
       var errorMessage = context
               .select((ViewObservationBloc bloc) => bloc.state.errorMessage) ??
           "Error getting predictions";
 
-      tiles.add(ListTile(
-        title: Center(
-          child: Text(errorMessage),
-        ),
-      ));
-    } else {
-      final predictions =
-          context.select((ViewObservationBloc bloc) => bloc.state.predictions);
-
-      if (predictions == null) {
-        tiles.add(
-          ListTile(
-            minLeadingWidth: 0,
-            title: const Text("No predictions available"),
-            subtitle: const Text("Tap to generate"),
-            onTap: () => context
-                .read<ViewObservationBloc>()
-                .add(const ViewObservationRefreshPredctions()),
-          ),
-        );
-      } else {
-        if ((observation.lastUpdated ?? DateTime.now())
-            .subtract(
-              const Duration(seconds: 1),
-            )
-            .isAfter(predictions.dateCreated)) {
-          log(observation.lastUpdated.toString());
-          log(predictions.dateCreated.toString());
-
-          tiles.add(ListTile(
-            tileColor: Colors.yellow,
-            leading: const Icon(Icons.warning),
-            trailing: const Icon(Icons.refresh),
-            title: const Text("Predictions are out of date"),
-            subtitle: const Text("Tap to refresh"),
-            onTap: () => context
-                .read<ViewObservationBloc>()
-                .add(const ViewObservationRefreshPredctions()),
-          ));
-        }
-
-        var predictionTiles = _getPredictionTiles(context, predictions);
-        tiles.addAll(predictionTiles);
-      }
+      return Text(errorMessage);
     }
 
-    return tiles;
-  }
+    final predictions =
+        context.select((ViewObservationBloc bloc) => bloc.state.predictions);
 
-  List<ListTile> _getPredictionTiles(
-    BuildContext context,
-    Predictions predictions,
-  ) {
+    if (predictions == null) {
+      return ListTile(
+        minLeadingWidth: 0,
+        title: const Text("No predictions available"),
+        subtitle: const Text("Tap to generate"),
+        onTap: () => context
+            .read<ViewObservationBloc>()
+            .add(const ViewObservationRefreshPredctions()),
+      );
+    }
+
     final imageMap =
         context.select((ViewObservationBloc bloc) => bloc.state.imageMap) ?? {};
 
-    return predictions.predictions.map(
-      (pred) {
-        return getPredictionTile(context, pred, imageMap[pred.species]);
+    return ListView.separated(
+      separatorBuilder: (BuildContext context, int index) => const Divider(
+        height: 3,
+        thickness: 2,
+      ),
+      itemCount: predictions.predictions.length,
+      itemBuilder: (context, index) {
+        return getPredictionTile(
+          context,
+          predictions.predictions[index],
+          imageMap[predictions.predictions[index].species],
+        );
       },
-    ).toList();
+    );
   }
 
   ListTile getPredictionTile(

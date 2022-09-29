@@ -48,9 +48,7 @@ class ObservationListView extends StatelessWidget {
                       return _observationCard(
                           context, state.observations[index]);
                     },
-                    separatorBuilder: (context, index) => const Divider(
-                      color: Colors.grey,
-                    ),
+                    separatorBuilder: (context, index) => const Divider(),
                   ),
                 ),
               ],

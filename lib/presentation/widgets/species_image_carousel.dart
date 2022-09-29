@@ -12,16 +12,23 @@ class SpeciesImageCarousel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 200,
-      child: PageView.builder(
-        itemCount: images.length,
-        itemBuilder: (context, index) {
-          return SpeciesImageDisplay(
-            image: images[index],
-          );
-        },
-      ),
-    );
+    if (images.isEmpty) {
+      return const SizedBox.shrink();
+    } else {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: SizedBox(
+          height: 200,
+          child: PageView.builder(
+            itemCount: images.length,
+            itemBuilder: (context, index) {
+              return SpeciesImageDisplay(
+                image: images[index],
+              );
+            },
+          ),
+        ),
+      );
+    }
   }
 }

@@ -1,3 +1,4 @@
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fungid_flutter/repositories/location_repository.dart';
@@ -29,6 +30,7 @@ class FungIDApp extends StatelessWidget {
   final LocationRepository locationRepository;
   final PredictionsRepository predictionsRepository;
   final SpeciesRepository speciesRepository;
+  // final ThemeController themeController;
 
   @override
   Widget build(BuildContext context) {
@@ -56,9 +58,21 @@ class AppView extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'FungID',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+      theme: FlexThemeData.light(
+        scheme: FlexScheme.outerSpace,
+        surfaceMode: FlexSurfaceMode.highScaffoldLowSurface,
+        blendLevel: 20,
+        appBarOpacity: 0.95,
+        visualDensity: FlexColorScheme.comfortablePlatformDensity,
       ),
+      darkTheme: FlexThemeData.dark(
+        scheme: FlexScheme.outerSpace,
+        surfaceMode: FlexSurfaceMode.highScaffoldLowSurface,
+        blendLevel: 15,
+        appBarOpacity: 0.90,
+        visualDensity: FlexColorScheme.comfortablePlatformDensity,
+      ),
+      themeMode: ThemeMode.system,
       home: const ObservationListPage(),
     );
   }

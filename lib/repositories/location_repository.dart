@@ -15,7 +15,8 @@ class LocationRepository {
       );
 
       var first = data.first;
-      return "${first.street}, ${first.locality}, ${first.administrativeArea}, ${first.isoCountryCode}";
+      return "${first.street}, ${first.locality}, ${first.administrativeArea}, ${first.isoCountryCode}"
+          .replaceAll(", ,", ",");
     } catch (e) {
       log(e.toString());
       return "Unknown";

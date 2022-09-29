@@ -93,21 +93,17 @@ class EditObservationView extends StatelessWidget {
               ? const CircularProgressIndicator()
               : const Icon(Icons.check_rounded),
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              Expanded(
-                child: ListView(
-                  children: const [
-                    _ImageField(),
-                    _DateField(),
-                    _LocationField(),
-                    _NotesField(),
-                  ],
-                ),
-              ),
-            ],
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: const [
+                _ImageField(),
+                _DateField(),
+                _LocationField(),
+                _NotesField(),
+              ],
+            ),
           ),
         ),
       );
@@ -162,7 +158,7 @@ class _ImageField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ObservationImageCarousel(
+        ImageCarousel(
           key: Key('${images.length}-image-carousel'),
           images: images,
           onImagesAdded: (images) => context
