@@ -68,5 +68,5 @@ dev_dependencies:
 
 flutter:
   assets:
-    - assets/db/app.sqlite3
+    - assets/db/
   uses-material-design: true

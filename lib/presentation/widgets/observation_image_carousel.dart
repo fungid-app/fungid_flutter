@@ -4,8 +4,8 @@ import 'package:fungid_flutter/domain/observations.dart';
 import 'package:fungid_flutter/presentation/widgets/add_image_sheet.dart';
 import 'package:fungid_flutter/presentation/pages/view_image_page.dart';
 
-class ImageCarousel extends StatefulWidget {
-  const ImageCarousel({
+class ObservationImageCarousel extends StatefulWidget {
+  const ObservationImageCarousel({
     Key? key,
     required this.images,
     this.onImagesAdded,
@@ -18,12 +18,12 @@ class ImageCarousel extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return _ImageCarouselState();
+    return _ObservationImageCarousel();
   }
 }
 
-class _ImageCarouselState extends State<ImageCarousel> {
-  _ImageCarouselState();
+class _ObservationImageCarousel extends State<ObservationImageCarousel> {
+  _ObservationImageCarousel();
   int _current = 0;
   final CarouselController _controller = CarouselController();
 
@@ -45,7 +45,6 @@ class _ImageCarouselState extends State<ImageCarousel> {
           (image) => Builder(
             builder: (BuildContext context) {
               return Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 6.0),
                   decoration: const BoxDecoration(color: Colors.grey),
                   child: GestureDetector(
                       child: Image.file(

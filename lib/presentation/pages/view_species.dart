@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fungid_flutter/domain/observations.dart';
 import 'package:fungid_flutter/presentation/bloc/species_detail_bloc.dart';
+import 'package:fungid_flutter/presentation/widgets/species_common_names.dart';
 import 'package:fungid_flutter/presentation/widgets/species_seasonality_view.dart';
 import 'package:fungid_flutter/presentation/widgets/species_image_carousel.dart';
 import 'package:fungid_flutter/presentation/widgets/species_links_view.dart';
@@ -71,9 +72,10 @@ class ViewSpeciesPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SpeciesImageCarousel(images: state.species.images),
+            SpeciesCommonNamesView(names: state.species.commonNames),
             SpeciesPropertiesView(properties: state.species.properties),
-            SpeciesLinksView(species: state.species.species),
             SpeciesSeasonalityView(stats: state.species.stats),
+            SpeciesLinksView(species: state.species.species),
             SpeciesStatsView(stats: state.species.stats)
           ],
         ),

@@ -158,7 +158,7 @@ class _ImageField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ImageCarousel(
+        ObservationImageCarousel(
           key: Key('${images.length}-image-carousel'),
           images: images,
           onImagesAdded: (images) => context

@@ -55,14 +55,17 @@ VACUUM;
 SELECT prop, value FROM classifier_species_props css GROUP BY 1,2 ORDER BY 1,2
 
 
-SELECT prop FROM classifier_species_props css GROUP BY 1 ORDER BY 1
+SELECT prop, value, MAX(species) 
+FROM classifier_species_props css
+JOIN classifier_species cs  ON css.specieskey  = cs.specieskey 
+GROUP BY 1, 2 ORDER BY 1, 2;
 
-SELECT stat FROM classifier_species_stats css GROUP BY 1 ORDER BY 1
+SELECT prop, stat, MAX(species) FROM classifier_species_stats css GROUP BY 1, 2 ORDER BY 1, 2;
 
 
-SELECT * FROM classifier_species_stats css;
 
-SELECT 
+SELECT * FROM classifier_species_stats css WHERE value is null;
+
 SELECT * FROM classifier_species cs ;
 
 SELECT * FROM classifier_species cs  ;
@@ -70,3 +73,26 @@ SELECT * FROM classifier_species cs  ;
 SELECT * FROM classifier_names cn;
 
 SELECT * FROM classifier_species_images csi;
+
+
+DELETE FROM classifier_names;
+
+DROP TABLE names;
+
+INSERT INTO classifier_names (specieskey, name, lang) 
+SELECT specieskey, n.commonname, lng
+FROM names n
+JOIN classifier_species s ON s.species = n.species;
+
+
+
+
+-- GENERATING image file
+-- FROM gbif.sqlite3
+SELECT t2.specieskey, t2.genuskey, t2.familykey, t.gbifid, t.imgid, m.identifier AS external_url, t3.rightsholder AS rights_holder, t3.creator, t3.license
+FROM trainingimages t  
+JOIN multimedia m ON t.gbifid  = m.gbifid  AND m.imgid  = t.imgid 
+JOIN trainingspecies t2 ON t.specieskey = t2.specieskey 
+JOIN occurrence t3 ON t3.gbifid = t.gbifid 
+WHERE t.rank <= 100;
+

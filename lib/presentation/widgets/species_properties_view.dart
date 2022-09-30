@@ -59,12 +59,13 @@ class SpeciesPropertiesView extends StatelessWidget {
         .map(
           (e) => SizedBox(
             width: 190,
-            // height: 85,
             child: Card(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15.0),
               ),
               child: ListTile(
+                // dense: true,
+                contentPadding: const EdgeInsets.only(left: 10, right: 10),
                 leading: SizedBox(
                   height: 45,
                   width: 45,

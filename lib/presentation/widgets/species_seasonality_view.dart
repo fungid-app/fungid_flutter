@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:fungid_flutter/domain/species.dart';
@@ -22,9 +20,12 @@ class SpeciesSeasonalityView extends StatelessWidget {
           children: [
             Row(
               children: [
-                Text(
-                  "Seasonality",
-                  style: Theme.of(context).textTheme.headline6,
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Text(
+                    "Seasonality",
+                    style: Theme.of(context).textTheme.headline6,
+                  ),
                 ),
               ],
             ),
@@ -123,17 +124,8 @@ SideTitleWidget Function(double, TitleMeta) bottomTitleWidgets(
   };
 }
 
-// SideTitles leftTitles() => SideTitles(
-//       getTitlesWidget: leftTitleWidgets,
-//       showTitles: true,
-//       interval: .1,
-//       reservedSize: 40,
-//     );
-
 LineChartBarData getBarData(ThemeData theme, List<SpeciesStat> stats) {
   stats.sort((a, b) => double.parse(a.value).compareTo(double.parse(b.value)));
-  log(stats[0].value.toString());
-  log(stats[0].likelihood.toString());
   return LineChartBarData(
     isCurved: true,
     color: theme.toggleableActiveColor,

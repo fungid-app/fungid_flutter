@@ -1,7 +1,5 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:fungid_flutter/domain/species.dart';
-import 'package:fungid_flutter/domain/species_properties.dart';
 
 class SpeciesCommonNamesView extends StatelessWidget {
   final List<CommonName> names;
@@ -13,37 +11,32 @@ class SpeciesCommonNamesView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: const Text('Common Names'),
-      subtitle: Text(
-        names
-            // .where((element) => element.language == 'en')
-            .map((e) => '${e.name}, ${e.language}')
-            .join(', '),
-      ),
-    );
-  }
-
-  List<ListTile> getTiles<T extends Enum>(String title, List<T>? list) {
-    if (list == null || list.isEmpty) {
-      return [];
+    if (names.isEmpty) {
+      return const SizedBox.shrink();
     }
 
-    return list
-        .map(
-          (e) => ListTile(
-            leading: SizedBox(
-              height: 45,
-              width: 45,
-              child: CachedNetworkImage(
-                imageUrl: SpeciesProperties.iconUrl(e),
-                errorWidget: (context, url, error) => const Icon(Icons.error),
-              ),
-            ),
-            title: Text(title),
-            subtitle: Text(e.name),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Text(
+                "Common Name(s)",
+                style: Theme.of(context).textTheme.headline6,
+              )
+            ],
           ),
-        )
-        .toList();
+          ListTile(
+            title: Text(
+              names
+                  .where((element) => element.language == 'en')
+                  .map((e) => e.name)
+                  .join(', '),
+            ),
+          )
+        ],
+      ),
+    );
   }
 }
