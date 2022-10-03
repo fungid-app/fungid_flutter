@@ -29,16 +29,8 @@ class DatabaseHandler {
     return await _GetMetadata('db_version');
   }
 
-  Future<String?> getImageVersion() async {
-    return await _GetMetadata('image_version');
-  }
-
-  Future<void> _setDbVersion(String version) async {
+  Future<void> setDbVersion(String version) async {
     await _SetMetadata('db_version', version);
-  }
-
-  Future<void> _setImageVersion(String version) async {
-    await _SetMetadata('image_version', version);
   }
 
   Future<void> _SetMetadata(String name, String value) async {
@@ -51,30 +43,6 @@ class DatabaseHandler {
       },
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
-  }
-
-  Future<void> LoadDB(String createScript, String dbVersion) async {
-    await _runScript(createScript);
-    await _setDbVersion(dbVersion);
-  }
-
-  Future<void> LoadImages(String imageInsertScript, String imageVersion) async {
-    await _runScript(imageInsertScript);
-    await _setImageVersion(imageVersion);
-  }
-
-  Future<void> _runScript(String script) async {
-    var db = await database;
-
-    var batch = db.batch();
-
-    for (var cmd in script.split(';')) {
-      if (cmd.trim() != '') {
-        batch.execute(cmd.trim());
-      }
-    }
-
-    await batch.commit();
   }
 
   Future<String?> _GetMetadata(String name) async {
@@ -125,15 +93,6 @@ class DatabaseHandler {
     return maps.map((e) => ClassifierCommonName.fromMap(e)).toList();
   }
 
-  Future<List<ClassifierEluValues>> getEluValues(int eluID) async {
-    final db = await this.database;
-
-    final List<Map<String, dynamic>> maps = await db
-        .query('classifier_elu_values', where: 'eluid = ?', whereArgs: [eluID]);
-
-    return maps.map((e) => ClassifierEluValues.fromMap(e)).toList();
-  }
-
   Future<List<ClassifierSpeciesImages>> getSpeciesImages(int speciesKey) async {
     final db = await this.database;
 
@@ -168,13 +127,13 @@ class DatabaseHandler {
     return maps.map((e) => ClassifierSpeciesProp.fromMap(e)).toList();
   }
 
-  Future<List<ClassifierSpeciesStat>> getSpeciesStats(String species) async {
+  Future<List<ClassifierSpeciesStat>> getSpeciesStats(int specieskey) async {
     final db = await this.database;
 
     final List<Map<String, dynamic>> maps = await db.query(
         'classifier_species_stats',
-        where: 'species = ? AND value != "" AND VALUE IS NOT NULL',
-        whereArgs: [species]);
+        where: 'specieskey = ? AND value != "" AND VALUE IS NOT NULL',
+        whereArgs: [specieskey]);
 
     return maps.map((e) => ClassifierSpeciesStat.fromMap(e)).toList();
   }

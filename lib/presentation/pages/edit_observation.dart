@@ -153,7 +153,7 @@ class _ImageField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final images =
-        context.select((EditObservationBloc bloc) => bloc.state.images) ?? [];
+        context.select((EditObservationBloc bloc) => bloc.state.images);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -164,9 +164,12 @@ class _ImageField extends StatelessWidget {
           onImagesAdded: (images) => context
               .read<EditObservationBloc>()
               .add(EditObservationAddImages(images: images)),
-          onImageDeleted: (imageID) => context
-              .read<EditObservationBloc>()
-              .add(EditObservationDeleteImage(imageID: imageID)),
+          onImageDeleted: (imageID) {
+            log('Deleting image $imageID');
+            context
+                .read<EditObservationBloc>()
+                .add(EditObservationDeleteImage(imageID: imageID));
+          },
         ),
       ],
     );

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:fungid_flutter/domain/observations.dart';
@@ -16,13 +18,12 @@ class EditObservationBloc
     required this.locationRepository,
     required this.intialObservation,
   }) : super(EditObservationState(
-          status: EditObservationStatus.uninitialized,
           location: intialObservation?.location,
           id: intialObservation?.id,
           dateCreated: intialObservation?.dateCreated,
           observationDate: intialObservation?.observationDate,
           lastUpdated: intialObservation?.lastUpdated,
-          images: intialObservation?.images,
+          images: intialObservation?.images ?? [],
           intialObservation: intialObservation,
           notes: intialObservation?.notes,
         )) {
@@ -100,7 +101,7 @@ class EditObservationBloc
         )
         .toList();
 
-    var images = (state.images ?? []);
+    var images = [...state.images];
 
     images.addAll(converted);
 
@@ -111,9 +112,11 @@ class EditObservationBloc
 
   void _onEditObservationDeleteImage(
       EditObservationDeleteImage event, Emitter<EditObservationState> emit) {
-    var images = (state.images ?? []);
+    var images = [...state.images];
+    log('Deleting image ${event.imageID} - images: ${images.length}');
     images.removeWhere((element) => element.id == event.imageID);
 
+    log('Images after delete: ${images.length}');
     emit(state.copyWith(
       images: images,
     ));
@@ -135,7 +138,7 @@ class EditObservationBloc
       location: state.location!,
       dateCreated: state.dateCreated!,
       observationDate: state.observationDate ?? state.dateCreated!,
-      images: state.images!,
+      images: state.images,
       lastUpdated: DateTime.now().toUtc(),
       notes: state.notes,
     );

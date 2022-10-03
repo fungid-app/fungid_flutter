@@ -28,6 +28,24 @@ void createAddImageSheet({
     return images.map((e) => e.path).toList();
   }
 
+  ElevatedButton createButton(IconData icon, ImageSource source) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+          shape: const CircleBorder(), padding: const EdgeInsets.all(20)),
+      child: Icon(
+        icon,
+        size: 25,
+      ),
+      onPressed: () async {
+        Navigator.of(context).pop();
+        var images = await getImages(source);
+        if (images.isNotEmpty) {
+          onImagesSelected(images);
+        }
+      },
+    );
+  }
+
   showModalBottomSheet(
       context: context,
       builder: (context) {
@@ -36,38 +54,8 @@ void createAddImageSheet({
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    shape: const CircleBorder(),
-                    padding: const EdgeInsets.all(20)),
-                child: const Icon(
-                  Icons.camera_alt_rounded,
-                  size: 25,
-                ),
-                onPressed: () async {
-                  var images = await getImages(ImageSource.camera);
-                  if (images.isNotEmpty) {
-                    onImagesSelected(images);
-                  }
-                },
-              ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    shape: const CircleBorder(),
-                    padding: const EdgeInsets.all(20)),
-                child: const Icon(
-                  Icons.photo_library,
-                  size: 25,
-                ),
-                onPressed: () async {
-                  var nav = Navigator.of(context);
-                  nav.pop();
-                  var images = await getImages(ImageSource.gallery);
-                  if (images.isNotEmpty) {
-                    onImagesSelected(images);
-                  }
-                },
-              ),
+              createButton(Icons.camera_alt_rounded, ImageSource.camera),
+              createButton(Icons.photo_library, ImageSource.gallery),
             ],
           ),
         );

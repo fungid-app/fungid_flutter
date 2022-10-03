@@ -1,6 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:fungid_flutter/domain/species.dart';
-import 'package:fungid_flutter/presentation/widgets/fallback_image.dart';
 
 class SpeciesImageDisplay extends StatelessWidget {
   final SpeciesImage? image;
@@ -16,14 +16,32 @@ class SpeciesImageDisplay extends StatelessWidget {
     this.fit,
   }) : super(key: key);
 
+  // @override
+  // Widget build(BuildContext context) {
+  //   return FallbackImage(
+  //     url: image!.fungidUrl,
+  //     fallbackUrl: image!.externalUrl,
+  //     width: width,
+  //     height: height,
+  //     fit: fit,
+  //   );
+  // }
+
   @override
   Widget build(BuildContext context) {
-    return FallbackImage(
-      url: image!.fungidUrl,
-      fallbackUrl: image!.externalUrl,
+    return CachedNetworkImage(
+      fit: fit,
+      imageUrl: image!.fungidUrl,
+      placeholder: (context, url) => Center(
+        child: SizedBox(
+          width: width,
+          height: height,
+          child: const CircularProgressIndicator(),
+        ),
+      ),
+      errorWidget: (context, url, error) => const Icon(Icons.error),
       width: width,
       height: height,
-      fit: fit,
     );
   }
 }

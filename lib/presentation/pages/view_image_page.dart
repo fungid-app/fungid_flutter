@@ -1,22 +1,44 @@
 //https://stackoverflow.com/questions/55413525/flutter-carousel-image-slider-open-separate-page-during-on-tap-event-is-called
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:fungid_flutter/domain/observations.dart';
 
 class ViewObservationImagePage extends StatefulWidget {
-  final UserObservationImage image;
+  final List<UserObservationImage> images;
+  final String selected;
   final Function(String)? onImageDeleted;
+
   const ViewObservationImagePage({
     Key? key,
-    required this.image,
+    required this.images,
+    required this.selected,
     this.onImageDeleted,
   }) : super(key: key);
 
   @override
-  MyImageScreen createState() => MyImageScreen();
+  ViewObservationImagePageState createState() =>
+      ViewObservationImagePageState();
 }
 
-class MyImageScreen extends State<ViewObservationImagePage> {
-  MyImageScreen();
+class ViewObservationImagePageState extends State<ViewObservationImagePage> {
+  int _current = 0;
+  late PageController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _current =
+        widget.images.indexWhere((element) => element.id == widget.selected);
+    controller = PageController(initialPage: _current);
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     List<Widget> actions = [];
@@ -25,7 +47,11 @@ class MyImageScreen extends State<ViewObservationImagePage> {
         IconButton(
           icon: const Icon(Icons.delete),
           onPressed: () {
-            deleteImage(context, widget.onImageDeleted!, widget.image.id);
+            deleteImage(
+              context,
+              widget.onImageDeleted!,
+              widget.images[_current].id,
+            );
           },
         ),
       );
@@ -33,20 +59,35 @@ class MyImageScreen extends State<ViewObservationImagePage> {
 
     return Scaffold(
       appBar: AppBar(
+        title: Text('Image ${_current + 1} of ${widget.images.length}'),
         actions: actions,
-        backgroundColor: Colors.transparent,
       ),
-      extendBodyBehindAppBar: true,
-      backgroundColor: Colors.black,
       body: Center(
-        child: InteractiveViewer(
-          constrained: true,
-          clipBehavior: Clip.none,
-          maxScale: 10,
-          child: Image.file(
-            widget.image.getFile(),
-            fit: BoxFit.contain,
-          ),
+        child: Column(
+          children: [
+            Expanded(
+              child: PageView.builder(
+                controller: controller,
+                onPageChanged: (index) {
+                  setState(() {
+                    _current = index;
+                  });
+                },
+                itemCount: widget.images.length,
+                itemBuilder: (context, index) {
+                  return InteractiveViewer(
+                    constrained: true,
+                    clipBehavior: Clip.none,
+                    maxScale: 10,
+                    child: Image.file(
+                      widget.images[index].getFile(),
+                      fit: BoxFit.contain,
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -73,6 +114,7 @@ void deleteImage(
                 child: const Text('Cancel')),
             TextButton(
                 onPressed: () {
+                  log("deleting image");
                   onImageDeleted(id);
                   int count = 0;
                   Navigator.of(context).popUntil((_) => count++ >= 2);

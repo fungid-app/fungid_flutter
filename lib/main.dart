@@ -20,8 +20,7 @@ import 'firebase_options.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io' as io;
 
-const String _dbVersion = '0.0.1';
-const String _imageVersion = '0.0.1';
+const String _dbVersion = '0.0.2';
 
 Future<void> main() async {
   runZonedGuarded<Future<void>>(
@@ -62,24 +61,9 @@ Future<PredictionsSharedPrefProvider> getPredictions() async {
 Future<SpeciesLocalDatabaseProvider> getSpeciesDb() async {
   // Setup local DB
   // Construct a file path to copy database to
-  DatabaseHandler db = await ensureDB();
-  await ensureImages(db);
 
-  final SpeciesLocalDatabaseProvider speciesProvider =
-      SpeciesLocalDatabaseProvider(db);
-  return speciesProvider;
-}
-
-Future<void> ensureImages(DatabaseHandler db) async {
-  if (_imageVersion != await db.getImageVersion()) {
-    String insertScript =
-        await rootBundle.loadString(path.join('assets', 'db/images.sql'));
-
-    await db.LoadImages(insertScript, _imageVersion);
-  }
-}
-
-Future<DatabaseHandler> ensureDB() async {
+  // Setup local DB
+  // Construct a file path to copy database to
   io.Directory documentsDirectory = await getApplicationDocumentsDirectory();
   String p = path.join(documentsDirectory.path, "app.sqlite3");
 
@@ -94,12 +78,10 @@ Future<DatabaseHandler> ensureDB() async {
     try {
       if (_dbVersion != await db.getDbVersion()) {
         loadDb = true;
-        // Delete old DB
         db.destroy();
       }
     } catch (e, stacktrace) {
       loadDb = true;
-      // Delete old DB
       db.destroy();
 
       await FirebaseCrashlytics.instance.recordError(
@@ -113,21 +95,26 @@ Future<DatabaseHandler> ensureDB() async {
   // Only copy if the database doesn't exist
   if (loadDb) {
     // Load database from asset and copy
-    String createScript =
-        await rootBundle.loadString(path.join('assets', 'db/create.sql'));
+    ByteData data =
+        await rootBundle.load(path.join('assets', 'db/app.sqlite3'));
+    List<int> bytes =
+        data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+
+    // Save copied asset to documents
+    await io.File(p).writeAsBytes(bytes);
 
     var db = DatabaseHandler(
       dbPath: p,
     );
 
-    await db.LoadDB(createScript, _dbVersion);
+    db.setDbVersion(_dbVersion);
   }
 
   var db = DatabaseHandler(
     dbPath: p,
   );
 
-  return db;
+  return SpeciesLocalDatabaseProvider(db);
 }
 
 FungidApiProvider getFungidApi() {

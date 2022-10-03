@@ -13,22 +13,23 @@ class CommonName {
 class SpeciesImage {
   final int gbifid;
   final int imgid;
-  final String externalUrl;
   final String rightsHolder;
   final String creator;
-  final String license;
+  final int license;
 
   SpeciesImage({
     required this.gbifid,
     required this.imgid,
-    required this.externalUrl,
     required this.rightsHolder,
     required this.creator,
     required this.license,
   });
 
   get fungidUrl =>
+      // Home URL
       'https://api.fungid.app/images/observations/$gbifid-$imgid.jpg';
+  // DO Spaces URL
+  // 'https://images.fungid.app/fungid/app-images/$gbifid-$imgid.jpg';
 }
 
 class SpeciesStat {

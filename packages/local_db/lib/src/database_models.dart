@@ -42,51 +42,24 @@ class ClassifierSpecies extends Equatable {
   }
 }
 
-class ClassifierEluValues extends Equatable {
-  final int eluid;
-  final String class1;
-  final String class2;
-  final String class3;
-
-  const ClassifierEluValues({
-    required this.eluid,
-    required this.class1,
-    required this.class2,
-    required this.class3,
-  });
-
-  @override
-  List<Object?> get props => [
-        eluid,
-        class1,
-        class2,
-        class3,
-      ];
-
-  static ClassifierEluValues fromMap(Map<String, Object?> e) {
-    return ClassifierEluValues(
-      eluid: e['eluid'] as int,
-      class1: e['class1'] as String,
-      class2: e['class2'] as String,
-      class3: e['class3'] as String,
-    );
-  }
+enum ImageLicense {
+  CC0_1_0,
+  CC_BY_4_0,
+  CC_BY_NC_4_0,
 }
 
 class ClassifierSpeciesImages extends Equatable {
   final int specieskey;
   final int gbifid;
   final int imgid;
-  final String externalUrl;
   final String rightsHolder;
   final String creator;
-  final String license;
+  final int license;
 
   const ClassifierSpeciesImages({
     required this.specieskey,
     required this.gbifid,
     required this.imgid,
-    required this.externalUrl,
     required this.rightsHolder,
     required this.creator,
     required this.license,
@@ -97,7 +70,6 @@ class ClassifierSpeciesImages extends Equatable {
         specieskey,
         gbifid,
         imgid,
-        externalUrl,
         rightsHolder,
         creator,
         license,
@@ -108,22 +80,21 @@ class ClassifierSpeciesImages extends Equatable {
       specieskey: e['specieskey'] as int,
       gbifid: e['gbifid'] as int,
       imgid: e['imgid'] as int,
-      externalUrl: e['external_url'] as String,
       rightsHolder: e['rights_holder'] as String,
       creator: e['creator'] as String,
-      license: e['license'] as String,
+      license: e['license'] as int,
     );
   }
 }
 
 class ClassifierSpeciesStat extends Equatable {
-  final String species;
+  final int specieskey;
   final String stat;
   final String value;
   final double likelihood;
 
   const ClassifierSpeciesStat({
-    required this.species,
+    required this.specieskey,
     required this.stat,
     required this.value,
     required this.likelihood,
@@ -131,7 +102,7 @@ class ClassifierSpeciesStat extends Equatable {
 
   @override
   List<Object?> get props => [
-        species,
+        specieskey,
         stat,
         value,
         likelihood,
@@ -139,7 +110,7 @@ class ClassifierSpeciesStat extends Equatable {
 
   static ClassifierSpeciesStat fromMap(Map<String, Object?> e) {
     return ClassifierSpeciesStat(
-      species: e['species'] as String,
+      specieskey: e['specieskey'] as int,
       stat: e['stat'] as String,
       value: e['value'] as String? ?? '',
       likelihood: e['likelihood'] as double,

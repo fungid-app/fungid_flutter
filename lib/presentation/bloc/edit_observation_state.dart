@@ -18,14 +18,14 @@ extension EditObservationStatusX on EditObservationStatus {
 class EditObservationState extends Equatable {
   const EditObservationState({
     this.status = EditObservationStatus.uninitialized,
-    this.location,
-    this.id,
-    this.dateCreated,
-    this.observationDate,
-    this.lastUpdated,
-    this.images,
-    this.intialObservation,
-    this.notes,
+    required this.location,
+    required this.id,
+    required this.dateCreated,
+    required this.observationDate,
+    required this.lastUpdated,
+    required this.images,
+    required this.intialObservation,
+    required this.notes,
   });
 
   final ObservationLocation? location;
@@ -33,7 +33,7 @@ class EditObservationState extends Equatable {
   final DateTime? dateCreated;
   final DateTime? observationDate;
   final DateTime? lastUpdated;
-  final List<UserObservationImage>? images;
+  final List<UserObservationImage> images;
   final UserObservation? intialObservation;
   final EditObservationStatus status;
   final String? notes;

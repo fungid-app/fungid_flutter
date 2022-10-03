@@ -1,7 +1,7 @@
 name: fungid_flutter
 description: The App for Fungid.app
 publish_to: 'none'
-version: 0.0.6+6
+version: 0.0.7+7
 
 environment:
   sdk: '>=2.17.5 <3.0.0'
@@ -68,5 +68,5 @@ dev_dependencies:
 
 flutter:
   assets:
-    - assets/db/
+    - assets/db/app.sqlite3
   uses-material-design: true

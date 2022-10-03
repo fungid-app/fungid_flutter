@@ -73,7 +73,7 @@ class SpeciesLocalDatabaseProvider {
       total: dbSpecies.total,
       properties: await getProperties(dbSpecies.speciesKey),
       commonNames: await getCommonNames(dbSpecies.speciesKey),
-      stats: await getStats(dbSpecies.species),
+      stats: await getStats(dbSpecies.speciesKey),
       images: await getImages(dbSpecies.speciesKey),
     );
   }
@@ -101,7 +101,6 @@ class SpeciesLocalDatabaseProvider {
       gbifid: dbImg.gbifid,
       imgid: dbImg.imgid,
       creator: dbImg.creator,
-      externalUrl: dbImg.externalUrl,
       license: dbImg.license,
       rightsHolder: dbImg.rightsHolder,
     );
@@ -121,8 +120,8 @@ class SpeciesLocalDatabaseProvider {
         .toList();
   }
 
-  Future<SpeciesStats> getStats(String species) async {
-    var dbStats = await _db.getSpeciesStats(species);
+  Future<SpeciesStats> getStats(int specieskey) async {
+    var dbStats = await _db.getSpeciesStats(specieskey);
     return _buildStats(dbStats);
   }
 

@@ -131,7 +131,7 @@ class ViewObservationView extends StatelessWidget {
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10),
+            padding: const EdgeInsets.all(10),
             child: ObservationImageCarousel(
               images: observation.images,
             ),

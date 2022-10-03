@@ -4,7 +4,7 @@ import 'package:fungid_flutter/domain/observations.dart';
 import 'package:fungid_flutter/presentation/widgets/add_image_sheet.dart';
 import 'package:fungid_flutter/presentation/pages/view_image_page.dart';
 
-class ObservationImageCarousel extends StatefulWidget {
+class ObservationImageCarousel extends StatelessWidget {
   const ObservationImageCarousel({
     Key? key,
     required this.images,
@@ -17,47 +17,50 @@ class ObservationImageCarousel extends StatefulWidget {
   final Function(String)? onImageDeleted;
 
   @override
-  State<StatefulWidget> createState() {
-    return _ObservationImageCarousel();
+  Widget build(BuildContext context) {
+    return ObservationImageCarouselView(
+      onImagesAdded: onImagesAdded,
+      onImageDeleted: onImageDeleted,
+      images: images,
+    );
   }
 }
 
-class _ObservationImageCarousel extends State<ObservationImageCarousel> {
-  _ObservationImageCarousel();
-  int _current = 0;
-  final CarouselController _controller = CarouselController();
+class ObservationImageCarouselView extends StatelessWidget {
+  const ObservationImageCarouselView({
+    Key? key,
+    required this.onImagesAdded,
+    required this.onImageDeleted,
+    required this.images,
+  }) : super(key: key);
+  final Function(List<String>)? onImagesAdded;
+  final Function(String)? onImageDeleted;
+  final List<UserObservationImage> images;
 
   @override
   Widget build(BuildContext context) {
-    Function(String)? onImageDeleted;
+    var imageLen = images.length;
 
-    if (widget.onImageDeleted != null) {
-      onImageDeleted = (String id) {
-        widget.onImageDeleted!(id);
-        setState(() {
-          _current = _current - 1;
-        });
-      };
-    }
-
-    var items = (widget.images)
+    var items = (images)
         .map(
           (image) => Builder(
             builder: (BuildContext context) {
               return Container(
-                  decoration: const BoxDecoration(color: Colors.grey),
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  width: MediaQuery.of(context).size.width,
                   child: GestureDetector(
                       child: Image.file(
                         image.getFile(),
                         fit: BoxFit.cover,
-                        cacheWidth: 120,
+                        cacheWidth: 250,
                       ),
                       onTap: () {
                         Navigator.push<Widget>(
                           context,
                           MaterialPageRoute(
                             builder: (context) => ViewObservationImagePage(
-                              image: image,
+                              selected: image.id,
+                              images: images,
                               onImageDeleted: onImageDeleted,
                             ),
                           ),
@@ -68,7 +71,7 @@ class _ObservationImageCarousel extends State<ObservationImageCarousel> {
         )
         .toList();
 
-    if (widget.onImagesAdded != null) {
+    if (onImagesAdded != null) {
       items.add(Builder(
         builder: (BuildContext context) {
           return Center(
@@ -79,8 +82,7 @@ class _ObservationImageCarousel extends State<ObservationImageCarousel> {
                 createAddImageSheet(
                   context: context,
                   onImagesSelected: (images) {
-                    widget.onImagesAdded!(images);
-                    _controller.jumpToPage(0);
+                    onImagesAdded!(images);
                   },
                 );
               },
@@ -90,47 +92,19 @@ class _ObservationImageCarousel extends State<ObservationImageCarousel> {
       ));
     }
 
-    return SizedBox(
-      // height: 127,
-      child: Column(children: [
-        CarouselSlider(
-          items: items,
-          carouselController: _controller,
-          options: CarouselOptions(
-            disableCenter: true,
-            aspectRatio: 1,
-            viewportFraction: .3,
-            enlargeCenterPage: true,
-            height: 100,
-            enableInfiniteScroll: false,
-            onPageChanged: (index, reason) {
-              setState(() {
-                _current = index;
-              });
-            },
-          ),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: items.asMap().entries.map((entry) {
-            return GestureDetector(
-              onTap: () => _controller.animateToPage(entry.key),
-              child: Container(
-                width: 12.0,
-                height: 12.0,
-                margin:
-                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
-                decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: (Theme.of(context).brightness == Brightness.dark
-                            ? Colors.white
-                            : Colors.black)
-                        .withOpacity(_current == entry.key ? 0.9 : 0.4)),
-              ),
-            );
-          }).toList(),
-        ),
-      ]),
+    return CarouselSlider(
+      items: items,
+      options: CarouselOptions(
+        initialPage: imageLen - 1,
+        disableCenter: true,
+        aspectRatio: 1,
+        viewportFraction: .3,
+        // enlargeCenterPage: true,
+
+        padEnds: false,
+        height: 100,
+        enableInfiniteScroll: false,
+      ),
     );
   }
 }
