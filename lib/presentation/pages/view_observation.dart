@@ -62,7 +62,6 @@ class ViewObservationPage extends StatelessWidget {
       ],
       child: const ViewObservationView(),
     );
-    // return const ViewObservationView();
   }
 }
 

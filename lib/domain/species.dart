@@ -27,9 +27,9 @@ class SpeciesImage {
 
   get fungidUrl =>
       // Home URL
-      'https://api.fungid.app/images/observations/$gbifid-$imgid.jpg';
-  // DO Spaces URL
-  // 'https://images.fungid.app/fungid/app-images/$gbifid-$imgid.jpg';
+      // 'https://api.fungid.app/images/observations/$gbifid-$imgid.jpg';
+      // DO Spaces URL
+      'https://images.fungid.app/fungid/app-images/$gbifid-$imgid.jpg';
 }
 
 class SpeciesStat {

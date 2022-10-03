@@ -87,17 +87,17 @@ JOIN classifier_species s ON s.species = n.species;
 
 
 CREATE TABLE IF NOT EXISTS classifier_species_stats2(
-	species INTEGER NOT NULL PRIMARY KEY, 
+	specieskey INTEGER NOT NULL, 
 	stat VARCHAR COLLATE NOCASE, 
 	value VARCHAR COLLATE NOCASE, 
 	likelihood FLOAT
 );
 
 
+INSERT INTO classifier_species_stats2
 SELECT cs.specieskey, css.stat, css.value, css.likelihood
 FROM classifier_species_stats css 
 JOIN classifier_species cs  ON cs.species  = css.species;
-
 
 
 -- GENERATING image file
@@ -124,5 +124,12 @@ WHERE t.rank <= 100;
 
 
 DROP TABLE classifier_species_images;
+
+
+
+identificationqualifier, 
+identificationreferences,
+identificationverificationstatus,
+occurrencestatus,
 
 
