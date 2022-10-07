@@ -15,6 +15,7 @@ assets/app.sqlite
 
 .vscode/launch.json
 local.properties
+assets/models
 
 # IntelliJ related
 *.iml
