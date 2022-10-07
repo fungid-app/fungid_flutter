@@ -52,18 +52,25 @@ class InferredData extends Equatable {
   Map<String, dynamic> toJson() => _$InferredDataToJson(this);
 }
 
+enum PredictionType {
+  online,
+  offline,
+}
+
 @JsonSerializable()
 class Predictions extends Equatable {
   final String observationID;
   final List<Prediction> predictions;
   final DateTime dateCreated;
-  final InferredData inferred;
+  final InferredData? inferred;
+  final PredictionType? predictionType;
 
   const Predictions({
     required this.observationID,
     required this.predictions,
     required this.dateCreated,
     required this.inferred,
+    required this.predictionType,
   });
 
   @override
@@ -82,6 +89,7 @@ class Predictions extends Equatable {
           .toList(),
       dateCreated: DateTime.now().toUtc(),
       inferred: InferredData.fromApi(preds.inferred),
+      predictionType: PredictionType.online,
     );
   }
 }
@@ -91,10 +99,10 @@ class Prediction extends Equatable {
   final String species;
   final double probability;
   final double localProbability;
-  final double imageScore;
-  final double tabScore;
-  final double localScore;
-  final bool isLocal;
+  final double? imageScore;
+  final double? tabScore;
+  final double? localScore;
+  final bool? isLocal;
 
   const Prediction({
     required this.species,

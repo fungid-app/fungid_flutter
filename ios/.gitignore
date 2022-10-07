@@ -28,6 +28,7 @@ ServiceDefinitions.json
 Runner/GeneratedPluginRegistrant.*
 Runner.app.dSYM.zip
 Runner.ipa
+fastlane/report.xml
 
 # Exceptions to above rules.
 !default.mode1v3

@@ -11,14 +11,17 @@ generate-code: get-openapi
 
 generate: generate-icons generate-code 
 
-deploy: deploy-android deploy-ios
+deploy-beta: clean deploy-android-draft deploy-ios-beta
 
-deploy-ios:
+clean:
+	flutter clean
+
+deploy-ios-beta:
 	flutter build ipa \
 	&& cd ios \
 	&& fastlane ios beta
 
-deploy-android:
+deploy-android-draft:
 	flutter build appbundle \
 	&& cd android \
 	&& fastlane android draft

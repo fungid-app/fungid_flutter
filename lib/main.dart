@@ -7,8 +7,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_pretty_dio_logger/flutter_pretty_dio_logger.dart';
 import 'package:fungid_api/fungid_api.dart';
 import 'package:fungid_flutter/bootstrap.dart';
-import 'package:fungid_flutter/providers/fungid_api_provider.dart';
-import 'package:fungid_flutter/providers/predictions_provider.dart';
+import 'package:fungid_flutter/providers/offline_predictions_provider.dart';
+import 'package:fungid_flutter/providers/online_predictions_provider.dart';
+import 'package:fungid_flutter/providers/saved_predictions_provider.dart';
 import 'package:fungid_flutter/providers/species_local_database_provider.dart';
 import 'package:fungid_flutter/providers/user_observation_image_provider.dart';
 import 'package:fungid_flutter/providers/user_observation_provider.dart';
@@ -31,9 +32,10 @@ Future<void> main() async {
 
       bootstrap(
         observationsProvider: await getObservationsApi(),
-        fungidApiProvider: getFungidApi(),
+        onlinePredictionsProvider: getOnlinePredictions(),
+        offlinePredictionsProvider: await getOfflinePredictions(),
         imageProvider: UserObservationImageFileSystemProvider(),
-        predictionsProvider: await getPredictions(),
+        savedPredictionsProvider: await getPredictions(),
         speciesProvider: await getSpeciesDb(),
       );
     },
@@ -51,8 +53,8 @@ Future<void> setupFirebase() async {
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
 }
 
-Future<PredictionsSharedPrefProvider> getPredictions() async {
-  final predictionsProvider = PredictionsSharedPrefProvider(
+Future<SavedPredictionsSharedPrefProvider> getPredictions() async {
+  final predictionsProvider = SavedPredictionsSharedPrefProvider(
     prefs: await SharedPreferences.getInstance(),
   );
   return predictionsProvider;
@@ -117,8 +119,15 @@ Future<SpeciesLocalDatabaseProvider> getSpeciesDb() async {
   return SpeciesLocalDatabaseProvider(db);
 }
 
-FungidApiProvider getFungidApi() {
-  final fungidApiProvider = FungidApiProvider(
+Future<OfflinePredictionsProvider> getOfflinePredictions() async {
+  return await OfflinePredictionsProvider.create(
+    'assets/models/mobile-image-model.pth',
+    'assets/models/labels.csv',
+  );
+}
+
+OnlinePredictionsProvider getOnlinePredictions() {
+  final onlinePredictionsProvider = OnlinePredictionsProvider(
     FungidApi(
       dio: Dio(BaseOptions(
         // Production
@@ -143,7 +152,7 @@ FungidApiProvider getFungidApi() {
       ],
     ),
   );
-  return fungidApiProvider;
+  return onlinePredictionsProvider;
 }
 
 Future<UserObservationsSharedPrefProvider> getObservationsApi() async {

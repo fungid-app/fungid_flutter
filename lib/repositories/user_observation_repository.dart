@@ -1,6 +1,4 @@
 import 'package:fungid_flutter/domain/observations.dart';
-import 'package:fungid_flutter/domain/predictions.dart';
-import 'package:fungid_flutter/providers/fungid_api_provider.dart';
 import 'package:fungid_flutter/providers/user_observation_image_provider.dart';
 import 'package:fungid_flutter/providers/user_observation_provider.dart';
 
@@ -8,12 +6,9 @@ class UserObservationsRepository {
   const UserObservationsRepository({
     required UserObservationsSharedPrefProvider observationsProvider,
     required UserObservationImageFileSystemProvider imageProvider,
-    required FungidApiProvider fungidApiProvider,
   })  : _observationsProvider = observationsProvider,
-        _fungidApiProvider = fungidApiProvider,
         _imageProvider = imageProvider;
 
-  final FungidApiProvider _fungidApiProvider;
   final UserObservationsSharedPrefProvider _observationsProvider;
   final UserObservationImageFileSystemProvider _imageProvider;
 
@@ -70,15 +65,5 @@ class UserObservationsRepository {
     }
 
     return _observationsProvider.deleteObservation(id);
-  }
-
-  Future<Predictions> getPredictions(UserObservation observation) async {
-    return _fungidApiProvider.getPredictions(
-      observation.id,
-      observation.dateCreated,
-      observation.location.lat,
-      observation.location.lng,
-      observation.images,
-    );
   }
 }

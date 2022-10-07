@@ -52,14 +52,20 @@ Predictions _$PredictionsFromJson(Map<String, dynamic> json) => $checkedCreate(
                   .toList()),
           dateCreated: $checkedConvert(
               'date_created', (v) => DateTime.parse(v as String)),
-          inferred: $checkedConvert('inferred',
-              (v) => InferredData.fromJson(v as Map<String, dynamic>)),
+          inferred: $checkedConvert(
+              'inferred',
+              (v) => v == null
+                  ? null
+                  : InferredData.fromJson(v as Map<String, dynamic>)),
+          predictionType: $checkedConvert('prediction_type',
+              (v) => $enumDecodeNullable(_$PredictionTypeEnumMap, v)),
         );
         return val;
       },
       fieldKeyMap: const {
         'observationID': 'observation_i_d',
-        'dateCreated': 'date_created'
+        'dateCreated': 'date_created',
+        'predictionType': 'prediction_type'
       },
     );
 
@@ -69,7 +75,13 @@ Map<String, dynamic> _$PredictionsToJson(Predictions instance) =>
       'predictions': instance.predictions,
       'date_created': instance.dateCreated.toIso8601String(),
       'inferred': instance.inferred,
+      'prediction_type': _$PredictionTypeEnumMap[instance.predictionType],
     };
+
+const _$PredictionTypeEnumMap = {
+  PredictionType.online: 'online',
+  PredictionType.offline: 'offline',
+};
 
 Prediction _$PredictionFromJson(Map<String, dynamic> json) => $checkedCreate(
       'Prediction',
@@ -82,11 +94,12 @@ Prediction _$PredictionFromJson(Map<String, dynamic> json) => $checkedCreate(
           localProbability: $checkedConvert(
               'local_probability', (v) => (v as num).toDouble()),
           imageScore:
-              $checkedConvert('image_score', (v) => (v as num).toDouble()),
-          tabScore: $checkedConvert('tab_score', (v) => (v as num).toDouble()),
+              $checkedConvert('image_score', (v) => (v as num?)?.toDouble()),
+          tabScore:
+              $checkedConvert('tab_score', (v) => (v as num?)?.toDouble()),
           localScore:
-              $checkedConvert('local_score', (v) => (v as num).toDouble()),
-          isLocal: $checkedConvert('is_local', (v) => v as bool),
+              $checkedConvert('local_score', (v) => (v as num?)?.toDouble()),
+          isLocal: $checkedConvert('is_local', (v) => v as bool?),
         );
         return val;
       },

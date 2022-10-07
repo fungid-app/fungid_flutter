@@ -4,8 +4,8 @@ import 'dart:convert';
 import 'package:fungid_flutter/domain/predictions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class PredictionsSharedPrefProvider {
-  PredictionsSharedPrefProvider({
+class SavedPredictionsSharedPrefProvider {
+  SavedPredictionsSharedPrefProvider({
     required SharedPreferences prefs,
   }) : _prefs = prefs;
 

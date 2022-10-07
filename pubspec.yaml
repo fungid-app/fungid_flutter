@@ -21,8 +21,8 @@ dependencies:
   path: '^1.8.0'
   image_picker: ^0.8.5
   openapi_generator_annotations: ^4.0.0
-  uuid: 3.0.6
-  image: 3.2.0
+  uuid: ^3.0.6
+  image: ^3.2.0
   shared_preferences: ^2.0.15
   carousel_slider: ^4.1.1
   geolocator: ^9.0.1
@@ -40,10 +40,14 @@ dependencies:
   url_launcher: ^6.1.5
   image_gallery_saver: ^1.7.1
   intl: ^0.17.0
-  cached_network_image: 3.2.2
+  cached_network_image: ^3.2.2
   collection: ^1.16.0
   fl_chart: ^0.55.2
   flex_color_scheme: ^6.0.1
+  pytorch_mobile_v2:
+    git:
+      url: https://github.com/fungid-app/flutter_pytorch_mobile
+      ref: master # branch name
 
 dev_dependencies:
   flutter_test:
@@ -69,4 +73,6 @@ dev_dependencies:
 flutter:
   assets:
     - assets/db/app.sqlite3
+    - assets/models/
+
   uses-material-design: true

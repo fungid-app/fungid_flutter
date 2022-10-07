@@ -75,8 +75,10 @@ class ViewObservationBloc
     Emitter<ViewObservationState> emit,
   ) async {
     await _loadPredictions(
-        () async =>
-            await predictionsRepository.getNewPredictions(state.observation!),
+        () async => await predictionsRepository.getNewOnlinePredictions(
+              state.observation!,
+              // null,
+            ),
         emit);
   }
 
@@ -85,8 +87,10 @@ class ViewObservationBloc
     Emitter<ViewObservationState> emit,
   ) async {
     await _loadPredictions(
-        () async =>
-            await predictionsRepository.getPredictions(state.observation!),
+        () async => await predictionsRepository.getNewOnlinePredictions(
+              state.observation!,
+              // null,
+            ),
         emit);
   }
 
