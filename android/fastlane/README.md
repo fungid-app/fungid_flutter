@@ -39,10 +39,10 @@ Runs all the tests
 
 
 
-### android deploy
+### android release
 
 ```sh
-[bundle exec] fastlane android deploy
+[bundle exec] fastlane android release
 ```
 
 Deploy a new version to the Google Play
