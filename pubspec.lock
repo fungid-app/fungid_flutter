@@ -975,15 +975,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.2.0"
-  pytorch_mobile_v2:
+  pytorch_mobile:
     dependency: "direct main"
     description:
-      path: "."
-      ref: master
-      resolved-ref: d37a9217367f627a6c5e74c73dff38d2a5579f0e
-      url: "https://github.com/fungid-app/flutter_pytorch_mobile"
-    source: git
-    version: "0.0.1"
+      name: pytorch_mobile
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.2"
   quiver:
     dependency: transitive
     description:
@@ -1347,5 +1345,5 @@ packages:
     source: hosted
     version: "3.1.1"
 sdks:
-  dart: ">=2.18.2 <3.0.0"
+  dart: ">=2.18.0 <3.0.0"
   flutter: ">=3.3.0"

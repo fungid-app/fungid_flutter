@@ -8,7 +8,6 @@ import 'package:fungid_flutter/domain/species.dart';
 import 'package:fungid_flutter/repositories/predictions_repository.dart';
 import 'package:fungid_flutter/repositories/species_repository.dart';
 import 'package:fungid_flutter/repositories/user_observation_repository.dart';
-import 'package:fungid_flutter/utils/internet.dart';
 
 part 'view_prediction_event.dart';
 part 'view_prediction_state.dart';

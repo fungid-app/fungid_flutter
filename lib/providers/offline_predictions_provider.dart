@@ -4,8 +4,8 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:fungid_flutter/domain/observations.dart';
 import 'package:fungid_flutter/domain/predictions.dart';
-import 'package:pytorch_mobile_v2/model.dart';
-import 'package:pytorch_mobile_v2/pytorch_mobile_v2.dart';
+import 'package:pytorch_mobile/model.dart';
+import 'package:pytorch_mobile/pytorch_mobile.dart';
 
 class OfflinePredictionsProvider {
   final String _modelPath;
