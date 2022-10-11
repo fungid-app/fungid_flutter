@@ -7,6 +7,7 @@ part of 'serializers.dart';
 // **************************************************************************
 
 Serializers _$serializers = (new Serializers().toBuilder()
+      ..add(ClassifierVersion.serializer)
       ..add(FullPrediction.serializer)
       ..add(FullPredictions.serializer)
       ..add(GbifObservation.serializer)

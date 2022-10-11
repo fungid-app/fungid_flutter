@@ -59,13 +59,16 @@ Predictions _$PredictionsFromJson(Map<String, dynamic> json) => $checkedCreate(
                   : InferredData.fromJson(v as Map<String, dynamic>)),
           predictionType: $checkedConvert('prediction_type',
               (v) => $enumDecodeNullable(_$PredictionTypeEnumMap, v)),
+          modelVersion:
+              $checkedConvert('model_version', (v) => (v ?? "0.4.1") as String),
         );
         return val;
       },
       fieldKeyMap: const {
         'observationID': 'observation_i_d',
         'dateCreated': 'date_created',
-        'predictionType': 'prediction_type'
+        'predictionType': 'prediction_type',
+        'modelVersion': 'model_version'
       },
     );
 
@@ -76,6 +79,7 @@ Map<String, dynamic> _$PredictionsToJson(Predictions instance) =>
       'date_created': instance.dateCreated.toIso8601String(),
       'inferred': instance.inferred,
       'prediction_type': _$PredictionTypeEnumMap[instance.predictionType],
+      'model_version': instance.modelVersion,
     };
 
 const _$PredictionTypeEnumMap = {

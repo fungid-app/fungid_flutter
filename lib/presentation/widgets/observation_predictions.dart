@@ -5,70 +5,148 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fungid_flutter/domain/observations.dart';
 import 'package:fungid_flutter/domain/predictions.dart';
 import 'package:fungid_flutter/domain/species.dart';
-import 'package:fungid_flutter/presentation/bloc/view_observation_bloc.dart';
+import 'package:fungid_flutter/presentation/bloc/view_prediction_bloc.dart';
 import 'package:fungid_flutter/presentation/pages/view_species.dart';
 import 'package:fungid_flutter/presentation/widgets/species_image.dart';
+import 'package:fungid_flutter/repositories/predictions_repository.dart';
+import 'package:fungid_flutter/repositories/species_repository.dart';
+import 'package:fungid_flutter/repositories/user_observation_repository.dart';
 
 class ObservationPredictionsView extends StatelessWidget {
-  final UserObservation observation;
+  final String observationID;
 
   const ObservationPredictionsView({
     Key? key,
-    required this.observation,
+    required this.observationID,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final status =
-        context.select((ViewObservationBloc bloc) => bloc.state.status);
+    return BlocProvider(
+      create: (context) => ViewPredictionBloc(
+        observationID: observationID,
+        predictionsRepository: context.read<PredictionsRepository>(),
+        observationRepository: context.read<UserObservationsRepository>(),
+        speciesRepository: context.read<SpeciesRepository>(),
+      )..add(const ViewPredictionSubscriptionRequested()),
+      child: BlocListener<ViewPredictionBloc, ViewPredictionState>(
+        listenWhen: (previous, current) =>
+            previous.status != current.status &&
+            current.status == ViewPredictionStatus.success &&
+            current.observation != null &&
+            current.predictions == null,
+        listener: (context, state) => context.read<ViewPredictionBloc>().add(
+              const ViewPredictionGetPredctions(),
+            ),
+        child: const ViewPredictionList(),
+      ),
+    );
+  }
+}
 
-    var icon = status == ViewObservationStatus.predictionsLoading
-        ? null
-        : IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () {
-              context.read<ViewObservationBloc>().add(
-                    const ViewObservationRefreshPredctions(),
-                  );
-            },
-          );
+enum Menu { edit, delete }
+
+class ViewPredictionList extends StatelessWidget {
+  const ViewPredictionList({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final status =
+        context.select((ViewPredictionBloc bloc) => bloc.state.status);
+    final observation =
+        context.select((ViewPredictionBloc bloc) => bloc.state.observation);
+
+    // var icon = status == ViewPredictionStatus.predictionsLoading
+    //     ? null
+    //     : IconButton(
+    //         icon: const Icon(Icons.refresh),
+    //         onPressed: () {
+    //           context.read<ViewPredictionBloc>().add(
+    //                 const ViewPredictionRefreshPredctions(),
+    //               );
+    //         },
+    //       );
 
     var header = ListTile(
-        minLeadingWidth: 0,
-        leading: const Icon(Icons.batch_prediction_sharp),
-        title: Text(
-          "Predictions",
-          style: Theme.of(context).textTheme.headline5,
-        ),
-        trailing: icon);
+      minLeadingWidth: 0,
+      leading: const Icon(Icons.batch_prediction_sharp),
+      title: Text(
+        "Predictions",
+        style: Theme.of(context).textTheme.headline5,
+      ),
+      // trailing: icon,
+    );
+
+    if (observation == null) {
+      return Column(
+        children: [
+          header,
+          const Expanded(
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          ),
+        ],
+      );
+    }
 
     final predictions =
-        context.select((ViewObservationBloc bloc) => bloc.state.predictions);
+        context.select((ViewPredictionBloc bloc) => bloc.state.predictions);
 
-    var isStale = (observation.lastUpdated ?? DateTime.now())
-        .subtract(
-          const Duration(seconds: 1),
-        )
-        .isAfter(predictions?.dateCreated ?? DateTime.now());
+    ListTile? infoTile = getInfoTile(observation, predictions, context);
 
     return Column(
       children: [
         header,
-        !isStale
-            ? const SizedBox.shrink()
-            : ListTile(
-                leading: const Icon(Icons.warning),
-                trailing: const Icon(Icons.refresh),
-                title: const Text("Predictions are out of date"),
-                subtitle: const Text("Tap to refresh"),
-                onTap: () => context
-                    .read<ViewObservationBloc>()
-                    .add(const ViewObservationRefreshPredctions()),
-              ),
+        infoTile ?? const SizedBox.shrink(),
         Expanded(
           child: _getPredictionsBody(context, observation),
         ),
       ],
+    );
+  }
+
+  ListTile? getInfoTile(UserObservation observation, Predictions? predictions,
+      BuildContext context) {
+    // if (context.select((ViewPredictionBloc bloc) => bloc.state.isStale)) {
+    //   return _buildWarningTile(
+    //     "These predictions are stale.",
+    //     "Tap to refresh",
+    //     context,
+    //   );
+    // }
+
+    if (predictions?.predictionType == PredictionType.offline) {
+      return _buildWarningTile(
+        "These predictions were generated offline.",
+        "Tap to generate better predictions.",
+        context,
+      );
+    }
+
+    if (!context.select(
+        (ViewPredictionBloc bloc) => bloc.state.isCurrentModelVersion)) {
+      return _buildWarningTile(
+        "There is a newer model available.",
+        "Tap to generate better predictions.",
+        context,
+      );
+    }
+
+    return null;
+  }
+
+  ListTile _buildWarningTile(
+      String title, String subtitle, BuildContext context) {
+    return ListTile(
+      leading: const Icon(Icons.warning),
+      trailing: const Icon(Icons.refresh),
+      title: Text(title),
+      dense: true,
+      subtitle: Text(subtitle),
+      onTap: () => context
+          .read<ViewPredictionBloc>()
+          .add(const ViewPredictionRefreshPredctions()),
     );
   }
 
@@ -77,22 +155,22 @@ class ObservationPredictionsView extends StatelessWidget {
     UserObservation observation,
   ) {
     final status =
-        context.select((ViewObservationBloc bloc) => bloc.state.status);
+        context.select((ViewPredictionBloc bloc) => bloc.state.status);
 
-    if (status == ViewObservationStatus.predictionsLoading) {
+    if (status == ViewPredictionStatus.predictionsLoading) {
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (status == ViewObservationStatus.predictionsFailed) {
+    if (status == ViewPredictionStatus.predictionsFailed) {
       var errorMessage = context
-              .select((ViewObservationBloc bloc) => bloc.state.errorMessage) ??
+              .select((ViewPredictionBloc bloc) => bloc.state.errorMessage) ??
           "Error getting predictions";
 
       return Text(errorMessage);
     }
 
     final predictions =
-        context.select((ViewObservationBloc bloc) => bloc.state.predictions);
+        context.select((ViewPredictionBloc bloc) => bloc.state.predictions);
 
     if (predictions == null) {
       return ListTile(
@@ -100,13 +178,13 @@ class ObservationPredictionsView extends StatelessWidget {
         title: const Text("No predictions available"),
         subtitle: const Text("Tap to generate"),
         onTap: () => context
-            .read<ViewObservationBloc>()
-            .add(const ViewObservationRefreshPredctions()),
+            .read<ViewPredictionBloc>()
+            .add(const ViewPredictionRefreshPredctions()),
       );
     }
 
     final imageMap =
-        context.select((ViewObservationBloc bloc) => bloc.state.imageMap) ?? {};
+        context.select((ViewPredictionBloc bloc) => bloc.state.imageMap) ?? {};
 
     return ListView.separated(
       separatorBuilder: (BuildContext context, int index) => const Divider(

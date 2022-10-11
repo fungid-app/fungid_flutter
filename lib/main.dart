@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -21,22 +22,29 @@ import 'firebase_options.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io' as io;
 
-const String _dbVersion = '0.0.2';
+const String _dbVersion = '0.4.2';
 
 Future<void> main() async {
   runZonedGuarded<Future<void>>(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
 
-      await setupFirebase();
+      var responses = await Future.wait<dynamic>([
+        setupFirebase(),
+        getObservationsApi(),
+        getOnlinePredictions(),
+        getOfflinePredictions(),
+        getPredictions(),
+        getSpeciesDb()
+      ]);
 
       bootstrap(
-        observationsProvider: await getObservationsApi(),
-        onlinePredictionsProvider: getOnlinePredictions(),
-        offlinePredictionsProvider: await getOfflinePredictions(),
         imageProvider: UserObservationImageFileSystemProvider(),
-        savedPredictionsProvider: await getPredictions(),
-        speciesProvider: await getSpeciesDb(),
+        observationsProvider: responses[1],
+        onlinePredictionsProvider: responses[2],
+        offlinePredictionsProvider: responses[3],
+        savedPredictionsProvider: responses[4],
+        speciesProvider: responses[5],
       );
     },
     (error, stack) =>
@@ -79,10 +87,13 @@ Future<SpeciesLocalDatabaseProvider> getSpeciesDb() async {
 
     try {
       if (_dbVersion != await db.getDbVersion()) {
+        log('Database version mismatch, reloading');
         loadDb = true;
         db.destroy();
       }
     } catch (e, stacktrace) {
+      log('Error loading database version, reloading',
+          error: e, stackTrace: stacktrace);
       loadDb = true;
       db.destroy();
 
@@ -97,19 +108,23 @@ Future<SpeciesLocalDatabaseProvider> getSpeciesDb() async {
   // Only copy if the database doesn't exist
   if (loadDb) {
     // Load database from asset and copy
+    log("Loading database from asset and copying to $p");
     ByteData data =
         await rootBundle.load(path.join('assets', 'db/app.sqlite3'));
     List<int> bytes =
         data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
 
+    log('Database ${bytes.length} bytes loaded');
     // Save copied asset to documents
     await io.File(p).writeAsBytes(bytes);
+
+    log('Database saved to $p');
 
     var db = DatabaseHandler(
       dbPath: p,
     );
 
-    db.setDbVersion(_dbVersion);
+    await db.setDbVersion(_dbVersion);
   }
 
   var db = DatabaseHandler(
@@ -121,13 +136,13 @@ Future<SpeciesLocalDatabaseProvider> getSpeciesDb() async {
 
 Future<OfflinePredictionsProvider> getOfflinePredictions() async {
   return await OfflinePredictionsProvider.create(
-    'assets/models/mobile-image-model.pth',
+    'assets/models/mobile-image-model.pt',
     'assets/models/labels.csv',
   );
 }
 
-OnlinePredictionsProvider getOnlinePredictions() {
-  final onlinePredictionsProvider = OnlinePredictionsProvider(
+Future<OnlinePredictionsProvider> getOnlinePredictions() async {
+  final onlinePredictionsProvider = await OnlinePredictionsProvider.create(
     FungidApi(
       dio: Dio(BaseOptions(
         // Production
@@ -152,6 +167,7 @@ OnlinePredictionsProvider getOnlinePredictions() {
       ],
     ),
   );
+
   return onlinePredictionsProvider;
 }
 

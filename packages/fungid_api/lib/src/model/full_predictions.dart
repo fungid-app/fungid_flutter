@@ -16,6 +16,7 @@ part 'full_predictions.g.dart';
 /// * [predictions] 
 /// * [date] 
 /// * [inferred] 
+/// * [version] 
 abstract class FullPredictions implements Built<FullPredictions, FullPredictionsBuilder> {
     @BuiltValueField(wireName: r'predictions')
     BuiltList<FullPrediction> get predictions;
@@ -25,6 +26,9 @@ abstract class FullPredictions implements Built<FullPredictions, FullPredictions
 
     @BuiltValueField(wireName: r'inferred')
     InferredData get inferred;
+
+    @BuiltValueField(wireName: r'version')
+    String get version;
 
     FullPredictions._();
 
@@ -60,6 +64,10 @@ class _$FullPredictionsSerializer implements StructuredSerializer<FullPrediction
             ..add(r'inferred')
             ..add(serializers.serialize(object.inferred,
                 specifiedType: const FullType(InferredData)));
+        result
+            ..add(r'version')
+            ..add(serializers.serialize(object.version,
+                specifiedType: const FullType(String)));
         return result;
     }
 
@@ -89,6 +97,11 @@ class _$FullPredictionsSerializer implements StructuredSerializer<FullPrediction
                     final valueDes = serializers.deserialize(value,
                         specifiedType: const FullType(InferredData)) as InferredData;
                     result.inferred.replace(valueDes);
+                    break;
+                case r'version':
+                    final valueDes = serializers.deserialize(value,
+                        specifiedType: const FullType(String)) as String;
+                    result.version = valueDes;
                     break;
             }
         }

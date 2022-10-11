@@ -2,6 +2,7 @@
 README.md
 analysis_options.yaml
 doc/ClassifierApi.md
+doc/ClassifierVersion.md
 doc/DefaultApi.md
 doc/FullPrediction.md
 doc/FullPredictions.md
@@ -30,6 +31,7 @@ lib/src/auth/basic_auth.dart
 lib/src/auth/bearer_auth.dart
 lib/src/auth/oauth.dart
 lib/src/date_serializer.dart
+lib/src/model/classifier_version.dart
 lib/src/model/date.dart
 lib/src/model/full_prediction.dart
 lib/src/model/full_predictions.dart
@@ -45,3 +47,4 @@ lib/src/model/species.dart
 lib/src/model/validation_error.dart
 lib/src/serializers.dart
 pubspec.yaml
+test/classifier_version_test.dart

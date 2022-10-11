@@ -13,18 +13,25 @@ class _$FullPredictions extends FullPredictions {
   final DateTime date;
   @override
   final InferredData inferred;
+  @override
+  final String version;
 
   factory _$FullPredictions([void Function(FullPredictionsBuilder)? updates]) =>
       (new FullPredictionsBuilder()..update(updates))._build();
 
   _$FullPredictions._(
-      {required this.predictions, required this.date, required this.inferred})
+      {required this.predictions,
+      required this.date,
+      required this.inferred,
+      required this.version})
       : super._() {
     BuiltValueNullFieldError.checkNotNull(
         predictions, r'FullPredictions', 'predictions');
     BuiltValueNullFieldError.checkNotNull(date, r'FullPredictions', 'date');
     BuiltValueNullFieldError.checkNotNull(
         inferred, r'FullPredictions', 'inferred');
+    BuiltValueNullFieldError.checkNotNull(
+        version, r'FullPredictions', 'version');
   }
 
   @override
@@ -41,13 +48,16 @@ class _$FullPredictions extends FullPredictions {
     return other is FullPredictions &&
         predictions == other.predictions &&
         date == other.date &&
-        inferred == other.inferred;
+        inferred == other.inferred &&
+        version == other.version;
   }
 
   @override
   int get hashCode {
     return $jf($jc(
-        $jc($jc(0, predictions.hashCode), date.hashCode), inferred.hashCode));
+        $jc($jc($jc(0, predictions.hashCode), date.hashCode),
+            inferred.hashCode),
+        version.hashCode));
   }
 
   @override
@@ -55,7 +65,8 @@ class _$FullPredictions extends FullPredictions {
     return (newBuiltValueToStringHelper(r'FullPredictions')
           ..add('predictions', predictions)
           ..add('date', date)
-          ..add('inferred', inferred))
+          ..add('inferred', inferred)
+          ..add('version', version))
         .toString();
   }
 }
@@ -79,6 +90,10 @@ class FullPredictionsBuilder
       _$this._inferred ??= new InferredDataBuilder();
   set inferred(InferredDataBuilder? inferred) => _$this._inferred = inferred;
 
+  String? _version;
+  String? get version => _$this._version;
+  set version(String? version) => _$this._version = version;
+
   FullPredictionsBuilder() {
     FullPredictions._defaults(this);
   }
@@ -89,6 +104,7 @@ class FullPredictionsBuilder
       _predictions = $v.predictions.toBuilder();
       _date = $v.date;
       _inferred = $v.inferred.toBuilder();
+      _version = $v.version;
       _$v = null;
     }
     return this;
@@ -116,7 +132,9 @@ class FullPredictionsBuilder
               predictions: predictions.build(),
               date: BuiltValueNullFieldError.checkNotNull(
                   date, r'FullPredictions', 'date'),
-              inferred: inferred.build());
+              inferred: inferred.build(),
+              version: BuiltValueNullFieldError.checkNotNull(
+                  version, r'FullPredictions', 'version'));
     } catch (_) {
       late String _$failedField;
       try {

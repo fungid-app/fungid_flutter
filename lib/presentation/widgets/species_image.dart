@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:fungid_flutter/domain/species.dart';
@@ -31,7 +29,6 @@ class SpeciesImageDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    log("Image Url: ${image!.fungidUrl}");
     return CachedNetworkImage(
       fit: fit,
       imageUrl: image!.fungidUrl,

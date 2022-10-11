@@ -12,6 +12,7 @@ import 'package:built_value/iso_8601_date_time_serializer.dart';
 import 'package:fungid_api/src/date_serializer.dart';
 import 'package:fungid_api/src/model/date.dart';
 
+import 'package:fungid_api/src/model/classifier_version.dart';
 import 'package:fungid_api/src/model/full_prediction.dart';
 import 'package:fungid_api/src/model/full_predictions.dart';
 import 'package:fungid_api/src/model/gbif_observation.dart';
@@ -28,6 +29,7 @@ import 'package:fungid_api/src/model/validation_error.dart';
 part 'serializers.g.dart';
 
 @SerializersFor([
+  ClassifierVersion,
   FullPrediction,
   FullPredictions,
   GbifObservation,

@@ -19,18 +19,6 @@ class ViewObservationEdit extends ViewObservationEvent {
   const ViewObservationEdit();
 }
 
-class ViewObservationRefreshPredctions extends ViewObservationEvent {
-  const ViewObservationRefreshPredctions();
-}
-
-class ViewObservationGetPredctions extends ViewObservationEvent {
-  const ViewObservationGetPredctions();
-}
-
-class ViewObservationSave extends ViewObservationEvent {
-  const ViewObservationSave();
-}
-
 class ViewObservationDelete extends ViewObservationEvent {
   const ViewObservationDelete();
 }

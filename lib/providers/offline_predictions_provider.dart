@@ -1,14 +1,18 @@
+import 'dart:developer';
 import 'dart:io';
 
+import 'package:flutter/services.dart';
 import 'package:fungid_flutter/domain/observations.dart';
 import 'package:fungid_flutter/domain/predictions.dart';
 import 'package:pytorch_mobile_v2/model.dart';
+import 'package:pytorch_mobile_v2/pytorch_mobile_v2.dart';
 
 class OfflinePredictionsProvider {
   final String _modelPath;
   final String _labelPath;
   List<String>? _labels;
   Model? _imageModel;
+  String currentVersion = "0.4.1";
 
   OfflinePredictionsProvider._({
     required String modelPath,
@@ -32,44 +36,58 @@ class OfflinePredictionsProvider {
   }
 
   Future<void> _init() async {
-    // log('Loading model from $_modelPath');
-    // _imageModel = await PyTorchMobile.loadModel(_modelPath);
-    // log('Model loaded');
-    // File labelFile = File(_labelPath);
-    // if (!await labelFile.exists()) {
-    //   throw Exception('Image classifier label file does not exist');
-    // }
-    // _labels = await labelFile.readAsLines();
+    log('Loading model from $_modelPath');
+    try {
+      await Future.wait([
+        PyTorchMobile.loadModel(_modelPath),
+        rootBundle.loadString(_labelPath),
+      ]).then((results) {
+        _imageModel = results[0] as Model;
+        log('Model loaded');
+        _labels = (results[1] as String).split('\n');
+        log('Found ${_labels!.length} labels');
+      });
+    } catch (e) {
+      log('Error loading model: $e');
+    }
   }
 
-  Future<List<double>?> getImagePrediction(
+  Future<List<dynamic>?> getImagePrediction(
     String imgPath,
-  ) {
+  ) async {
     File imgFile = File(imgPath);
-    return _imageModel!.getImagePredictionList(imgFile, 385, 385)
-        as Future<List<double>?>;
+    return await _imageModel!.getImagePredictionList(imgFile, 384, 384);
   }
 
   Future<List<double>> getImagesPrediction(
     List<UserObservationImage> images,
   ) async {
     var results = await Future.wait(images.map(
-      (img) async => getImagePrediction(img.filename),
+      (img) => getImagePrediction(img.filename),
     ));
 
-    var validResults = results.whereType<List<double>>();
-
-    List<double> combinedResults = [];
-
-    for (int i = 0; i < validResults.first.length; i++) {
-      var sum = 0.0;
-      for (var result in validResults) {
-        sum += result[i];
-      }
-      combinedResults.add(sum / validResults.length);
+    if (results.length != images.length) {
+      throw Exception('Results length does not match images length');
     }
 
-    return combinedResults;
+    List<double> combinedResults = [];
+    double maxScore = 0.0;
+
+    for (int i = 0; i < results.first!.length; i++) {
+      var total = 0.0;
+
+      for (var result in results) {
+        total += result![i];
+      }
+
+      if (maxScore < total) {
+        maxScore = total;
+      }
+
+      combinedResults.add(total);
+    }
+
+    return combinedResults.map((e) => e / results.length).toList();
   }
 
   List<Prediction> _makePredictions(
@@ -90,15 +108,17 @@ class OfflinePredictionsProvider {
         localProb = localProb * 0.1;
       }
 
-      predictions.add(Prediction(
-        species: _labels![i],
-        probability: probability,
-        localProbability: localProb,
-        imageScore: null,
-        isLocal: null,
-        localScore: null,
-        tabScore: null,
-      ));
+      if (probability > 0.001) {
+        predictions.add(Prediction(
+          species: _labels![i],
+          probability: probability,
+          localProbability: localProb,
+          imageScore: null,
+          isLocal: null,
+          localScore: null,
+          tabScore: null,
+        ));
+      }
     }
 
     predictions.sort((a, b) => b.probability.compareTo(a.probability));
@@ -120,6 +140,7 @@ class OfflinePredictionsProvider {
       dateCreated: DateTime.now().toUtc(),
       inferred: null,
       predictionType: PredictionType.offline,
+      modelVersion: currentVersion,
     );
   }
 }

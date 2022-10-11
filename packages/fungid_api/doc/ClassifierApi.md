@@ -13,6 +13,7 @@ Method | HTTP request | Description
 [**evaluateImageClassifierClassifierImagePut**](ClassifierApi.md#evaluateimageclassifierclassifierimageput) | **PUT** /classifier/image | Evaluate Image Classifier
 [**evaluateLocationClassifierClassifierLocationGet**](ClassifierApi.md#evaluatelocationclassifierclassifierlocationget) | **GET** /classifier/location | Evaluate Location Classifier
 [**evaluateTabularClassifierClassifierTabularGet**](ClassifierApi.md#evaluatetabularclassifierclassifiertabularget) | **GET** /classifier/tabular | Evaluate Tabular Classifier
+[**getVersionClassifierVersionGet**](ClassifierApi.md#getversionclassifierversionget) | **GET** /classifier/version | Get Version
 
 
 # **evaluateFullClassifierClassifierFullPut**
@@ -179,6 +180,43 @@ Name | Type | Description  | Notes
 ### Return type
 
 **BuiltMap&lt;String, num&gt;**
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **getVersionClassifierVersionGet**
+> ClassifierVersion getVersionClassifierVersionGet()
+
+Get Version
+
+### Example
+```dart
+import 'package:fungid_api/api.dart';
+
+final api = FungidApi().getClassifierApi();
+
+try {
+    final response = api.getVersionClassifierVersionGet();
+    print(response);
+} catch on DioError (e) {
+    print('Exception when calling ClassifierApi->getVersionClassifierVersionGet: $e\n');
+}
+```
+
+### Parameters
+This endpoint does not need any parameter.
+
+### Return type
+
+[**ClassifierVersion**](ClassifierVersion.md)
 
 ### Authorization
 

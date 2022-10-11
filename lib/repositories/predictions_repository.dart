@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:fungid_flutter/domain/observations.dart';
 import 'package:fungid_flutter/domain/predictions.dart';
 import 'package:fungid_flutter/providers/offline_predictions_provider.dart';
@@ -27,11 +29,6 @@ class PredictionsRepository {
     return preds;
   }
 
-  Future<void> deleteOnlinePredictions(String id) async {
-    // Delete old images
-    return _savedPredictionsProvider.deletePredictions(id);
-  }
-
   Future<Predictions> getNewOnlinePredictions(
       UserObservation observation) async {
     var preds = await _onlinePredictionsProvider.getPredictions(
@@ -46,19 +43,20 @@ class PredictionsRepository {
     return preds;
   }
 
-  Future<Predictions> getOfflinePredictions(UserObservation observation) async {
+  Future<Predictions> getOfflinePredictions(
+    UserObservation observation,
+    Set<String>? localSpecies,
+  ) async {
     var preds = _savedPredictionsProvider.getPredictions(observation.id);
 
     if (preds == null) {
-      return await getNewOnlinePredictions(observation);
+      return await getNewOfflinePredictions(
+        observation,
+        localSpecies,
+      );
     }
 
     return preds;
-  }
-
-  Future<void> deleteOfflinePredictions(String id) async {
-    // Delete old images
-    return _savedPredictionsProvider.deletePredictions(id);
   }
 
   Future<Predictions> getNewOfflinePredictions(
@@ -74,5 +72,22 @@ class PredictionsRepository {
 
     await _savedPredictionsProvider.savePredictions(preds);
     return preds;
+  }
+
+  bool isCurrentVersion(Predictions preds) {
+    return preds.predictionType == PredictionType.offline
+        ? _isCurrentOfflineVersion(preds.modelVersion)
+        : _isCurrentOnlineVersion(preds.modelVersion);
+  }
+
+  bool _isCurrentOnlineVersion(String version) {
+    var curVersion = _onlinePredictionsProvider.currentVersion;
+    log('Current online version: $curVersion vs $version');
+    return version == (curVersion ?? version);
+  }
+
+  bool _isCurrentOfflineVersion(String version) {
+    var curVersion = _offlinePredictionsProvider.currentVersion;
+    return version == curVersion;
   }
 }

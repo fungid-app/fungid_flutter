@@ -14,6 +14,7 @@ export 'package:fungid_api/src/api/default_api.dart';
 export 'package:fungid_api/src/api/observations_api.dart';
 export 'package:fungid_api/src/api/taxonomy_api.dart';
 
+export 'package:fungid_api/src/model/classifier_version.dart';
 export 'package:fungid_api/src/model/full_prediction.dart';
 export 'package:fungid_api/src/model/full_predictions.dart';
 export 'package:fungid_api/src/model/gbif_observation.dart';

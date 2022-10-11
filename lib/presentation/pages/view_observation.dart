@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fungid_flutter/presentation/bloc/view_observation_bloc.dart';
 import 'package:fungid_flutter/presentation/pages/edit_observation.dart';
+import 'package:fungid_flutter/presentation/widgets/connectivity_warning.dart';
 import 'package:fungid_flutter/presentation/widgets/observation_image_carousel.dart';
 import 'package:fungid_flutter/presentation/widgets/observation_predictions.dart';
-import 'package:fungid_flutter/repositories/predictions_repository.dart';
-import 'package:fungid_flutter/repositories/species_repository.dart';
 import 'package:fungid_flutter/repositories/user_observation_repository.dart';
 
 class ViewObservationPage extends StatelessWidget {
@@ -20,8 +19,6 @@ class ViewObservationPage extends StatelessWidget {
             create: (context) => ViewObservationBloc(
               id: id,
               observationRepository: context.read<UserObservationsRepository>(),
-              predictionsRepository: context.read<PredictionsRepository>(),
-              speciesRepository: context.read<SpeciesRepository>(),
             )..add(const ViewObservationSubscriptionRequested()),
           ),
         ],
@@ -48,16 +45,6 @@ class ViewObservationPage extends StatelessWidget {
               previous.status != current.status &&
               current.status == ViewObservationStatus.deleted,
           listener: (context, state) => Navigator.of(context).pop(),
-        ),
-        BlocListener<ViewObservationBloc, ViewObservationState>(
-          listenWhen: (previous, current) =>
-              previous.status != current.status &&
-              current.status == ViewObservationStatus.success &&
-              current.observation != null &&
-              current.predictions == null,
-          listener: (context, state) => context.read<ViewObservationBloc>().add(
-                const ViewObservationGetPredctions(),
-              ),
         ),
       ],
       child: const ViewObservationView(),
@@ -129,6 +116,7 @@ class ViewObservationView extends StatelessWidget {
       ),
       body: Column(
         children: [
+          const ConnectivityWarning(),
           Padding(
             padding: const EdgeInsets.all(10),
             child: ObservationImageCarousel(
@@ -157,7 +145,7 @@ class ViewObservationView extends StatelessWidget {
           ),
           Expanded(
             child: ObservationPredictionsView(
-              observation: observation,
+              observationID: observation.id,
             ),
           ),
         ],

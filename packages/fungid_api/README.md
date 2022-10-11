@@ -72,6 +72,7 @@ Class | Method | HTTP request | Description
 [*ClassifierApi*](doc/ClassifierApi.md) | [**evaluateImageClassifierClassifierImagePut**](doc/ClassifierApi.md#evaluateimageclassifierclassifierimageput) | **PUT** /classifier/image | Evaluate Image Classifier
 [*ClassifierApi*](doc/ClassifierApi.md) | [**evaluateLocationClassifierClassifierLocationGet**](doc/ClassifierApi.md#evaluatelocationclassifierclassifierlocationget) | **GET** /classifier/location | Evaluate Location Classifier
 [*ClassifierApi*](doc/ClassifierApi.md) | [**evaluateTabularClassifierClassifierTabularGet**](doc/ClassifierApi.md#evaluatetabularclassifierclassifiertabularget) | **GET** /classifier/tabular | Evaluate Tabular Classifier
+[*ClassifierApi*](doc/ClassifierApi.md) | [**getVersionClassifierVersionGet**](doc/ClassifierApi.md#getversionclassifierversionget) | **GET** /classifier/version | Get Version
 [*DefaultApi*](doc/DefaultApi.md) | [**healthcheckHealthcheckGet**](doc/DefaultApi.md#healthcheckhealthcheckget) | **GET** /healthcheck | Healthcheck
 [*ObservationsApi*](doc/ObservationsApi.md) | [**getAllObservationsObservationsGet**](doc/ObservationsApi.md#getallobservationsobservationsget) | **GET** /observations/ | Get All Observations
 [*ObservationsApi*](doc/ObservationsApi.md) | [**getImageByIdObservationsImagesImageIdGet**](doc/ObservationsApi.md#getimagebyidobservationsimagesimageidget) | **GET** /observations/images/{image_id} | Get Image By Id
@@ -85,6 +86,7 @@ Class | Method | HTTP request | Description
 
 ## Documentation For Models
 
+ - [ClassifierVersion](doc/ClassifierVersion.md)
  - [FullPrediction](doc/FullPrediction.md)
  - [FullPredictions](doc/FullPredictions.md)
  - [GbifObservation](doc/GbifObservation.md)

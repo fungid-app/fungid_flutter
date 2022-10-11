@@ -64,6 +64,7 @@ class Predictions extends Equatable {
   final DateTime dateCreated;
   final InferredData? inferred;
   final PredictionType? predictionType;
+  final String modelVersion;
 
   const Predictions({
     required this.observationID,
@@ -71,6 +72,7 @@ class Predictions extends Equatable {
     required this.dateCreated,
     required this.inferred,
     required this.predictionType,
+    required this.modelVersion,
   });
 
   @override
@@ -81,7 +83,11 @@ class Predictions extends Equatable {
 
   Map<String, dynamic> toJson() => _$PredictionsToJson(this);
 
-  factory Predictions.fromApi(api.FullPredictions preds, String observationID) {
+  factory Predictions.fromApi(
+    api.FullPredictions preds,
+    String observationID,
+    String version,
+  ) {
     return Predictions(
       observationID: observationID,
       predictions: preds.predictions
@@ -90,6 +96,7 @@ class Predictions extends Equatable {
       dateCreated: DateTime.now().toUtc(),
       inferred: InferredData.fromApi(preds.inferred),
       predictionType: PredictionType.online,
+      modelVersion: version,
     );
   }
 }
