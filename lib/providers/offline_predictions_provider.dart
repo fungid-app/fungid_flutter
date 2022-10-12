@@ -4,14 +4,14 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:fungid_flutter/domain/observations.dart';
 import 'package:fungid_flutter/domain/predictions.dart';
-import 'package:pytorch_mobile/model.dart';
-import 'package:pytorch_mobile/pytorch_mobile.dart';
+// import 'package:pytorch_mobile/model.dart';
+// import 'package:pytorch_mobile/pytorch_mobile.dart';
 
 class OfflinePredictionsProvider {
   final String _modelPath;
   final String _labelPath;
   List<String>? _labels;
-  Model? _imageModel;
+  // Model? _imageModel;
   String currentVersion = "0.4.1";
 
   OfflinePredictionsProvider._({
@@ -39,12 +39,12 @@ class OfflinePredictionsProvider {
     log('Loading model from $_modelPath');
     try {
       await Future.wait([
-        PyTorchMobile.loadModel(_modelPath),
+        // PyTorchMobile.loadModel(_modelPath),
         rootBundle.loadString(_labelPath),
       ]).then((results) {
-        _imageModel = results[0] as Model;
+        // _imageModel = results[0] as Model;
         log('Model loaded');
-        _labels = (results[1] as String).split('\n');
+        _labels = (results[1]).split('\n');
         log('Found ${_labels!.length} labels');
       });
     } catch (e) {
@@ -55,7 +55,8 @@ class OfflinePredictionsProvider {
   Future<List<dynamic>?> getImagePrediction(
     File img,
   ) async {
-    return await _imageModel!.getImagePredictionList(img, 384, 384);
+    // return await _imageModel!.getImagePredictionList(img, 384, 384);
+    return [];
   }
 
   Future<List<double>> getImagesPrediction(

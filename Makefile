@@ -43,3 +43,8 @@ generate-imagedb-file:
 check-size:
 	flutter clean \
 	&& flutter build appbundle --analyze-size --target-platform android-arm64
+
+direct-install:
+	&& flutter build appbundle \
+	&& bundletool build-apks --bundle=build/app/outputs/bundle/release/app-release.aab --output=build/app/outputs/bundle/release/app-release.apks \
+	&& bundletool install-apks --apks=build/app/outputs/bundle/release/app-release.apks

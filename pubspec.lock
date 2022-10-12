@@ -891,13 +891,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.2.0"
-  pytorch_mobile:
-    dependency: "direct main"
-    description:
-      name: pytorch_mobile
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.2.2"
   rxdart:
     dependency: "direct main"
     description:
