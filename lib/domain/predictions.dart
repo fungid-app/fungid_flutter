@@ -64,7 +64,7 @@ class Predictions extends Equatable {
   final DateTime dateCreated;
   final InferredData? inferred;
   final PredictionType? predictionType;
-  final String modelVersion;
+  final String? modelVersion;
 
   const Predictions({
     required this.observationID,

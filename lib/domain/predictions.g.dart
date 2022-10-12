@@ -59,8 +59,7 @@ Predictions _$PredictionsFromJson(Map<String, dynamic> json) => $checkedCreate(
                   : InferredData.fromJson(v as Map<String, dynamic>)),
           predictionType: $checkedConvert('prediction_type',
               (v) => $enumDecodeNullable(_$PredictionTypeEnumMap, v)),
-          modelVersion:
-              $checkedConvert('model_version', (v) => (v ?? "0.4.1") as String),
+          modelVersion: $checkedConvert('model_version', (v) => v as String?),
         );
         return val;
       },

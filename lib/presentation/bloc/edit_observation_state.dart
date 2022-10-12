@@ -33,7 +33,7 @@ class EditObservationState extends Equatable {
   final DateTime? dateCreated;
   final DateTime? observationDate;
   final DateTime? lastUpdated;
-  final List<UserObservationImage> images;
+  final List<UserObservationImageBase> images;
   final UserObservation? intialObservation;
   final EditObservationStatus status;
   final String? notes;
@@ -50,7 +50,7 @@ class EditObservationState extends Equatable {
     DateTime? dateCreated,
     DateTime? observationDate,
     DateTime? lastUpdated,
-    List<UserObservationImage>? images,
+    List<UserObservationImageBase>? images,
     UserObservation? intialObservation,
     EditObservationStatus? status,
     String? notes,

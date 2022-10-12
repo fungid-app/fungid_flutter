@@ -77,11 +77,13 @@ class OnlinePredictionsProvider {
     num lat,
     num lon,
     List<UserObservationImage> images,
+    Directory imagesDirectory,
   ) async {
     await _ensureCurrentVersion();
 
     final appDir = await getTemporaryDirectory();
-    var files = await _buildFiles(images.map((e) => e.filename), appDir);
+    var files = await _buildFiles(
+        images.map((e) => e.getFilePath(imagesDirectory)), appDir);
 
     var result = await classifierApi!.evaluateFullClassifierClassifierFullPut(
       date: date,

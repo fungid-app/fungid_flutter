@@ -35,16 +35,17 @@ Future<void> main() async {
         getOnlinePredictions(),
         getOfflinePredictions(),
         getPredictions(),
-        getSpeciesDb()
+        getSpeciesDb(),
+        UserObservationImageFileSystemProvider.create()
       ]);
 
       bootstrap(
-        imageProvider: UserObservationImageFileSystemProvider(),
         observationsProvider: responses[1],
         onlinePredictionsProvider: responses[2],
         offlinePredictionsProvider: responses[3],
         savedPredictionsProvider: responses[4],
         speciesProvider: responses[5],
+        imageProvider: responses[6],
       );
     },
     (error, stack) =>

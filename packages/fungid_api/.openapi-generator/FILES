@@ -47,4 +47,3 @@ lib/src/model/species.dart
 lib/src/model/validation_error.dart
 lib/src/serializers.dart
 pubspec.yaml
-test/classifier_version_test.dart

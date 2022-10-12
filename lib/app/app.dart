@@ -3,6 +3,7 @@ import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fungid_flutter/presentation/cubit/internet_cubit.dart';
+import 'package:fungid_flutter/presentation/cubit/observation_image_cubit.dart';
 import 'package:fungid_flutter/repositories/location_repository.dart';
 import 'package:fungid_flutter/repositories/predictions_repository.dart';
 import 'package:fungid_flutter/repositories/species_repository.dart';
@@ -61,8 +62,17 @@ class AppView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => InternetCubit(connectivity: Connectivity()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => InternetCubit(connectivity: Connectivity()),
+        ),
+        BlocProvider(
+          create: (context) => ObservationImageCubit(
+              userObservationsRepository:
+                  RepositoryProvider.of<UserObservationsRepository>(context)),
+        ),
+      ],
       child: MaterialApp(
         title: 'FungID',
         theme: FlexThemeData.light(

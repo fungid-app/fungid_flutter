@@ -53,17 +53,17 @@ class OfflinePredictionsProvider {
   }
 
   Future<List<dynamic>?> getImagePrediction(
-    String imgPath,
+    File img,
   ) async {
-    File imgFile = File(imgPath);
-    return await _imageModel!.getImagePredictionList(imgFile, 384, 384);
+    return await _imageModel!.getImagePredictionList(img, 384, 384);
   }
 
   Future<List<double>> getImagesPrediction(
     List<UserObservationImage> images,
+    Directory imagesDirectory,
   ) async {
     var results = await Future.wait(images.map(
-      (img) => getImagePrediction(img.filename),
+      (img) => getImagePrediction(img.getFile(imagesDirectory)),
     ));
 
     if (results.length != images.length) {
@@ -131,8 +131,9 @@ class OfflinePredictionsProvider {
     DateTime date,
     List<UserObservationImage> images,
     Set<String>? localSpecies,
+    Directory imagesDirectory,
   ) async {
-    var results = await getImagesPrediction(images);
+    var results = await getImagesPrediction(images, imagesDirectory);
 
     return Predictions(
       observationID: observationID,

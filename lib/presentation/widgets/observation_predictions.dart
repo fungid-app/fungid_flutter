@@ -108,13 +108,20 @@ class ViewPredictionList extends StatelessWidget {
 
   ListTile? getInfoTile(UserObservation observation, Predictions? predictions,
       BuildContext context) {
-    // if (context.select((ViewPredictionBloc bloc) => bloc.state.isStale)) {
-    //   return _buildWarningTile(
-    //     "These predictions are stale.",
-    //     "Tap to refresh",
-    //     context,
-    //   );
-    // }
+    final status =
+        context.select((ViewPredictionBloc bloc) => bloc.state.status);
+
+    if (status == ViewPredictionStatus.predictionsLoading) {
+      return null;
+    }
+
+    if (context.select((ViewPredictionBloc bloc) => bloc.state.isStale)) {
+      return _buildWarningTile(
+        "These predictions are stale.",
+        "Tap to refresh",
+        context,
+      );
+    }
 
     if (predictions?.predictionType == PredictionType.offline) {
       return _buildWarningTile(

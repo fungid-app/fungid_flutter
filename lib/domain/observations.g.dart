@@ -79,7 +79,6 @@ UserObservationImage _$UserObservationImageFromJson(
       json,
       ($checkedConvert) {
         final val = UserObservationImage(
-          filename: $checkedConvert('filename', (v) => v as String),
           id: $checkedConvert('id', (v) => v as String),
           dateCreated: $checkedConvert('date_created',
               (v) => v == null ? null : DateTime.parse(v as String)),
@@ -93,6 +92,5 @@ Map<String, dynamic> _$UserObservationImageToJson(
         UserObservationImage instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'filename': instance.filename,
       'date_created': instance.dateCreated.toIso8601String(),
     };

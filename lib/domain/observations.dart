@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:equatable/equatable.dart';
 import 'package:intl/intl.dart';
-import 'package:uuid/uuid.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'observations.g.dart';
@@ -10,24 +9,12 @@ part 'observations.g.dart';
 const maxImages = 10;
 const maxImageSize = 1000;
 
-UserObservation addImageToObservation(
-  UserObservation obs,
-  String imagePath,
-) {
-  obs.images.add(UserObservationImage(
-    filename: imagePath,
-    id: const Uuid().v4(),
-  ));
-
-  return obs;
-}
-
 UserObservation removeImageFromObservation(
   UserObservation obs,
   String imageID,
 ) {
   try {
-    UserObservationImage? image =
+    UserObservationImageBase? image =
         obs.images.firstWhere((element) => element.id == imageID);
 
     obs.images.remove(image);
@@ -130,15 +117,28 @@ class ObservationLocation extends Equatable {
   Map<String, dynamic> toJson() => _$ObservationLocationToJson(this);
 }
 
-@JsonSerializable()
-class UserObservationImage extends Equatable {
+abstract class UserObservationImageBase {
   final String id;
-  final String filename;
   final DateTime dateCreated;
 
-  File getFile() => File(filename);
+  File getFile(Directory directory);
+  String getFilePath(Directory directory);
 
-  UserObservationImage({
+  UserObservationImageBase({
+    required this.id,
+    DateTime? dateCreated,
+  }) : dateCreated = dateCreated ?? DateTime.now().toUtc();
+}
+
+class TempUserObservationImage extends Equatable
+    implements UserObservationImageBase {
+  final String filename;
+  @override
+  final String id;
+  @override
+  final DateTime dateCreated;
+
+  TempUserObservationImage({
     required this.filename,
     required this.id,
     DateTime? dateCreated,
@@ -146,8 +146,50 @@ class UserObservationImage extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
         filename,
+        id,
+        dateCreated,
+      ];
+
+  @override
+  String getFilePath(Directory directory) {
+    return filename;
+  }
+
+  @override
+  File getFile(Directory directory) {
+    return File(getFilePath(directory));
+  }
+}
+
+@JsonSerializable()
+class UserObservationImage extends Equatable
+    implements UserObservationImageBase {
+  @override
+  final String id;
+  @override
+  final DateTime dateCreated;
+
+  UserObservationImage({
+    required this.id,
+    DateTime? dateCreated,
+  }) : dateCreated = dateCreated ?? DateTime.now().toUtc();
+
+  get _filename => '$id.jpg';
+
+  @override
+  String getFilePath(Directory directory) {
+    return directory.path + Platform.pathSeparator + _filename;
+  }
+
+  @override
+  File getFile(Directory directory) {
+    return File(getFilePath(directory));
+  }
+
+  @override
+  List<Object?> get props => [
+        id,
         dateCreated,
       ];
 
@@ -158,12 +200,10 @@ class UserObservationImage extends Equatable {
 
   UserObservationImage copyWith({
     String? id,
-    String? filename,
     DateTime? dateCreated,
   }) {
     return UserObservationImage(
       id: id ?? this.id,
-      filename: filename ?? this.filename,
       dateCreated: dateCreated ?? this.dateCreated,
     );
   }

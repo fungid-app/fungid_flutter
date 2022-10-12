@@ -5,16 +5,20 @@ import 'package:fungid_flutter/domain/predictions.dart';
 import 'package:fungid_flutter/providers/offline_predictions_provider.dart';
 import 'package:fungid_flutter/providers/online_predictions_provider.dart';
 import 'package:fungid_flutter/providers/saved_predictions_provider.dart';
+import 'package:fungid_flutter/providers/user_observation_image_provider.dart';
 
 class PredictionsRepository {
   const PredictionsRepository({
     required SavedPredictionsSharedPrefProvider savedPredictionsProvider,
     required OnlinePredictionsProvider onlinePredictionsProvider,
     required OfflinePredictionsProvider offlinePredictionsProvider,
+    required UserObservationImageFileSystemProvider imageProvider,
   })  : _savedPredictionsProvider = savedPredictionsProvider,
         _onlinePredictionsProvider = onlinePredictionsProvider,
-        _offlinePredictionsProvider = offlinePredictionsProvider;
+        _offlinePredictionsProvider = offlinePredictionsProvider,
+        _imageProvider = imageProvider;
 
+  final UserObservationImageFileSystemProvider _imageProvider;
   final OnlinePredictionsProvider _onlinePredictionsProvider;
   final SavedPredictionsSharedPrefProvider _savedPredictionsProvider;
   final OfflinePredictionsProvider _offlinePredictionsProvider;
@@ -37,6 +41,7 @@ class PredictionsRepository {
       observation.location.lat,
       observation.location.lng,
       observation.images,
+      _imageProvider.storageDirectory,
     );
 
     await _savedPredictionsProvider.savePredictions(preds);
@@ -68,6 +73,7 @@ class PredictionsRepository {
       observation.dateCreated,
       observation.images,
       localSpecies,
+      _imageProvider.storageDirectory,
     );
 
     await _savedPredictionsProvider.savePredictions(preds);
@@ -80,13 +86,13 @@ class PredictionsRepository {
         : _isCurrentOnlineVersion(preds.modelVersion);
   }
 
-  bool _isCurrentOnlineVersion(String version) {
+  bool _isCurrentOnlineVersion(String? version) {
     var curVersion = _onlinePredictionsProvider.currentVersion;
     log('Current online version: $curVersion vs $version');
     return version == (curVersion ?? version);
   }
 
-  bool _isCurrentOfflineVersion(String version) {
+  bool _isCurrentOfflineVersion(String? version) {
     var curVersion = _offlinePredictionsProvider.currentVersion;
     return version == curVersion;
   }

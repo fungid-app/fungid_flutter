@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fungid_flutter/domain/observations.dart';
+import 'package:fungid_flutter/presentation/cubit/observation_image_cubit.dart';
 import 'package:fungid_flutter/presentation/widgets/add_image_sheet.dart';
 import 'package:fungid_flutter/presentation/pages/view_image_page.dart';
 
@@ -12,7 +16,7 @@ class ObservationImageCarousel extends StatelessWidget {
     this.onImageDeleted,
   }) : super(key: key);
 
-  final List<UserObservationImage> images;
+  final List<UserObservationImageBase> images;
   final Function(List<String>)? onImagesAdded;
   final Function(String)? onImageDeleted;
 
@@ -35,11 +39,13 @@ class ObservationImageCarouselView extends StatelessWidget {
   }) : super(key: key);
   final Function(List<String>)? onImagesAdded;
   final Function(String)? onImageDeleted;
-  final List<UserObservationImage> images;
+  final List<UserObservationImageBase> images;
 
   @override
   Widget build(BuildContext context) {
     var imageLen = images.length;
+    Directory imageStorageDirectory = context
+        .select((ObservationImageCubit bloc) => bloc.state.storageDirectory);
 
     var items = (images)
         .map(
@@ -50,7 +56,7 @@ class ObservationImageCarouselView extends StatelessWidget {
                   width: MediaQuery.of(context).size.width,
                   child: GestureDetector(
                       child: Image.file(
-                        image.getFile(),
+                        image.getFile(imageStorageDirectory),
                         fit: BoxFit.cover,
                         cacheWidth: 250,
                       ),

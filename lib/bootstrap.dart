@@ -30,6 +30,7 @@ void bootstrap({
   );
 
   final predictionsRepository = PredictionsRepository(
+    imageProvider: imageProvider,
     savedPredictionsProvider: savedPredictionsProvider,
     onlinePredictionsProvider: onlinePredictionsProvider,
     offlinePredictionsProvider: offlinePredictionsProvider,

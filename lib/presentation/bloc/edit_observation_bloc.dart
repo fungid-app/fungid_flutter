@@ -95,9 +95,9 @@ class EditObservationBloc
 
   void _onEditObservationAddImages(
       EditObservationAddImages event, Emitter<EditObservationState> emit) {
-    List<UserObservationImage> converted = event.images
+    List<TempUserObservationImage> converted = event.images
         .map(
-          (e) => UserObservationImage(filename: e, id: const Uuid().v4()),
+          (e) => TempUserObservationImage(filename: e, id: const Uuid().v4()),
         )
         .toList();
 
@@ -138,13 +138,13 @@ class EditObservationBloc
       location: state.location!,
       dateCreated: state.dateCreated!,
       observationDate: state.observationDate ?? state.dateCreated!,
-      images: state.images,
+      images: const [],
       lastUpdated: DateTime.now().toUtc(),
       notes: state.notes,
     );
 
     try {
-      await observationRepository.saveObservation(observation);
+      await observationRepository.saveObservation(observation, state.images);
       emit(state.copyWith(status: EditObservationStatus.success));
     } catch (e) {
       emit(state.copyWith(status: EditObservationStatus.failure));

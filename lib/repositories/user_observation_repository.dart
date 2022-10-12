@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:fungid_flutter/domain/observations.dart';
 import 'package:fungid_flutter/providers/user_observation_image_provider.dart';
 import 'package:fungid_flutter/providers/user_observation_provider.dart';
@@ -20,27 +22,26 @@ class UserObservationsRepository {
     return _observationsProvider.getObservation(id);
   }
 
-  Future<void> saveObservation(UserObservation obs) async {
+  Future<void> saveObservation(
+    UserObservation obs,
+    List<UserObservationImageBase> tmpImages,
+  ) async {
     var prevObs = getObservation(obs.id);
     List<UserObservationImage> images = [];
 
     // Save new images
-    for (var image in obs.images) {
-      var path = await _imageProvider.saveImage(image);
-      images.add(image.copyWith(filename: path));
+    for (var image in tmpImages) {
+      var img = await _imageProvider.saveImage(image);
+      images.add(img);
     }
-
-    // Using Future.wait froze on ios. Not sure why.
-    // var images = await Future.wait(obs.images.map((img) async {
-    //   var path = await _imageProvider.saveImage(img);
-    //   return img.copyWith(filename: path);
-    // }));
 
     if (prevObs != null) {
       // Delete old images
       for (var img in prevObs.images) {
         if (!obs.images.any((element) => element.id == img.id)) {
-          _imageProvider.deleteImage(img.filename);
+          _imageProvider.deleteImage(
+            img.getFilePath(_imageProvider.storageDirectory),
+          );
         }
       }
     }
@@ -49,6 +50,8 @@ class UserObservationsRepository {
       images: images,
     ));
   }
+
+  Directory get imageStorageDirectory => _imageProvider.storageDirectory;
 
   Future<bool> clearObservations() async {
     return _observationsProvider.clear();
@@ -60,7 +63,9 @@ class UserObservationsRepository {
     // Delete old images
     if (prevObs != null) {
       for (var img in prevObs.images) {
-        _imageProvider.deleteImage(img.filename);
+        _imageProvider.deleteImage(
+          img.getFilePath(_imageProvider.storageDirectory),
+        );
       }
     }
 

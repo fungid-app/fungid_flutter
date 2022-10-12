@@ -3,9 +3,11 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:fungid_flutter/domain/observations.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fungid_flutter/presentation/cubit/observation_image_cubit.dart';
 
 class ViewObservationImagePage extends StatefulWidget {
-  final List<UserObservationImage> images;
+  final List<UserObservationImageBase> images;
   final String selected;
   final Function(String)? onImageDeleted;
 
@@ -57,6 +59,9 @@ class ViewObservationImagePageState extends State<ViewObservationImagePage> {
       );
     }
 
+    var imageStorageDirectory = context
+        .select((ObservationImageCubit bloc) => bloc.state.storageDirectory);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Image ${_current + 1} of ${widget.images.length}'),
@@ -80,7 +85,7 @@ class ViewObservationImagePageState extends State<ViewObservationImagePage> {
                     clipBehavior: Clip.none,
                     maxScale: 10,
                     child: Image.file(
-                      widget.images[index].getFile(),
+                      widget.images[index].getFile(imageStorageDirectory),
                       fit: BoxFit.contain,
                     ),
                   );

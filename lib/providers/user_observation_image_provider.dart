@@ -6,23 +6,22 @@ import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
 
 class UserObservationImageFileSystemProvider {
-  UserObservationImageFileSystemProvider() {
-    _init();
-  }
-  Directory fileDirectory = Directory('');
-
-  // https://stackoverflow.com/questions/55220612/how-to-save-a-text-file-in-external-storage-in-ios-using-flutter
-  void _init() async {
-    fileDirectory = Platform.isAndroid
-        ? await getAndroidDirectory() //FOR ANDROID
-        : await getApplicationSupportDirectory(); //FOR iOS
-
-    if (!fileDirectory.existsSync()) {
-      fileDirectory.createSync(recursive: true);
-    }
-  }
-
   var baseDirectoryName = "FungID";
+  late Directory storageDirectory;
+
+  UserObservationImageFileSystemProvider._();
+
+  static Future<UserObservationImageFileSystemProvider> create() async {
+    var provider = UserObservationImageFileSystemProvider._();
+
+    await provider._init();
+
+    return provider;
+  }
+
+  Future<void> _init() async {
+    storageDirectory = await getDirectory();
+  }
 
   Future<Directory> getAndroidDirectory() async {
     Directory? directory = await getExternalStorageDirectory();
@@ -34,15 +33,34 @@ class UserObservationImageFileSystemProvider {
     }
   }
 
-  Future<String> saveImage(UserObservationImage img) async {
-    String path = "${fileDirectory.path}/${img.id}.jpg";
-    log("Saving image from ${img.filename} to $path");
-    if (path != img.filename) {
-      var file = await File(img.filename).copy(path);
-      await ImageGallerySaver.saveFile(file.path);
+  Future<Directory> getDirectory() async {
+    var fileDirectory = Platform.isAndroid
+        ? await getAndroidDirectory() //FOR ANDROID
+        : await getApplicationSupportDirectory(); //FOR iOS
+
+    if (!fileDirectory.existsSync()) {
+      fileDirectory.createSync(recursive: true);
     }
 
-    return path;
+    return fileDirectory;
+  }
+
+  Future<UserObservationImage> saveImage(UserObservationImageBase img) async {
+    if (img is UserObservationImage) {
+      return img;
+    }
+
+    UserObservationImage image = UserObservationImage(
+      id: img.id,
+      dateCreated: img.dateCreated,
+    );
+
+    var file = await (img.getFile(storageDirectory)).copy(
+      image.getFilePath(storageDirectory),
+    );
+    await ImageGallerySaver.saveFile(file.path);
+
+    return image;
   }
 
   Future<void> deleteImage(String imagePath) async {

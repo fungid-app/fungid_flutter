@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fungid_flutter/domain/observations.dart';
 import 'package:fungid_flutter/presentation/bloc/observation_list_bloc.dart';
+import 'package:fungid_flutter/presentation/cubit/observation_image_cubit.dart';
 import 'package:fungid_flutter/presentation/pages/edit_observation.dart';
 import 'package:fungid_flutter/presentation/pages/view_observation.dart';
 import 'package:fungid_flutter/presentation/widgets/add_image_sheet.dart';
@@ -25,9 +28,11 @@ class ObservationListPage extends StatelessWidget {
 
 class ObservationListView extends StatelessWidget {
   const ObservationListView({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
+    Directory imageStorageDirectory = context
+        .select((ObservationImageCubit bloc) => bloc.state.storageDirectory);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Your Observations'),
@@ -45,8 +50,8 @@ class ObservationListView extends StatelessWidget {
                     shrinkWrap: true,
                     itemCount: state.observations.length,
                     itemBuilder: (BuildContext context, int index) {
-                      return _observationCard(
-                          context, state.observations[index]);
+                      return _observationCard(context,
+                          state.observations[index], imageStorageDirectory);
                     },
                     separatorBuilder: (context, index) => const Divider(),
                   ),
@@ -60,15 +65,21 @@ class ObservationListView extends StatelessWidget {
   }
 }
 
-ListTile _observationCard(BuildContext context, UserObservation observation) {
+ListTile _observationCard(
+  BuildContext context,
+  UserObservation observation,
+  Directory imageStorageDirectory,
+) {
   return ListTile(
     leading: SizedBox(
       width: 60,
-      child: Image.file(
-        observation.images.first.getFile(),
-        fit: BoxFit.cover,
-        cacheWidth: 100,
-      ),
+      child: observation.images.isNotEmpty
+          ? Image.file(
+              observation.images.first.getFile(imageStorageDirectory),
+              fit: BoxFit.cover,
+              cacheWidth: 100,
+            )
+          : const SizedBox.shrink(),
     ),
     minLeadingWidth: 0,
     title: Text(observation.dayObserved()),
