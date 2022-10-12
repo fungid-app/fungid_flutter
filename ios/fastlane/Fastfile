@@ -24,4 +24,9 @@ platform :ios do
     )
     upload_to_testflight
   end
+
+  lane :crashlytics do
+    upload_symbols_to_crashlytics(dsym_path: "./Runner.app.dSYM.zip")
+  end
+
 end

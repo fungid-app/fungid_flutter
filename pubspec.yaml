@@ -1,7 +1,7 @@
 name: fungid_flutter
 description: The App for Fungid.app
 publish_to: 'none'
-version: 0.0.8+8
+version: 0.0.10+10
 
 environment:
   sdk: '>=2.17.5 <3.0.0'
@@ -15,7 +15,6 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_bloc: ^8.0.0
-  google_fonts: ^2.1.0
   json_annotation: ^4.4.0
   path_provider: ^2.0.9
   path: '^1.8.0'
@@ -27,12 +26,10 @@ dependencies:
   carousel_slider: ^4.1.1
   geolocator: ^9.0.1
   geocoding: ^2.0.5
-  google_maps_place_picker_mb: ^2.0.0-mb.22
   google_maps_flutter: ^2.2.0
   rxdart: ^0.27.5
   bloc: ^8.1.0
   dio: '>=4.0.1 <5.0.0'
-  built_value: '>=8.1.0 <9.0.0'
   built_collection: '>=5.1.0 <6.0.0'
   flutter_pretty_dio_logger: '2.0.2'
   firebase_core: ^1.22.0
@@ -41,7 +38,6 @@ dependencies:
   image_gallery_saver: ^1.7.1
   intl: ^0.17.0
   cached_network_image: ^3.2.2
-  collection: ^1.16.0
   fl_chart: ^0.55.2
   flex_color_scheme: ^6.0.1
   connectivity_plus: ^2.3.9
@@ -62,6 +58,9 @@ dev_dependencies:
   flutter_lints: ^2.0.0
   test: ^1.21.4
   freezed: ^2.0.5
+  dependency_validator: ^3.2.2
+  built_value: '>=8.1.0 <9.0.0'
+  collection: ^1.16.0
 
 # flutter_icons:
 #   android: true

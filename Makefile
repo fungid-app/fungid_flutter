@@ -11,18 +11,20 @@ generate-code: get-openapi
 
 generate: generate-icons generate-code 
 
-deploy-beta: clean deploy-android-draft deploy-ios-beta
+deploy-beta: deploy-android-draft deploy-ios-beta
 
 clean:
 	flutter clean
 
 deploy-ios-beta:
-	flutter build ipa \
+	flutter clean \
+	&& flutter build ipa \
 	&& cd ios \
 	&& fastlane ios beta
 
 deploy-android-draft:
-	flutter build appbundle \
+	flutter clean \
+	&& flutter build appbundle \
 	&& cd android \
 	&& fastlane android draft
 
@@ -38,3 +40,6 @@ generate-imagedb-file:
 	
 
 	
+check-size:
+	flutter clean \
+	&& flutter build appbundle --analyze-size --target-platform android-arm64
