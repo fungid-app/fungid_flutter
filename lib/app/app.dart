@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fungid_flutter/presentation/cubit/internet_cubit.dart';
 import 'package:fungid_flutter/presentation/cubit/observation_image_cubit.dart';
+import 'package:fungid_flutter/presentation/pages/home.dart';
 import 'package:fungid_flutter/repositories/location_repository.dart';
 import 'package:fungid_flutter/repositories/predictions_repository.dart';
 import 'package:fungid_flutter/repositories/species_repository.dart';
 import 'package:fungid_flutter/repositories/user_observation_repository.dart';
-import 'package:fungid_flutter/presentation/pages/observation_list.dart';
 import 'package:openapi_generator_annotations/openapi_generator_annotations.dart';
 
 @Openapi(
@@ -90,7 +90,7 @@ class AppView extends StatelessWidget {
           visualDensity: FlexColorScheme.comfortablePlatformDensity,
         ),
         themeMode: ThemeMode.system,
-        home: const ObservationListPage(),
+        home: const HomeView(),
       ),
     );
   }

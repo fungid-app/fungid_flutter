@@ -8,23 +8,6 @@ import 'package:fungid_flutter/presentation/cubit/observation_image_cubit.dart';
 import 'package:fungid_flutter/presentation/pages/edit_observation.dart';
 import 'package:fungid_flutter/presentation/pages/view_observation.dart';
 import 'package:fungid_flutter/presentation/widgets/add_image_sheet.dart';
-import 'package:fungid_flutter/repositories/user_observation_repository.dart';
-
-class ObservationListPage extends StatelessWidget {
-  const ObservationListPage({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => ObservationListBloc(
-        repository: RepositoryProvider.of<UserObservationsRepository>(context),
-      )..add(const ObservationListSubscriptionRequested()),
-      child: const ObservationListView(),
-    );
-  }
-}
 
 class ObservationListView extends StatelessWidget {
   const ObservationListView({Key? key}) : super(key: key);
@@ -33,34 +16,28 @@ class ObservationListView extends StatelessWidget {
     Directory imageStorageDirectory = context
         .select((ObservationImageCubit bloc) => bloc.state.storageDirectory);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Your Observations'),
-      ),
-      floatingActionButton: createObservationAction(context, null),
-      body: BlocBuilder<ObservationListBloc, ObservationListState>(
-        builder: (context, state) {
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: ListView.separated(
-                    shrinkWrap: true,
-                    itemCount: state.observations.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return _observationCard(context,
-                          state.observations[index], imageStorageDirectory);
-                    },
-                    separatorBuilder: (context, index) => const Divider(),
-                  ),
+    return BlocBuilder<ObservationListBloc, ObservationListState>(
+      builder: (context, state) {
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  itemCount: state.observations.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return _observationCard(context, state.observations[index],
+                        imageStorageDirectory);
+                  },
+                  separatorBuilder: (context, index) => const Divider(),
                 ),
-              ],
-            ),
-          );
-        },
-      ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
