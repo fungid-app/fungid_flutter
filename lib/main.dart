@@ -22,7 +22,7 @@ import 'firebase_options.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io' as io;
 
-const String _dbVersion = '0.4.3';
+const String _dbVersion = '0.4.4';
 
 Future<void> main() async {
   runZonedGuarded<Future<void>>(
