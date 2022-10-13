@@ -7,7 +7,7 @@ import 'package:fungid_flutter/domain/predictions.dart';
 import 'package:fungid_flutter/domain/species.dart';
 import 'package:fungid_flutter/presentation/bloc/view_prediction_bloc.dart';
 import 'package:fungid_flutter/presentation/pages/view_species.dart';
-import 'package:fungid_flutter/presentation/widgets/species_image.dart';
+import 'package:fungid_flutter/presentation/widgets/species_image_display.dart';
 import 'package:fungid_flutter/repositories/predictions_repository.dart';
 import 'package:fungid_flutter/repositories/species_repository.dart';
 import 'package:fungid_flutter/repositories/user_observation_repository.dart';
@@ -230,6 +230,7 @@ class ViewPredictionList extends StatelessWidget {
           context,
           ViewSpeciesPage.route(
             species: pred.species,
+            specieskey: null,
             observation: null,
           ),
         )

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fungid_flutter/domain/species.dart';
-import 'package:fungid_flutter/presentation/widgets/species_image.dart';
+import 'package:fungid_flutter/presentation/pages/view_species_images_page.dart';
+import 'package:fungid_flutter/presentation/widgets/species_image_display.dart';
 
 class SpeciesImageCarousel extends StatelessWidget {
   final List<SpeciesImage> images;
@@ -15,18 +16,29 @@ class SpeciesImageCarousel extends StatelessWidget {
     if (images.isEmpty) {
       return const SizedBox.shrink();
     } else {
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: SizedBox(
-          height: 200,
-          child: PageView.builder(
-            itemCount: images.length,
-            itemBuilder: (context, index) {
-              return SpeciesImageDisplay(
+      return SizedBox(
+        height: 200,
+        child: PageView.builder(
+          itemCount: images.length,
+          itemBuilder: (context, index) {
+            return GestureDetector(
+              child: SpeciesImageDisplay(
+                fit: BoxFit.cover,
                 image: images[index],
-              );
-            },
-          ),
+              ),
+              onTap: () => {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ViewSpeciesImagesPage(
+                      images: images,
+                      idx: index,
+                    ),
+                  ),
+                )
+              },
+            );
+          },
         ),
       );
     }

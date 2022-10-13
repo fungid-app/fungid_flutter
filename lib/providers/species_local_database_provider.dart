@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:fungid_flutter/domain/species.dart';
 import 'package:fungid_flutter/domain/species_properties.dart';
 import 'package:local_db/local_db.dart';
@@ -52,6 +54,22 @@ class SpeciesLocalDatabaseProvider {
     }
   }
 
+  Future<String?> getSpeciesName(int speciesKey) async {
+    var dbSpecies = await _db.getSpeciesByKey(speciesKey);
+
+    return dbSpecies?.species;
+  }
+
+  Future<Species?> getSpeciesByKey(int specieskey) async {
+    var dbSpecies = await _db.getSpeciesByKey(specieskey);
+
+    if (dbSpecies == null) {
+      return null;
+    } else {
+      return _buildFromDB(dbSpecies);
+    }
+  }
+
   Future<int?> getSpeciesKey(String species) async {
     var dbSpecies = await _db.getSpecies(species);
 
@@ -75,7 +93,28 @@ class SpeciesLocalDatabaseProvider {
       commonNames: await getCommonNames(dbSpecies.speciesKey),
       stats: await getStats(dbSpecies.speciesKey),
       images: await getImages(dbSpecies.speciesKey),
+      similarSpecies: await getSimilarSpecies(dbSpecies.speciesKey),
     );
+  }
+
+  Future<List<SimilarSpecies>> getSimilarSpecies(int speciesKey) async {
+    var similarSpecies = await _db.getSimilarSpecies(speciesKey);
+
+    var maxScore = similarSpecies.map((e) => e.similarity).reduce(max);
+
+    var similar = await Future.wait(similarSpecies.map((e) async {
+      return SimilarSpecies(
+        specieskey: e.specieskey,
+        similarity: e.similarity / maxScore,
+        similarSpecieskey: e.similarSpecieskey,
+        image: await getImage(e.similarSpecieskey),
+        similarSpeciesName: await getSpeciesName(e.similarSpecieskey),
+      );
+    }).toList());
+
+    similar.sort((a, b) => b.similarity.compareTo(a.similarity));
+
+    return similar;
   }
 
   Future<List<SpeciesImage>> getImages(int speciesKey) async {

@@ -72,6 +72,8 @@ Class | Method | HTTP request | Description
 [*ClassifierApi*](doc/ClassifierApi.md) | [**evaluateImageClassifierClassifierImagePut**](doc/ClassifierApi.md#evaluateimageclassifierclassifierimageput) | **PUT** /classifier/image | Evaluate Image Classifier
 [*ClassifierApi*](doc/ClassifierApi.md) | [**evaluateLocationClassifierClassifierLocationGet**](doc/ClassifierApi.md#evaluatelocationclassifierclassifierlocationget) | **GET** /classifier/location | Evaluate Location Classifier
 [*ClassifierApi*](doc/ClassifierApi.md) | [**evaluateTabularClassifierClassifierTabularGet**](doc/ClassifierApi.md#evaluatetabularclassifierclassifiertabularget) | **GET** /classifier/tabular | Evaluate Tabular Classifier
+[*ClassifierApi*](doc/ClassifierApi.md) | [**getLocalClassifierLocalGet**](doc/ClassifierApi.md#getlocalclassifierlocalget) | **GET** /classifier/local | Get Local
+[*ClassifierApi*](doc/ClassifierApi.md) | [**getSeasonalClassifierSeasonalGet**](doc/ClassifierApi.md#getseasonalclassifierseasonalget) | **GET** /classifier/seasonal | Get Seasonal
 [*ClassifierApi*](doc/ClassifierApi.md) | [**getVersionClassifierVersionGet**](doc/ClassifierApi.md#getversionclassifierversionget) | **GET** /classifier/version | Get Version
 [*DefaultApi*](doc/DefaultApi.md) | [**healthcheckHealthcheckGet**](doc/DefaultApi.md#healthcheckhealthcheckget) | **GET** /healthcheck | Healthcheck
 [*ObservationsApi*](doc/ObservationsApi.md) | [**getAllObservationsObservationsGet**](doc/ObservationsApi.md#getallobservationsobservationsget) | **GET** /observations/ | Get All Observations
@@ -86,6 +88,7 @@ Class | Method | HTTP request | Description
 
 ## Documentation For Models
 
+ - [BasicPrediction](doc/BasicPrediction.md)
  - [ClassifierVersion](doc/ClassifierVersion.md)
  - [FullPrediction](doc/FullPrediction.md)
  - [FullPredictions](doc/FullPredictions.md)
@@ -94,6 +97,7 @@ Class | Method | HTTP request | Description
  - [HTTPValidationError](doc/HTTPValidationError.md)
  - [InferredData](doc/InferredData.md)
  - [LocationInner](doc/LocationInner.md)
+ - [PageBasicPrediction](doc/PageBasicPrediction.md)
  - [PageGbifObservation](doc/PageGbifObservation.md)
  - [PageGbifObservationImage](doc/PageGbifObservationImage.md)
  - [PageSpecies](doc/PageSpecies.md)

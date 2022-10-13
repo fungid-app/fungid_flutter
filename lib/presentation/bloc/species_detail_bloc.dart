@@ -22,16 +22,31 @@ class SpeciesDetailBloc extends Bloc<SpeciesDetailEvent, SpeciesDetailState> {
   ) async {
     emit(SpeciesDetailInitializing(
       speciesName: event.speciesName,
+      speciesKey: event.specieskey,
       observation: event.observation,
     ));
 
-    var species = await speciesRepository.getSpecies(event.speciesName);
+    Species? species;
+    if (event.speciesName != null) {
+      species = await speciesRepository.getSpecies(event.speciesName!);
+    } else if (event.specieskey != null) {
+      species = await speciesRepository.getSpeciesByKey(event.specieskey!);
+    } else {
+      emit(SpeciesDetailFailure(
+        message: 'No species name or key provided',
+      ));
+      return;
+    }
 
     if (species == null) {
       emit(SpeciesDetailFailure(message: "Species not found"));
     } else {
+      var similar =
+          await speciesRepository.getSimilarSpecies(species.speciesKey);
+
       emit(SpeciesDetailReady(
         species: species,
+        similarSpecies: similar,
         observation: event.observation,
       ));
     }

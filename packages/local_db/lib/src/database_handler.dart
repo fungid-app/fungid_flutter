@@ -5,7 +5,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:collection/collection.dart';
 
 Future<Database> initializeDatabase(String dbPath) async {
-  return openDatabase(
+  return await openDatabase(
     dbPath,
     readOnly: false,
   );
@@ -13,15 +13,19 @@ Future<Database> initializeDatabase(String dbPath) async {
 
 class DatabaseHandler {
   final String dbPath;
-  DatabaseHandler({
+  late Database database;
+  DatabaseHandler._({
     required this.dbPath,
-  }) : this.database = initializeDatabase(dbPath);
+  });
 
-  Future<Database> database;
+  static Future<DatabaseHandler> create(String dbPath) async {
+    final handler = DatabaseHandler._(dbPath: dbPath);
+    handler.database = await initializeDatabase(dbPath);
+    return handler;
+  }
 
   Future<void> destroy() async {
-    final db = await database;
-    await db.close();
+    await database.close();
     await File(dbPath).delete();
   }
 
@@ -34,8 +38,7 @@ class DatabaseHandler {
   }
 
   Future<void> _SetMetadata(String name, String value) async {
-    var db = await database;
-    await db.insert(
+    await database.insert(
       'metadata',
       {
         'name': name,
@@ -46,9 +49,7 @@ class DatabaseHandler {
   }
 
   Future<String?> _GetMetadata(String name) async {
-    final db = await this.database;
-
-    final List<Map<String, dynamic>> maps = await db.query(
+    final List<Map<String, dynamic>> maps = await database.query(
       'metadata',
       columns: ['value'],
       where: 'name = ?',
@@ -63,10 +64,23 @@ class DatabaseHandler {
   }
 
   Future<ClassifierSpecies?> getSpecies(String species) async {
-    final db = await this.database;
+    final List<Map<String, dynamic>> maps = await database.query(
+        'classifier_species',
+        where: 'species = ?',
+        whereArgs: [species]);
 
-    final List<Map<String, dynamic>> maps = await db.query('classifier_species',
-        where: 'species = ?', whereArgs: [species]);
+    if (maps.isNotEmpty) {
+      return ClassifierSpecies.fromMap(maps.first);
+    } else {
+      return null;
+    }
+  }
+
+  Future<ClassifierSpecies?> getSpeciesByKey(int specieskey) async {
+    final List<Map<String, dynamic>> maps = await database.query(
+        'classifier_species',
+        where: 'specieskey = ?',
+        whereArgs: [specieskey]);
 
     if (maps.isNotEmpty) {
       return ClassifierSpecies.fromMap(maps.first);
@@ -76,27 +90,23 @@ class DatabaseHandler {
   }
 
   Future<List<ClassifierSpecies>> getSpeciesByGenus(String genus) async {
-    final db = await this.database;
-
-    final List<Map<String, dynamic>> maps = await db
+    final List<Map<String, dynamic>> maps = await database
         .query('classifier_species', where: 'genus = ?', whereArgs: [genus]);
 
     return maps.map((e) => ClassifierSpecies.fromMap(e)).toList();
   }
 
   Future<List<ClassifierCommonName>> getCommonNames(int speciesKey) async {
-    final db = await this.database;
-
-    final List<Map<String, dynamic>> maps = await db.query('classifier_names',
-        where: 'specieskey = ?', whereArgs: [speciesKey]);
+    final List<Map<String, dynamic>> maps = await database.query(
+        'classifier_names',
+        where: 'specieskey = ?',
+        whereArgs: [speciesKey]);
 
     return maps.map((e) => ClassifierCommonName.fromMap(e)).toList();
   }
 
   Future<List<ClassifierSpeciesImages>> getSpeciesImages(int speciesKey) async {
-    final db = await this.database;
-
-    final List<Map<String, dynamic>> maps = await db.query(
+    final List<Map<String, dynamic>> maps = await database.query(
         'classifier_species_images',
         where: 'specieskey = ?',
         whereArgs: [speciesKey]);
@@ -105,9 +115,7 @@ class DatabaseHandler {
   }
 
   Future<ClassifierSpeciesImages?> getSpeciesImage(int speciesKey) async {
-    final db = await this.database;
-
-    final List<Map<String, dynamic>> maps = await db.query(
+    final List<Map<String, dynamic>> maps = await database.query(
         'classifier_species_images',
         where: 'specieskey = ?',
         whereArgs: [speciesKey],
@@ -117,9 +125,7 @@ class DatabaseHandler {
   }
 
   Future<List<ClassifierSpeciesProp>> getSpeciesProps(int speciesKey) async {
-    final db = await this.database;
-
-    final List<Map<String, dynamic>> maps = await db.query(
+    final List<Map<String, dynamic>> maps = await database.query(
         'classifier_species_props',
         where: 'specieskey = ?',
         whereArgs: [speciesKey]);
@@ -128,13 +134,22 @@ class DatabaseHandler {
   }
 
   Future<List<ClassifierSpeciesStat>> getSpeciesStats(int specieskey) async {
-    final db = await this.database;
-
-    final List<Map<String, dynamic>> maps = await db.query(
+    final List<Map<String, dynamic>> maps = await database.query(
         'classifier_species_stats',
         where: 'specieskey = ? AND value != "" AND VALUE IS NOT NULL',
         whereArgs: [specieskey]);
 
     return maps.map((e) => ClassifierSpeciesStat.fromMap(e)).toList();
+  }
+
+  Future<List<ClassifierSimilarSpecies>> getSimilarSpecies(
+      int specieskey) async {
+    final List<Map<String, dynamic>> maps = await database.query(
+      'similar_species',
+      where: 'specieskey = ?',
+      whereArgs: [specieskey],
+    );
+
+    return maps.map((e) => ClassifierSimilarSpecies.fromMap(e)).toList();
   }
 }

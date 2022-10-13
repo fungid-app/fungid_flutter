@@ -72,6 +72,7 @@ class Species {
   final List<CommonName> commonNames;
   final SpeciesStats stats;
   final SpeciesProperties properties;
+  final List<SimilarSpecies> similarSpecies;
 
   Species({
     required this.family,
@@ -85,5 +86,22 @@ class Species {
     required this.commonNames,
     required this.stats,
     required this.properties,
+    required this.similarSpecies,
+  });
+}
+
+class SimilarSpecies {
+  final int specieskey;
+  final int similarSpecieskey;
+  final SpeciesImage? image;
+  final String? similarSpeciesName;
+  final double similarity;
+
+  SimilarSpecies({
+    required this.specieskey,
+    required this.similarSpecieskey,
+    required this.similarity,
+    required this.image,
+    required this.similarSpeciesName,
   });
 }

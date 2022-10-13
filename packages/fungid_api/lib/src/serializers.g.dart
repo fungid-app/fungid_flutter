@@ -7,6 +7,7 @@ part of 'serializers.dart';
 // **************************************************************************
 
 Serializers _$serializers = (new Serializers().toBuilder()
+      ..add(BasicPrediction.serializer)
       ..add(ClassifierVersion.serializer)
       ..add(FullPrediction.serializer)
       ..add(FullPredictions.serializer)
@@ -15,11 +16,15 @@ Serializers _$serializers = (new Serializers().toBuilder()
       ..add(HTTPValidationError.serializer)
       ..add(InferredData.serializer)
       ..add(LocationInner.serializer)
+      ..add(PageBasicPrediction.serializer)
       ..add(PageGbifObservation.serializer)
       ..add(PageGbifObservationImage.serializer)
       ..add(PageSpecies.serializer)
       ..add(Species.serializer)
       ..add(ValidationError.serializer)
+      ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(BasicPrediction)]),
+          () => new ListBuilder<BasicPrediction>())
       ..addBuilderFactory(
           const FullType(BuiltList, const [const FullType(FullPrediction)]),
           () => new ListBuilder<FullPrediction>())

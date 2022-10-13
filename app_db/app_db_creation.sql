@@ -49,8 +49,9 @@ DROP TABLE mapped_props;
 DROP TABLE species;
 DROP TABLE common_names;
 
-VACUUM;
+CREATE TABLE similar_species_temp (species VARCHAR, similar_species VARCHAR, similarity FLOAT, sim_rank INTEGER);
 
+VACUUM;
 
 SELECT prop, value FROM classifier_species_props css GROUP BY 1,2 ORDER BY 1,2
 
@@ -125,11 +126,5 @@ WHERE t.rank <= 100;
 
 DROP TABLE classifier_species_images;
 
-
-
-identificationqualifier, 
-identificationreferences,
-identificationverificationstatus,
-occurrencestatus,
 
 

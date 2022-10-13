@@ -10,8 +10,10 @@ import 'package:dio/dio.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:fungid_api/src/api_util.dart';
 import 'package:fungid_api/src/model/classifier_version.dart';
+import 'package:fungid_api/src/model/date.dart';
 import 'package:fungid_api/src/model/full_predictions.dart';
 import 'package:fungid_api/src/model/http_validation_error.dart';
+import 'package:fungid_api/src/model/page_basic_prediction.dart';
 
 class ClassifierApi {
 
@@ -379,6 +381,179 @@ class ClassifierApi {
     }
 
     return Response<BuiltMap<String, num>>(
+      data: _responseData,
+      headers: _response.headers,
+      isRedirect: _response.isRedirect,
+      requestOptions: _response.requestOptions,
+      redirects: _response.redirects,
+      statusCode: _response.statusCode,
+      statusMessage: _response.statusMessage,
+      extra: _response.extra,
+    );
+  }
+
+  /// Get Local
+  /// 
+  ///
+  /// Parameters:
+  /// * [lat] 
+  /// * [lon] 
+  /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
+  /// * [headers] - Can be used to add additional headers to the request
+  /// * [extras] - Can be used to add flags to the request
+  /// * [validateStatus] - A [ValidateStatus] callback that can be used to determine request success based on the HTTP status of the response
+  /// * [onSendProgress] - A [ProgressCallback] that can be used to get the send progress
+  /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
+  ///
+  /// Returns a [Future] containing a [Response] with a [BuiltList<String>] as data
+  /// Throws [DioError] if API call or serialization fails
+  Future<Response<BuiltList<String>>> getLocalClassifierLocalGet({ 
+    required num lat,
+    required num lon,
+    CancelToken? cancelToken,
+    Map<String, dynamic>? headers,
+    Map<String, dynamic>? extra,
+    ValidateStatus? validateStatus,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
+  }) async {
+    final _path = r'/classifier/local';
+    final _options = Options(
+      method: r'GET',
+      headers: <String, dynamic>{
+        ...?headers,
+      },
+      extra: <String, dynamic>{
+        'secure': <Map<String, String>>[],
+        ...?extra,
+      },
+      validateStatus: validateStatus,
+    );
+
+    final _queryParameters = <String, dynamic>{
+      r'lat': encodeQueryParameter(_serializers, lat, const FullType(num)),
+      r'lon': encodeQueryParameter(_serializers, lon, const FullType(num)),
+    };
+
+    final _response = await _dio.request<Object>(
+      _path,
+      options: _options,
+      queryParameters: _queryParameters,
+      cancelToken: cancelToken,
+      onSendProgress: onSendProgress,
+      onReceiveProgress: onReceiveProgress,
+    );
+
+    BuiltList<String> _responseData;
+
+    try {
+      const _responseType = FullType(BuiltList, [FullType(String)]);
+      _responseData = _serializers.deserialize(
+        _response.data!,
+        specifiedType: _responseType,
+      ) as BuiltList<String>;
+
+    } catch (error, stackTrace) {
+      throw DioError(
+        requestOptions: _response.requestOptions,
+        response: _response,
+        type: DioErrorType.other,
+        error: error,
+      )..stackTrace = stackTrace;
+    }
+
+    return Response<BuiltList<String>>(
+      data: _responseData,
+      headers: _response.headers,
+      isRedirect: _response.isRedirect,
+      requestOptions: _response.requestOptions,
+      redirects: _response.redirects,
+      statusCode: _response.statusCode,
+      statusMessage: _response.statusMessage,
+      extra: _response.extra,
+    );
+  }
+
+  /// Get Seasonal
+  /// 
+  ///
+  /// Parameters:
+  /// * [lat] 
+  /// * [lon] 
+  /// * [date] 
+  /// * [page] 
+  /// * [size] 
+  /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
+  /// * [headers] - Can be used to add additional headers to the request
+  /// * [extras] - Can be used to add flags to the request
+  /// * [validateStatus] - A [ValidateStatus] callback that can be used to determine request success based on the HTTP status of the response
+  /// * [onSendProgress] - A [ProgressCallback] that can be used to get the send progress
+  /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
+  ///
+  /// Returns a [Future] containing a [Response] with a [PageBasicPrediction] as data
+  /// Throws [DioError] if API call or serialization fails
+  Future<Response<PageBasicPrediction>> getSeasonalClassifierSeasonalGet({ 
+    required num lat,
+    required num lon,
+    Date? date,
+    int? page = 1,
+    int? size = 50,
+    CancelToken? cancelToken,
+    Map<String, dynamic>? headers,
+    Map<String, dynamic>? extra,
+    ValidateStatus? validateStatus,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
+  }) async {
+    final _path = r'/classifier/seasonal';
+    final _options = Options(
+      method: r'GET',
+      headers: <String, dynamic>{
+        ...?headers,
+      },
+      extra: <String, dynamic>{
+        'secure': <Map<String, String>>[],
+        ...?extra,
+      },
+      validateStatus: validateStatus,
+    );
+
+    final _queryParameters = <String, dynamic>{
+      r'lat': encodeQueryParameter(_serializers, lat, const FullType(num)),
+      r'lon': encodeQueryParameter(_serializers, lon, const FullType(num)),
+      if (date != null) r'date': encodeQueryParameter(_serializers, date, const FullType(Date)),
+      if (page != null) r'page': encodeQueryParameter(_serializers, page, const FullType(int)),
+      if (size != null) r'size': encodeQueryParameter(_serializers, size, const FullType(int)),
+    };
+
+    final _response = await _dio.request<Object>(
+      _path,
+      options: _options,
+      queryParameters: _queryParameters,
+      cancelToken: cancelToken,
+      onSendProgress: onSendProgress,
+      onReceiveProgress: onReceiveProgress,
+    );
+
+    PageBasicPrediction _responseData;
+
+    try {
+      const _responseType = FullType(PageBasicPrediction);
+      _responseData = _serializers.deserialize(
+        _response.data!,
+        specifiedType: _responseType,
+      ) as PageBasicPrediction;
+
+    } catch (error, stackTrace) {
+      throw DioError(
+        requestOptions: _response.requestOptions,
+        response: _response,
+        type: DioErrorType.other,
+        error: error,
+      )..stackTrace = stackTrace;
+    }
+
+    return Response<PageBasicPrediction>(
       data: _responseData,
       headers: _response.headers,
       isRedirect: _response.isRedirect,

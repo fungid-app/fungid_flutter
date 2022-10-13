@@ -8,27 +8,32 @@ class SpeciesDetailInitial extends SpeciesDetailState {
 }
 
 class SpeciesDetailInitializing extends SpeciesDetailState {
-  final String speciesName;
+  final String? speciesName;
+  final int? speciesKey;
   final UserObservation? observation;
 
   SpeciesDetailInitializing({
-    required this.speciesName,
+    this.speciesName,
+    this.speciesKey,
     this.observation,
   }) : super();
 
   @override
   List<Object> get props => [
-        speciesName,
+        speciesName ?? "",
+        speciesKey ?? 0,
         observation ?? "",
       ];
 }
 
 class SpeciesDetailReady extends SpeciesDetailState {
   final Species species;
+  final List<SimilarSpecies> similarSpecies;
   final UserObservation? observation;
 
   SpeciesDetailReady({
     required this.species,
+    required this.similarSpecies,
     this.observation,
   }) : super();
 

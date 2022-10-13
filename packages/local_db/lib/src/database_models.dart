@@ -175,3 +175,30 @@ class ClassifierSpeciesProp extends Equatable {
     );
   }
 }
+
+class ClassifierSimilarSpecies extends Equatable {
+  final int specieskey;
+  final int similarSpecieskey;
+  final double similarity;
+
+  const ClassifierSimilarSpecies({
+    required this.specieskey,
+    required this.similarSpecieskey,
+    required this.similarity,
+  });
+
+  @override
+  List<Object?> get props => [
+        specieskey,
+        similarSpecieskey,
+        similarity,
+      ];
+
+  static ClassifierSimilarSpecies fromMap(Map<String, Object?> e) {
+    return ClassifierSimilarSpecies(
+      specieskey: e['specieskey'] as int,
+      similarSpecieskey: e['similar_key'] as int,
+      similarity: e['similarity'] as double,
+    );
+  }
+}

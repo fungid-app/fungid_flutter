@@ -13,6 +13,8 @@ Method | HTTP request | Description
 [**evaluateImageClassifierClassifierImagePut**](ClassifierApi.md#evaluateimageclassifierclassifierimageput) | **PUT** /classifier/image | Evaluate Image Classifier
 [**evaluateLocationClassifierClassifierLocationGet**](ClassifierApi.md#evaluatelocationclassifierclassifierlocationget) | **GET** /classifier/location | Evaluate Location Classifier
 [**evaluateTabularClassifierClassifierTabularGet**](ClassifierApi.md#evaluatetabularclassifierclassifiertabularget) | **GET** /classifier/tabular | Evaluate Tabular Classifier
+[**getLocalClassifierLocalGet**](ClassifierApi.md#getlocalclassifierlocalget) | **GET** /classifier/local | Get Local
+[**getSeasonalClassifierSeasonalGet**](ClassifierApi.md#getseasonalclassifierseasonalget) | **GET** /classifier/seasonal | Get Seasonal
 [**getVersionClassifierVersionGet**](ClassifierApi.md#getversionclassifierversionget) | **GET** /classifier/version | Get Version
 
 
@@ -180,6 +182,98 @@ Name | Type | Description  | Notes
 ### Return type
 
 **BuiltMap&lt;String, num&gt;**
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **getLocalClassifierLocalGet**
+> BuiltList<String> getLocalClassifierLocalGet(lat, lon)
+
+Get Local
+
+### Example
+```dart
+import 'package:fungid_api/api.dart';
+
+final api = FungidApi().getClassifierApi();
+final num lat = 8.14; // num | 
+final num lon = 8.14; // num | 
+
+try {
+    final response = api.getLocalClassifierLocalGet(lat, lon);
+    print(response);
+} catch on DioError (e) {
+    print('Exception when calling ClassifierApi->getLocalClassifierLocalGet: $e\n');
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **lat** | **num**|  | 
+ **lon** | **num**|  | 
+
+### Return type
+
+**BuiltList&lt;String&gt;**
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **getSeasonalClassifierSeasonalGet**
+> PageBasicPrediction getSeasonalClassifierSeasonalGet(lat, lon, date, page, size)
+
+Get Seasonal
+
+### Example
+```dart
+import 'package:fungid_api/api.dart';
+
+final api = FungidApi().getClassifierApi();
+final num lat = 8.14; // num | 
+final num lon = 8.14; // num | 
+final Date date = 2013-10-20; // Date | 
+final int page = 56; // int | 
+final int size = 56; // int | 
+
+try {
+    final response = api.getSeasonalClassifierSeasonalGet(lat, lon, date, page, size);
+    print(response);
+} catch on DioError (e) {
+    print('Exception when calling ClassifierApi->getSeasonalClassifierSeasonalGet: $e\n');
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **lat** | **num**|  | 
+ **lon** | **num**|  | 
+ **date** | **Date**|  | [optional] 
+ **page** | **int**|  | [optional] [default to 1]
+ **size** | **int**|  | [optional] [default to 50]
+
+### Return type
+
+[**PageBasicPrediction**](PageBasicPrediction.md)
 
 ### Authorization
 

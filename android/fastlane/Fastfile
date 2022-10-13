@@ -19,7 +19,7 @@ platform :android do
   desc "Runs all the tests"
   lane :test do
     gradle(task: "test")
-  en
+  end
 
   lane :draft do
     # crashlytics
@@ -38,19 +38,14 @@ platform :android do
     upload_to_play_store_internal_app_sharing(
       # track: 'internal',
       # release_status: 'draft',
-      mapping: "../build/app/outputs/mapping/release/mapping.txt"
       aab: "../build/app/outputs/bundle/release/app-release.aab"
     )
   end
   
 
-  # desc "Deploy a new version to the Google Play"
-  # lane :release do
-  #   gradle(task: "clean assembleRelease")
-
-  #   upload_to_play_store(
-  #     aab: "../build/app/outputs/bundle/release/app-release.aab",
-  #     mapping: "../build/app/outputs/mapping/release/mapping.txt"
-  #   )
-  # end
+  desc "Deploy a new version to the Google Play"
+  lane :deploy do
+    gradle(task: "clean assembleRelease")
+    upload_to_play_store(aab: "../build/app/outputs/bundle/release/app-release.aab")
+  end
 end

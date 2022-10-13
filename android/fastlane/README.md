@@ -23,14 +23,6 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 Runs all the tests
 
-### android crashlytics
-
-```sh
-[bundle exec] fastlane android crashlytics
-```
-
-
-
 ### android draft
 
 ```sh
@@ -47,10 +39,10 @@ Runs all the tests
 
 
 
-### android release
+### android deploy
 
 ```sh
-[bundle exec] fastlane android release
+[bundle exec] fastlane android deploy
 ```
 
 Deploy a new version to the Google Play

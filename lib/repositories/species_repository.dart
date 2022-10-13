@@ -1,5 +1,4 @@
 import 'package:fungid_flutter/domain/species.dart';
-import 'package:fungid_flutter/domain/species_properties.dart';
 import 'package:fungid_flutter/providers/species_local_database_provider.dart';
 
 class SpeciesRepository {
@@ -11,6 +10,10 @@ class SpeciesRepository {
 
   Future<Species?> getSpecies(String species) async {
     return await _speciesProvider.getSpecies(species);
+  }
+
+  Future<Species?> getSpeciesByKey(int specieskey) async {
+    return await _speciesProvider.getSpeciesByKey(specieskey);
   }
 
   Future<Map<String, SpeciesImage>> getImageMap({
@@ -31,13 +34,7 @@ class SpeciesRepository {
     return imageMap;
   }
 
-  Future<SpeciesProperties?> getProperties(String species) async {
-    int? key = await _speciesProvider.getSpeciesKey(species);
-
-    if (key == null) {
-      return null;
-    } else {
-      return await _speciesProvider.getProperties(key);
-    }
+  Future<List<SimilarSpecies>> getSimilarSpecies(int speciesKey) async {
+    return await _speciesProvider.getSimilarSpecies(speciesKey);
   }
 }

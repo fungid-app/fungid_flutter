@@ -22,7 +22,7 @@ import 'firebase_options.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io' as io;
 
-const String _dbVersion = '0.4.2';
+const String _dbVersion = '0.4.3';
 
 Future<void> main() async {
   runZonedGuarded<Future<void>>(
@@ -82,15 +82,15 @@ Future<SpeciesLocalDatabaseProvider> getSpeciesDb() async {
       io.FileSystemEntity.typeSync(p) == io.FileSystemEntityType.notFound;
 
   if (!loadDb) {
-    var db = DatabaseHandler(
-      dbPath: p,
-    );
+    var db = await DatabaseHandler.create(p);
 
     try {
       if (_dbVersion != await db.getDbVersion()) {
         log('Database version mismatch, reloading');
         loadDb = true;
         db.destroy();
+      } else {
+        log('Database version match, not reloading');
       }
     } catch (e, stacktrace) {
       log('Error loading database version, reloading',
@@ -121,16 +121,12 @@ Future<SpeciesLocalDatabaseProvider> getSpeciesDb() async {
 
     log('Database saved to $p');
 
-    var db = DatabaseHandler(
-      dbPath: p,
-    );
+    var db = await DatabaseHandler.create(p);
 
-    await db.setDbVersion(_dbVersion);
+    db.setDbVersion(_dbVersion);
   }
 
-  var db = DatabaseHandler(
-    dbPath: p,
-  );
+  var db = await DatabaseHandler.create(p);
 
   return SpeciesLocalDatabaseProvider(db);
 }
