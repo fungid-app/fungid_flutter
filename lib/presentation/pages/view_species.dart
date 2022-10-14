@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fungid_flutter/domain/observations.dart';
 import 'package:fungid_flutter/presentation/bloc/species_detail_bloc.dart';
-import 'package:fungid_flutter/presentation/widgets/similar_species_view.dart';
+import 'package:fungid_flutter/presentation/widgets/basic_predictions_widgets.dart';
 import 'package:fungid_flutter/presentation/widgets/species_common_names.dart';
 import 'package:fungid_flutter/presentation/widgets/species_seasonality_view.dart';
 import 'package:fungid_flutter/presentation/widgets/species_image_carousel.dart';
@@ -83,7 +83,7 @@ class ViewSpeciesPage extends StatelessWidget {
                 SpeciesPropertiesView(properties: state.species.properties),
                 SpeciesSeasonalityView(stats: state.species.stats),
                 SpeciesLinksView(species: state.species.species),
-                SimilarSpeciesView(similarSpecies: state.similarSpecies),
+                BasicPredictionsView(basicPredictions: state.similarSpecies),
                 SpeciesStatsView(stats: state.species.stats)
               ],
             ),

@@ -28,7 +28,7 @@ class SpeciesDetailInitializing extends SpeciesDetailState {
 
 class SpeciesDetailReady extends SpeciesDetailState {
   final Species species;
-  final List<SimilarSpecies> similarSpecies;
+  final List<BasicPrediction> similarSpecies;
   final UserObservation? observation;
 
   SpeciesDetailReady({

@@ -56,16 +56,16 @@ class ViewPredictionList extends StatelessWidget {
     final observation =
         context.select((ViewPredictionBloc bloc) => bloc.state.observation);
 
-    // var icon = status == ViewPredictionStatus.predictionsLoading
-    //     ? null
-    //     : IconButton(
-    //         icon: const Icon(Icons.refresh),
-    //         onPressed: () {
-    //           context.read<ViewPredictionBloc>().add(
-    //                 const ViewPredictionRefreshPredctions(),
-    //               );
-    //         },
-    //       );
+    var icon = status == ViewPredictionStatus.predictionsLoading
+        ? null
+        : IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () {
+              context.read<ViewPredictionBloc>().add(
+                    const ViewPredictionRefreshPredctions(),
+                  );
+            },
+          );
 
     var header = ListTile(
       minLeadingWidth: 0,
@@ -74,7 +74,7 @@ class ViewPredictionList extends StatelessWidget {
         "Predictions",
         style: Theme.of(context).textTheme.headline5,
       ),
-      // trailing: icon,
+      trailing: icon,
     );
 
     if (observation == null) {

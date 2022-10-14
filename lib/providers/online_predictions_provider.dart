@@ -4,8 +4,6 @@ import 'dart:io';
 import 'package:built_collection/built_collection.dart';
 import 'package:dio/dio.dart';
 import 'package:fungid_api/fungid_api.dart';
-import 'package:fungid_flutter/domain/observations.dart';
-import 'package:fungid_flutter/domain/predictions.dart';
 import 'package:fungid_flutter/utils/images.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -59,7 +57,7 @@ class OnlinePredictionsProvider {
     }
   }
 
-  Future<Iterable<MultipartFile>> _buildFiles(
+  Future<Iterable<MultipartFile>> _buildImageFiles(
       Iterable<String> paths, Directory appDir) async {
     var prepped = await prepareImageFiles(paths, appDir, classifierImgSize!);
 
@@ -71,19 +69,17 @@ class OnlinePredictionsProvider {
     ));
   }
 
-  Future<Predictions> getPredictions(
+  Future<FullPredictions> getPredictions(
     String observationID,
     DateTime date,
     num lat,
     num lon,
-    List<UserObservationImage> images,
-    Directory imagesDirectory,
+    List<String> imagePaths,
   ) async {
     await _ensureCurrentVersion();
 
     final appDir = await getTemporaryDirectory();
-    var files = await _buildFiles(
-        images.map((e) => e.getFilePath(imagesDirectory)), appDir);
+    var files = await _buildImageFiles(imagePaths, appDir);
 
     var result = await classifierApi!.evaluateFullClassifierClassifierFullPut(
       date: date,
@@ -96,7 +92,35 @@ class OnlinePredictionsProvider {
       var data = result.data;
 
       if (data != null) {
-        return Predictions.fromApi(data, observationID, currentVersion!);
+        return data;
+      } else {
+        throw Exception('No data returned');
+      }
+    } else {
+      log(result.toString());
+      throw Exception(['Error getting predictions', result]);
+    }
+  }
+
+  Future<List<BasicPrediction>> getSeasonalSpecies({
+    required num lat,
+    required num lon,
+    Date? date,
+    int? size,
+    int? page,
+  }) async {
+    var result = await classifierApi!.getSeasonalClassifierSeasonalGet(
+      date: date,
+      lat: lat,
+      lon: lon,
+      size: size,
+    );
+
+    if (result.statusCode == 200) {
+      var data = result.data;
+
+      if (data != null) {
+        return data.items.toList();
       } else {
         throw Exception('No data returned');
       }

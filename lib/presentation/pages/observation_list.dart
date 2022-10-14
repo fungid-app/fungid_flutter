@@ -5,9 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fungid_flutter/domain/observations.dart';
 import 'package:fungid_flutter/presentation/bloc/observation_list_bloc.dart';
 import 'package:fungid_flutter/presentation/cubit/observation_image_cubit.dart';
-import 'package:fungid_flutter/presentation/pages/edit_observation.dart';
 import 'package:fungid_flutter/presentation/pages/view_observation.dart';
-import 'package:fungid_flutter/presentation/widgets/add_image_sheet.dart';
 
 class ObservationListView extends StatelessWidget {
   const ObservationListView({Key? key}) : super(key: key);
@@ -66,31 +64,5 @@ ListTile _observationCard(
         ViewObservationPage.route(
           id: observation.id,
         )),
-  );
-}
-
-FloatingActionButton createObservationAction(
-  BuildContext context,
-  UserObservation? observation,
-) {
-  return FloatingActionButton(
-    onPressed: () {
-      createAddImageSheet(
-        context: context,
-        onImagesSelected: (images) => {
-          if (images.isNotEmpty)
-            {
-              Navigator.push(
-                context,
-                EditObservationPage.route(
-                  initialImages: images,
-                  initialObservation: observation,
-                ),
-              )
-            },
-        },
-      );
-    },
-    child: const Icon(Icons.add),
   );
 }

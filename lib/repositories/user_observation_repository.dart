@@ -6,12 +6,12 @@ import 'package:fungid_flutter/providers/user_observation_provider.dart';
 
 class UserObservationsRepository {
   const UserObservationsRepository({
-    required UserObservationsSharedPrefProvider observationsProvider,
+    required SharedPrefsStorageProvider observationsProvider,
     required UserObservationImageFileSystemProvider imageProvider,
   })  : _observationsProvider = observationsProvider,
         _imageProvider = imageProvider;
 
-  final UserObservationsSharedPrefProvider _observationsProvider;
+  final SharedPrefsStorageProvider _observationsProvider;
   final UserObservationImageFileSystemProvider _imageProvider;
 
   Stream<List<UserObservation>> getAllObservations() {

@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:fungid_api/fungid_api.dart' as api;
+import 'package:fungid_flutter/domain/species.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'predictions.g.dart';
@@ -86,7 +87,6 @@ class Predictions extends Equatable {
   factory Predictions.fromApi(
     api.FullPredictions preds,
     String observationID,
-    String version,
   ) {
     return Predictions(
       observationID: observationID,
@@ -96,7 +96,7 @@ class Predictions extends Equatable {
       dateCreated: DateTime.now().toUtc(),
       inferred: InferredData.fromApi(preds.inferred),
       predictionType: PredictionType.online,
-      modelVersion: version,
+      modelVersion: preds.version,
     );
   }
 }
@@ -143,4 +143,32 @@ class Prediction extends Equatable {
       _$PredictionFromJson(json);
 
   Map<String, dynamic> toJson() => _$PredictionToJson(this);
+}
+
+@JsonSerializable()
+class BasicPrediction extends Equatable {
+  final int? specieskey;
+  final String? speciesName;
+  final SpeciesImage? image;
+  final num probability;
+
+  const BasicPrediction({
+    required this.specieskey,
+    required this.speciesName,
+    required this.probability,
+    required this.image,
+  });
+
+  @override
+  List<Object?> get props => [
+        specieskey,
+        speciesName,
+        probability,
+        image,
+      ];
+
+  factory BasicPrediction.fromJson(Map<String, dynamic> json) =>
+      _$BasicPredictionFromJson(json);
+
+  Map<String, dynamic> toJson() => _$BasicPredictionToJson(this);
 }

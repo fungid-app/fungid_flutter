@@ -90,7 +90,7 @@ class AppView extends StatelessWidget {
           visualDensity: FlexColorScheme.comfortablePlatformDensity,
         ),
         themeMode: ThemeMode.system,
-        home: const HomeView(),
+        home: const HomePage(),
       ),
     );
   }

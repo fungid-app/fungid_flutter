@@ -5,7 +5,7 @@ import 'package:fungid_flutter/app/app.dart';
 import 'package:fungid_flutter/providers/offline_predictions_provider.dart';
 import 'package:fungid_flutter/providers/online_predictions_provider.dart';
 import 'package:fungid_flutter/providers/saved_predictions_provider.dart';
-import 'package:fungid_flutter/providers/species_local_database_provider.dart';
+import 'package:fungid_flutter/providers/local_database_provider.dart';
 import 'package:fungid_flutter/providers/user_observation_image_provider.dart';
 import 'package:fungid_flutter/providers/user_observation_provider.dart';
 import 'package:fungid_flutter/repositories/location_repository.dart';
@@ -15,12 +15,12 @@ import 'package:fungid_flutter/repositories/user_observation_repository.dart';
 import 'package:fungid_flutter/monitoring/bloc_monitor.dart';
 
 void bootstrap({
-  required UserObservationsSharedPrefProvider observationsProvider,
+  required SharedPrefsStorageProvider observationsProvider,
   required UserObservationImageFileSystemProvider imageProvider,
   required OnlinePredictionsProvider onlinePredictionsProvider,
   required OfflinePredictionsProvider offlinePredictionsProvider,
   required SavedPredictionsSharedPrefProvider savedPredictionsProvider,
-  required SpeciesLocalDatabaseProvider speciesProvider,
+  required LocalDatabaseProvider localDatabaseProvider,
 }) {
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
 
@@ -30,16 +30,17 @@ void bootstrap({
   );
 
   final predictionsRepository = PredictionsRepository(
-    imageProvider: imageProvider,
+    imageStorageDirectory: imageProvider.storageDirectory,
     savedPredictionsProvider: savedPredictionsProvider,
     onlinePredictionsProvider: onlinePredictionsProvider,
     offlinePredictionsProvider: offlinePredictionsProvider,
+    localDatabaseProvider: localDatabaseProvider,
   );
   final locationRepository = LocationRepository();
   Bloc.observer = BlocMonitor();
 
   final speciesRepository = SpeciesRepository(
-    speciesProvider: speciesProvider,
+    speciesProvider: localDatabaseProvider,
   );
 
   runApp(

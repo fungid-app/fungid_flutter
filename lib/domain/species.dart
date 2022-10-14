@@ -1,4 +1,8 @@
+import 'package:fungid_flutter/domain/predictions.dart';
 import 'package:fungid_flutter/domain/species_properties.dart';
+import 'package:json_annotation/json_annotation.dart';
+
+part 'species.g.dart';
 
 class CommonName {
   final String name;
@@ -10,6 +14,7 @@ class CommonName {
   });
 }
 
+@JsonSerializable()
 class SpeciesImage {
   final int gbifid;
   final int imgid;
@@ -30,6 +35,11 @@ class SpeciesImage {
       // 'https://api.fungid.app/images/observations/$gbifid-$imgid.jpg';
       // DO Spaces URL
       'https://images.fungid.app/fungid/app-images/$gbifid-$imgid.jpg';
+
+  factory SpeciesImage.fromJson(Map<String, dynamic> json) =>
+      _$SpeciesImageFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SpeciesImageToJson(this);
 }
 
 class SpeciesStat {
@@ -72,7 +82,7 @@ class Species {
   final List<CommonName> commonNames;
   final SpeciesStats stats;
   final SpeciesProperties properties;
-  final List<SimilarSpecies> similarSpecies;
+  final List<BasicPrediction> similarSpecies;
 
   Species({
     required this.family,
@@ -87,21 +97,5 @@ class Species {
     required this.stats,
     required this.properties,
     required this.similarSpecies,
-  });
-}
-
-class SimilarSpecies {
-  final int specieskey;
-  final int similarSpecieskey;
-  final SpeciesImage? image;
-  final String? similarSpeciesName;
-  final double similarity;
-
-  SimilarSpecies({
-    required this.specieskey,
-    required this.similarSpecieskey,
-    required this.similarity,
-    required this.image,
-    required this.similarSpeciesName,
   });
 }

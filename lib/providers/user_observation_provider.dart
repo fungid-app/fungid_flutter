@@ -5,8 +5,8 @@ import 'package:fungid_flutter/domain/observations.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class UserObservationsSharedPrefProvider {
-  UserObservationsSharedPrefProvider({required SharedPreferences prefs})
+class SharedPrefsStorageProvider {
+  SharedPrefsStorageProvider({required SharedPreferences prefs})
       : _prefs = prefs {
     _init();
   }

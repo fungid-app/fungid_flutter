@@ -11,7 +11,7 @@ import 'package:fungid_flutter/bootstrap.dart';
 import 'package:fungid_flutter/providers/offline_predictions_provider.dart';
 import 'package:fungid_flutter/providers/online_predictions_provider.dart';
 import 'package:fungid_flutter/providers/saved_predictions_provider.dart';
-import 'package:fungid_flutter/providers/species_local_database_provider.dart';
+import 'package:fungid_flutter/providers/local_database_provider.dart';
 import 'package:fungid_flutter/providers/user_observation_image_provider.dart';
 import 'package:fungid_flutter/providers/user_observation_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -29,13 +29,15 @@ Future<void> main() async {
     () async {
       WidgetsFlutterBinding.ensureInitialized();
 
+      var fungidApi = getFungidApi();
+
       var responses = await Future.wait<dynamic>([
         setupFirebase(),
         getObservationsApi(),
-        getOnlinePredictions(),
+        getOnlinePredictions(fungidApi),
         getOfflinePredictions(),
         getPredictions(),
-        getSpeciesDb(),
+        getLocalDb(),
         UserObservationImageFileSystemProvider.create()
       ]);
 
@@ -44,7 +46,7 @@ Future<void> main() async {
         onlinePredictionsProvider: responses[2],
         offlinePredictionsProvider: responses[3],
         savedPredictionsProvider: responses[4],
-        speciesProvider: responses[5],
+        localDatabaseProvider: responses[5],
         imageProvider: responses[6],
       );
     },
@@ -62,6 +64,32 @@ Future<void> setupFirebase() async {
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
 }
 
+FungidApi getFungidApi() {
+  return FungidApi(
+    dio: Dio(BaseOptions(
+      // Production
+      baseUrl: 'https://api.fungid.app',
+      // Web Site/Desktop/iOS
+      // baseUrl: 'http://0.0.0.0:8080',
+      // Android Phone Emulator
+      // baseUrl: 'https://10.0.2.2:8080',
+      // LocalIp
+      // baseUrl: 'http://192.168.0.186:8080',
+      connectTimeout: 50000,
+      receiveTimeout: 60000,
+    )),
+    interceptors: [
+      PrettyDioLogger(
+        requestHeader: true,
+        requestBody: true,
+        responseBody: true,
+        responseHeader: false,
+        error: true,
+      ),
+    ],
+  );
+}
+
 Future<SavedPredictionsSharedPrefProvider> getPredictions() async {
   final predictionsProvider = SavedPredictionsSharedPrefProvider(
     prefs: await SharedPreferences.getInstance(),
@@ -69,7 +97,7 @@ Future<SavedPredictionsSharedPrefProvider> getPredictions() async {
   return predictionsProvider;
 }
 
-Future<SpeciesLocalDatabaseProvider> getSpeciesDb() async {
+Future<LocalDatabaseProvider> getLocalDb() async {
   // Setup local DB
   // Construct a file path to copy database to
 
@@ -128,7 +156,7 @@ Future<SpeciesLocalDatabaseProvider> getSpeciesDb() async {
 
   var db = await DatabaseHandler.create(p);
 
-  return SpeciesLocalDatabaseProvider(db);
+  return LocalDatabaseProvider(db);
 }
 
 Future<OfflinePredictionsProvider> getOfflinePredictions() async {
@@ -138,38 +166,14 @@ Future<OfflinePredictionsProvider> getOfflinePredictions() async {
   );
 }
 
-Future<OnlinePredictionsProvider> getOnlinePredictions() async {
-  final onlinePredictionsProvider = await OnlinePredictionsProvider.create(
-    FungidApi(
-      dio: Dio(BaseOptions(
-        // Production
-        baseUrl: 'https://api.fungid.app',
-        // Web Site/Desktop/iOS
-        // baseUrl: 'http://0.0.0.0:8080',
-        // Android Phone Emulator
-        // baseUrl: 'https://10.0.2.2:8080',
-        // LocalIp
-        // baseUrl: 'http://192.168.0.186:8080',
-        connectTimeout: 50000,
-        receiveTimeout: 60000,
-      )),
-      interceptors: [
-        PrettyDioLogger(
-          requestHeader: true,
-          requestBody: true,
-          responseBody: true,
-          responseHeader: false,
-          error: true,
-        ),
-      ],
-    ),
-  );
+Future<OnlinePredictionsProvider> getOnlinePredictions(FungidApi api) async {
+  final onlinePredictionsProvider = await OnlinePredictionsProvider.create(api);
 
   return onlinePredictionsProvider;
 }
 
-Future<UserObservationsSharedPrefProvider> getObservationsApi() async {
-  final observationsApi = UserObservationsSharedPrefProvider(
+Future<SharedPrefsStorageProvider> getObservationsApi() async {
+  final observationsApi = SharedPrefsStorageProvider(
     prefs: await SharedPreferences.getInstance(),
   );
   return observationsApi;

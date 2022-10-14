@@ -1,12 +1,13 @@
+import 'package:fungid_flutter/domain/predictions.dart';
 import 'package:fungid_flutter/domain/species.dart';
-import 'package:fungid_flutter/providers/species_local_database_provider.dart';
+import 'package:fungid_flutter/providers/local_database_provider.dart';
 
 class SpeciesRepository {
   const SpeciesRepository({
-    required SpeciesLocalDatabaseProvider speciesProvider,
+    required LocalDatabaseProvider speciesProvider,
   }) : _speciesProvider = speciesProvider;
 
-  final SpeciesLocalDatabaseProvider _speciesProvider;
+  final LocalDatabaseProvider _speciesProvider;
 
   Future<Species?> getSpecies(String species) async {
     return await _speciesProvider.getSpecies(species);
@@ -34,7 +35,19 @@ class SpeciesRepository {
     return imageMap;
   }
 
-  Future<List<SimilarSpecies>> getSimilarSpecies(int speciesKey) async {
-    return await _speciesProvider.getSimilarSpecies(speciesKey);
+  Future<List<BasicPrediction>> getSimilarSpecies(int speciesKey) async {
+    var similar = await _speciesProvider.getSimilarSpecies(speciesKey);
+    return await Future.wait(
+      similar.map((s) async {
+        final image = s.specieskey == null
+            ? null
+            : await _speciesProvider.getImage(s.specieskey!);
+        return BasicPrediction(
+            specieskey: s.specieskey,
+            speciesName: s.speciesName,
+            image: image,
+            probability: s.probability);
+      }),
+    );
   }
 }

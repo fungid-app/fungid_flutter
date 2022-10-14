@@ -13,12 +13,14 @@ enum CapShape {
 }
 
 enum EcologicalType {
+  na,
   mycorrhizal,
   parasitic,
   saprotrophic,
 }
 
 enum HowEdible {
+  na,
   allergenic,
   caution,
   choice,
@@ -32,6 +34,7 @@ enum HowEdible {
 }
 
 enum HymeniumType {
+  na,
   gills,
   gleba,
   pores,
@@ -41,6 +44,7 @@ enum HymeniumType {
 }
 
 enum SporePrintColor {
+  na,
   black,
   blackishBrown,
   brown,

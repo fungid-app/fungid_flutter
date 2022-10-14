@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:fungid_flutter/domain/predictions.dart';
 import 'package:fungid_flutter/domain/species.dart';
 import 'package:fungid_flutter/domain/species_properties.dart';
 import 'package:local_db/local_db.dart';
@@ -37,8 +38,8 @@ final Map<String, String> kgNames = {
   "30": "Polar, frost",
 };
 
-class SpeciesLocalDatabaseProvider {
-  const SpeciesLocalDatabaseProvider(
+class LocalDatabaseProvider {
+  const LocalDatabaseProvider(
     DatabaseHandler db,
   ) : _db = db;
 
@@ -97,22 +98,21 @@ class SpeciesLocalDatabaseProvider {
     );
   }
 
-  Future<List<SimilarSpecies>> getSimilarSpecies(int speciesKey) async {
+  Future<List<BasicPrediction>> getSimilarSpecies(int speciesKey) async {
     var similarSpecies = await _db.getSimilarSpecies(speciesKey);
 
     var maxScore = similarSpecies.map((e) => e.similarity).reduce(max);
 
     var similar = await Future.wait(similarSpecies.map((e) async {
-      return SimilarSpecies(
-        specieskey: e.specieskey,
-        similarity: e.similarity / maxScore,
-        similarSpecieskey: e.similarSpecieskey,
+      return BasicPrediction(
+        probability: e.similarity / maxScore,
+        specieskey: e.similarSpecieskey,
         image: await getImage(e.similarSpecieskey),
-        similarSpeciesName: await getSpeciesName(e.similarSpecieskey),
+        speciesName: await getSpeciesName(e.similarSpecieskey),
       );
     }).toList());
 
-    similar.sort((a, b) => b.similarity.compareTo(a.similarity));
+    similar.sort((a, b) => b.probability.compareTo(a.probability));
 
     return similar;
   }

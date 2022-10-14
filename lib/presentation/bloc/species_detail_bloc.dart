@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:fungid_flutter/domain/observations.dart';
+import 'package:fungid_flutter/domain/predictions.dart';
 import 'package:fungid_flutter/domain/species.dart';
 import 'package:fungid_flutter/repositories/species_repository.dart';
 

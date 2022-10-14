@@ -64,38 +64,22 @@ class ViewPredictionBloc
     ViewPredictionRefreshPredctions event,
     Emitter<ViewPredictionState> emit,
   ) async {
-    a() async => predictionsRepository.getNewOnlinePredictions(
-          state.observation!,
-          // null,
-        );
-
-    // if (!await isOnline()) {
-    //   a = () async => predictionsRepository.getNewOfflinePredictions(
-    //         state.observation!,
-    //         null,
-    //       );
-    // }
-
-    await _loadPredictions(a, emit);
+    await _loadPredictions(
+        () async => predictionsRepository.refreshPredictions(
+              state.observation!,
+            ),
+        emit);
   }
 
   Future<void> _onGetPredictions(
     ViewPredictionGetPredctions event,
     Emitter<ViewPredictionState> emit,
   ) async {
-    a() async => predictionsRepository.getOnlinePredictions(
-          state.observation!,
-          // null,
-        );
-
-    // if (!await isOnline()) {
-    //   a = () async => predictionsRepository.getOfflinePredictions(
-    //         state.observation!,
-    //         null,
-    //       );
-    // }
-
-    await _loadPredictions(a, emit);
+    await _loadPredictions(
+        () async => predictionsRepository.getPredictions(
+              state.observation!,
+            ),
+        emit);
   }
 
   Future<void> _loadPredictions(
