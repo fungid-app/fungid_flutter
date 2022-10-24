@@ -13,6 +13,10 @@ class SpeciesRepository {
     return await _speciesProvider.getSpecies(species);
   }
 
+  Future<SimpleSpecies?> getSimpleSpecies(int specieskey) async {
+    return await _speciesProvider.getSimpleSpecies(specieskey);
+  }
+
   Future<Species?> getSpeciesByKey(int specieskey) async {
     return await _speciesProvider.getSpeciesByKey(specieskey);
   }
@@ -39,13 +43,9 @@ class SpeciesRepository {
     var similar = await _speciesProvider.getSimilarSpecies(speciesKey);
     return await Future.wait(
       similar.map((s) async {
-        final image = s.specieskey == null
-            ? null
-            : await _speciesProvider.getImage(s.specieskey!);
         return BasicPrediction(
             specieskey: s.specieskey,
             speciesName: s.speciesName,
-            image: image,
             probability: s.probability);
       }),
     );

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fungid_flutter/domain/species.dart';
+import 'package:fungid_flutter/presentation/widgets/circular_prediction_indicator.dart';
+import 'package:fungid_flutter/utils/hue_calculation.dart';
+import 'package:fungid_flutter/utils/ui_helpers.dart';
 
 class SpeciesStatsView extends StatelessWidget {
   final SpeciesStats stats;
@@ -38,7 +41,7 @@ class SpeciesStatsView extends StatelessWidget {
                   ],
                 ),
                 Container(
-                  height: 750,
+                  height: 580,
                   decoration: const BoxDecoration(
                       border: Border(top: BorderSide(width: 0.5))),
                   child: TabBarView(
@@ -60,26 +63,15 @@ class SpeciesStatsView extends StatelessWidget {
 
   Widget getStatsTiles(List<SpeciesStat> stats) {
     return ListView.separated(
-      separatorBuilder: (BuildContext context, int index) => const Divider(
-        height: 3,
-        thickness: 2,
-      ),
+      separatorBuilder: (BuildContext context, int index) =>
+          UiHelpers.basicDivider,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: stats.length > 10 ? 10 : stats.length,
       itemBuilder: (context, index) => ListTile(
         title: Text(stats[index].value),
-        subtitle: LinearProgressIndicator(
-          value: stats[index].likelihood,
-          backgroundColor: Colors.grey,
-          minHeight: 8,
-          valueColor: AlwaysStoppedAnimation<Color>(
-            HSLColor.fromAHSL(
-              1,
-              stats[index].likelihood * 100,
-              .75,
-              .5,
-            ).toColor(),
-          ),
+        trailing: CircularPredictionIndicator(
+          probability: stats[index].likelihood,
+          hueCalculation: BasicHueCalculation(),
         ),
       ),
     );

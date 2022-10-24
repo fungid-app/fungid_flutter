@@ -149,14 +149,12 @@ class Prediction extends Equatable {
 class BasicPrediction extends Equatable {
   final int? specieskey;
   final String? speciesName;
-  final SpeciesImage? image;
   final num probability;
 
   const BasicPrediction({
     required this.specieskey,
     required this.speciesName,
     required this.probability,
-    required this.image,
   });
 
   @override
@@ -164,7 +162,6 @@ class BasicPrediction extends Equatable {
         specieskey,
         speciesName,
         probability,
-        image,
       ];
 
   factory BasicPrediction.fromJson(Map<String, dynamic> json) =>

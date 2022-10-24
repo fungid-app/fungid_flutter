@@ -84,6 +84,8 @@ class Species {
   final SpeciesProperties properties;
   final List<BasicPrediction> similarSpecies;
 
+  get title => commonNames.isNotEmpty ? commonNames.first.name : species;
+
   Species({
     required this.family,
     required this.genus,
@@ -97,5 +99,31 @@ class Species {
     required this.stats,
     required this.properties,
     required this.similarSpecies,
+  });
+}
+
+class SimpleSpecies {
+  final String family;
+  final String genus;
+  final String species;
+  final int familyKey;
+  final int genusKey;
+  final int speciesKey;
+  final int total;
+  final SpeciesImage? image;
+  final CommonName? commonName;
+  final SpeciesProperties properties;
+
+  SimpleSpecies({
+    required this.family,
+    required this.genus,
+    required this.species,
+    required this.familyKey,
+    required this.genusKey,
+    required this.speciesKey,
+    required this.total,
+    required this.image,
+    required this.commonName,
+    required this.properties,
   });
 }

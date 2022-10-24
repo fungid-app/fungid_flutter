@@ -139,15 +139,10 @@ class PredictionsRepository {
           var specieskey =
               await _localDatabaseProvider.getSpeciesKey(e.species);
 
-          var image = specieskey == null
-              ? null
-              : await _localDatabaseProvider.getImage(specieskey);
-
           return BasicPrediction(
               speciesName: e.species,
               specieskey: specieskey,
-              probability: e.probability,
-              image: image);
+              probability: e.probability);
         },
       ).toList(),
     );

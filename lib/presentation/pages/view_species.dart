@@ -10,6 +10,7 @@ import 'package:fungid_flutter/presentation/widgets/species_links_view.dart';
 import 'package:fungid_flutter/presentation/widgets/species_properties_view.dart';
 import 'package:fungid_flutter/presentation/widgets/species_stats_view.dart';
 import 'package:fungid_flutter/repositories/species_repository.dart';
+import 'package:fungid_flutter/utils/hue_calculation.dart';
 
 class ViewSpeciesPage extends StatelessWidget {
   final String? speciesName;
@@ -83,7 +84,11 @@ class ViewSpeciesPage extends StatelessWidget {
                 SpeciesPropertiesView(properties: state.species.properties),
                 SpeciesSeasonalityView(stats: state.species.stats),
                 SpeciesLinksView(species: state.species.species),
-                BasicPredictionsView(basicPredictions: state.similarSpecies),
+                BasicPredictionsView(
+                  title: "Lookalikes",
+                  basicPredictions: state.similarSpecies,
+                  hueCalculation: BasicHueCalculation(),
+                ),
                 SpeciesStatsView(stats: state.species.stats)
               ],
             ),

@@ -49,7 +49,31 @@ DROP TABLE mapped_props;
 DROP TABLE species;
 DROP TABLE common_names;
 
+DROP TABLE similar_species_temp;
 CREATE TABLE similar_species_temp (species VARCHAR, similar_species VARCHAR, similarity FLOAT, sim_rank INTEGER);
+
+CREATE INDEX IF NOT EXISTS classifier_species_specieskey ON classifier_species(specieskey);
+CREATE INDEX IF NOT EXISTS classifier_species_species ON classifier_species(species);
+CREATE INDEX IF NOT EXISTS classifier_species_stats_specieskey ON classifier_species_stats(specieskey);
+CREATE INDEX IF NOT EXISTS classifier_names_specieskey ON classifier_names(specieskey);
+CREATE INDEX IF NOT EXISTS classifier_species_props_specieskey ON classifier_species_props(specieskey);
+CREATE INDEX IF NOT EXISTS classifier_species_images_specieskey ON classifier_species_images(specieskey);
+
+
+
+.mode csv
+.import v0.4-similar.csv similar_species_temp
+
+DROP TABLE similar_species;
+CREATE TABLE similar_species (specieskey INTEGER, similar_key INTEGER, similarity FLOAT, PRIMARY KEY (specieskey, similar_key));
+
+INSERT INTO similar_species (specieskey, similar_key, similarity)
+SELECT a.specieskey, b.specieskey, similarity
+FROM similar_species_temp t
+JOIN classifier_species a ON t.species = a.species 
+JOIN classifier_species b ON t.similar_species = b.species;
+
+DROP TABLE similar_species_temp;
 
 VACUUM;
 

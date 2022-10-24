@@ -6,6 +6,7 @@ import 'package:fungid_flutter/domain/observations.dart';
 import 'package:fungid_flutter/presentation/bloc/observation_list_bloc.dart';
 import 'package:fungid_flutter/presentation/cubit/observation_image_cubit.dart';
 import 'package:fungid_flutter/presentation/pages/view_observation.dart';
+import 'package:fungid_flutter/utils/ui_helpers.dart';
 
 class ObservationListView extends StatelessWidget {
   const ObservationListView({Key? key}) : super(key: key);
@@ -29,7 +30,7 @@ class ObservationListView extends StatelessWidget {
                     return _observationCard(context, state.observations[index],
                         imageStorageDirectory);
                   },
-                  separatorBuilder: (context, index) => const Divider(),
+                  separatorBuilder: (context, index) => UiHelpers.basicDivider,
                 ),
               ),
             ],

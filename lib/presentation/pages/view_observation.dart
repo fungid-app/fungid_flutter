@@ -6,6 +6,7 @@ import 'package:fungid_flutter/presentation/widgets/connectivity_warning.dart';
 import 'package:fungid_flutter/presentation/widgets/observation_image_carousel.dart';
 import 'package:fungid_flutter/presentation/widgets/observation_predictions.dart';
 import 'package:fungid_flutter/repositories/user_observation_repository.dart';
+import 'package:fungid_flutter/utils/ui_helpers.dart';
 
 class ViewObservationPage extends StatelessWidget {
   const ViewObservationPage({Key? key}) : super(key: key);
@@ -140,9 +141,7 @@ class ViewObservationView extends StatelessWidget {
                   leading: const Icon(Icons.notes),
                   title: Text(observation.notes ?? ""),
                 ),
-          const Divider(
-            thickness: 2,
-          ),
+          UiHelpers.basicDivider,
           Expanded(
             child: ObservationPredictionsView(
               observationID: observation.id,

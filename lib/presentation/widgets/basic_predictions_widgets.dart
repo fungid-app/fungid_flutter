@@ -1,17 +1,26 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fungid_flutter/domain/predictions.dart';
+import 'package:fungid_flutter/presentation/bloc/simple_species_bloc.dart';
 import 'package:fungid_flutter/presentation/pages/view_species.dart';
+import 'package:fungid_flutter/presentation/widgets/circular_prediction_indicator.dart';
 import 'package:fungid_flutter/presentation/widgets/species_image_display.dart';
+import 'package:fungid_flutter/repositories/species_repository.dart';
+import 'package:fungid_flutter/utils/hue_calculation.dart';
+import 'package:fungid_flutter/utils/ui_helpers.dart';
+import 'package:intersperse/intersperse.dart';
 
 class BasicPredictionsView extends StatelessWidget {
   final List<BasicPrediction> basicPredictions;
+  final HueCalculation hueCalculation;
   final String? title;
 
-  const BasicPredictionsView(
-      {Key? key, required this.basicPredictions, this.title})
-      : super(key: key);
+  const BasicPredictionsView({
+    Key? key,
+    required this.basicPredictions,
+    this.title,
+    required this.hueCalculation,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -27,9 +36,15 @@ class BasicPredictionsView extends StatelessWidget {
                   )
                 ],
               ),
-        ...basicPredictions.map((e) => BasicPredictionTile(
+        ...intersperse(
+          UiHelpers.basicDivider,
+          basicPredictions.map(
+            (e) => BasicPredictionTile(
               prediction: e,
-            )),
+              hueCalculation: hueCalculation,
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -37,52 +52,101 @@ class BasicPredictionsView extends StatelessWidget {
 
 class BasicPredictionTile extends StatelessWidget {
   final BasicPrediction prediction;
+  final HueCalculation hueCalculation;
 
   const BasicPredictionTile({
     Key? key,
     required this.prediction,
+    required this.hueCalculation,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: prediction.image == null
-          ? null
-          : SpeciesImageDisplay(
-              image: prediction.image,
-              width: 50,
-              height: 50,
-              fit: BoxFit.cover,
+    SpeciesRepository speciesRepository = context.read<SpeciesRepository>();
+
+    return BlocProvider(
+      create: (context) =>
+          SimpleSpeciesBloc(speciesRepository: speciesRepository)
+            ..add(
+              SimpleSpeciesLoad(
+                specieskey: prediction.specieskey!,
+              ),
             ),
-      onTap: () => {
-        Navigator.push(
-          context,
-          ViewSpeciesPage.route(
-            species: null,
-            specieskey: prediction.specieskey,
-            observation: null,
-          ),
-        )
-      },
-      minLeadingWidth: 0,
-      title: Text('${prediction.speciesName}'),
-      subtitle: LinearProgressIndicator(
-        value: prediction.probability as double,
-        backgroundColor: Colors.grey,
-        minHeight: 8,
-        valueColor: AlwaysStoppedAnimation<Color>(
-          HSLColor.fromAHSL(
-            1,
-            _getHueFromProbability(prediction.probability),
-            .75,
-            .5,
-          ).toColor(),
-        ),
+      child: BasicPredictionTileView(
+        prediction: prediction,
+        hueCalculation: hueCalculation,
       ),
     );
   }
+}
 
-  double _getHueFromProbability(num probability) {
-    return 100 * (pow(2 * probability, 3) / pow(2, 3));
+class BasicPredictionTileView extends StatelessWidget {
+  final BasicPrediction prediction;
+  final HueCalculation hueCalculation;
+
+  const BasicPredictionTileView({
+    Key? key,
+    required this.prediction,
+    required this.hueCalculation,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<SimpleSpeciesBloc, SimpleSpeciesState>(
+        builder: (context, state) {
+      if (state is SimpleSpeciesLoading || state is SimpleSpeciesInitial) {
+        return const ListTile(
+          leading: SizedBox(
+            width: 40,
+            height: 40,
+            child: CircularProgressIndicator(),
+          ),
+        );
+      } else if (state is SimpleSpeciesError) {
+        return ListTile(
+          leading: const SizedBox(
+            width: 40,
+            height: 40,
+            child: Icon(Icons.error),
+          ),
+          title: Text(state.message),
+        );
+      } else if (state is SimpleSpeciesLoaded) {
+        return ListTile(
+          leading: state.species.image == null
+              ? null
+              : SpeciesImageDisplay(
+                  image: state.species.image,
+                  width: 50,
+                  height: 50,
+                  fit: BoxFit.cover,
+                ),
+          onTap: () => {
+            Navigator.push(
+              context,
+              ViewSpeciesPage.route(
+                species: null,
+                specieskey: prediction.specieskey,
+                observation: null,
+              ),
+            )
+          },
+          minLeadingWidth: 0,
+          title: Text(
+            state.species.commonName?.name ?? state.species.species,
+            overflow: TextOverflow.ellipsis,
+          ),
+          subtitle: state.species.commonName != null
+              ? Text(state.species.species)
+              : null,
+          trailing: CircularPredictionIndicator(
+            probability: prediction.probability,
+            hueCalculation: hueCalculation,
+          ),
+        );
+      } else {
+        return const SizedBox.shrink();
+      }
+    });
   }
 }

@@ -11,6 +11,7 @@ import 'package:fungid_flutter/presentation/widgets/species_image_display.dart';
 import 'package:fungid_flutter/repositories/predictions_repository.dart';
 import 'package:fungid_flutter/repositories/species_repository.dart';
 import 'package:fungid_flutter/repositories/user_observation_repository.dart';
+import 'package:fungid_flutter/utils/ui_helpers.dart';
 
 class ObservationPredictionsView extends StatelessWidget {
   final String observationID;
@@ -194,12 +195,8 @@ class ViewPredictionList extends StatelessWidget {
         context.select((ViewPredictionBloc bloc) => bloc.state.imageMap) ?? {};
 
     return ListView.separated(
-      separatorBuilder: (BuildContext context, int index) => const Divider(
-        height: 3,
-        indent: 10,
-        endIndent: 10,
-        thickness: 2,
-      ),
+      separatorBuilder: (BuildContext context, int index) =>
+          UiHelpers.basicDivider,
       itemCount: predictions.predictions.length,
       itemBuilder: (context, index) {
         return getPredictionTile(
@@ -236,21 +233,44 @@ class ViewPredictionList extends StatelessWidget {
         )
       },
       minLeadingWidth: 0,
-      title: Text('${pred.species} - ${pred.displayProbabilty()}'),
-      subtitle: LinearProgressIndicator(
-        value: pred.probability,
-        backgroundColor: Colors.grey,
-        minHeight: 8,
-        valueColor: AlwaysStoppedAnimation<Color>(
-          HSLColor.fromAHSL(
-            1,
-            _getHueFromProbability(pred.probability),
-            .75,
-            .5,
-          ).toColor(),
+      title: Text(pred.species),
+      trailing: SizedBox(
+        height: 40,
+        width: 40,
+        child: Stack(
+          children: [
+            Center(
+              child: CircularProgressIndicator(
+                value: pred.probability,
+                backgroundColor: Theme.of(context).backgroundColor,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  HSLColor.fromAHSL(
+                    1,
+                    _getHueFromProbability(pred.probability),
+                    .75,
+                    .5,
+                  ).toColor(),
+                ),
+              ),
+            ),
+            Center(
+              child: Text(
+                _getProbText(pred.probability),
+                style: Theme.of(context).textTheme.bodyText2,
+              ),
+            ),
+          ],
         ),
       ),
     );
+  }
+
+  String _getProbText(double probability) {
+    if (probability < .1) {
+      return (probability * 100).toStringAsFixed(1);
+    } else {
+      return '${(probability * 100).round()}';
+    }
   }
 
   double _getHueFromProbability(double probability) {

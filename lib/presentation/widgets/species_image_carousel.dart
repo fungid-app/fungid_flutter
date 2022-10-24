@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:fungid_flutter/domain/species.dart';
 import 'package:fungid_flutter/presentation/pages/view_species_images_page.dart';
@@ -21,9 +22,14 @@ class SpeciesImageCarousel extends StatelessWidget {
         child: PageView.builder(
           itemCount: images.length,
           itemBuilder: (context, index) {
+            if (index < images.length) {
+              precacheImage(
+                  CachedNetworkImageProvider(images[index + 1].fungidUrl),
+                  context);
+            }
             return GestureDetector(
               child: SpeciesImageDisplay(
-                fit: BoxFit.cover,
+                fit: BoxFit.contain,
                 image: images[index],
               ),
               onTap: () => {

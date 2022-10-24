@@ -1,5 +1,4 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fungid_flutter/presentation/cubit/internet_cubit.dart';
@@ -9,6 +8,7 @@ import 'package:fungid_flutter/repositories/location_repository.dart';
 import 'package:fungid_flutter/repositories/predictions_repository.dart';
 import 'package:fungid_flutter/repositories/species_repository.dart';
 import 'package:fungid_flutter/repositories/user_observation_repository.dart';
+import 'package:fungid_flutter/utils/ui_helpers.dart';
 import 'package:openapi_generator_annotations/openapi_generator_annotations.dart';
 
 @Openapi(
@@ -75,20 +75,8 @@ class AppView extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'FungID',
-        theme: FlexThemeData.light(
-          scheme: FlexScheme.outerSpace,
-          surfaceMode: FlexSurfaceMode.highScaffoldLowSurface,
-          blendLevel: 20,
-          appBarOpacity: 0.95,
-          visualDensity: FlexColorScheme.comfortablePlatformDensity,
-        ),
-        darkTheme: FlexThemeData.dark(
-          scheme: FlexScheme.outerSpace,
-          surfaceMode: FlexSurfaceMode.highScaffoldLowSurface,
-          blendLevel: 15,
-          appBarOpacity: 0.90,
-          visualDensity: FlexColorScheme.comfortablePlatformDensity,
-        ),
+        theme: UiHelpers.lightTheme,
+        darkTheme: UiHelpers.darkTheme,
         themeMode: ThemeMode.system,
         home: const HomePage(),
       ),

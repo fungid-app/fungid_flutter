@@ -135,11 +135,6 @@ BasicPrediction _$BasicPredictionFromJson(Map<String, dynamic> json) =>
           specieskey: $checkedConvert('specieskey', (v) => v as int?),
           speciesName: $checkedConvert('species_name', (v) => v as String?),
           probability: $checkedConvert('probability', (v) => v as num),
-          image: $checkedConvert(
-              'image',
-              (v) => v == null
-                  ? null
-                  : SpeciesImage.fromJson(v as Map<String, dynamic>)),
         );
         return val;
       },
@@ -150,6 +145,5 @@ Map<String, dynamic> _$BasicPredictionToJson(BasicPrediction instance) =>
     <String, dynamic>{
       'specieskey': instance.specieskey,
       'species_name': instance.speciesName,
-      'image': instance.image,
       'probability': instance.probability,
     };

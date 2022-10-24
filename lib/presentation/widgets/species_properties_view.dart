@@ -55,28 +55,39 @@ class SpeciesPropertiesView extends StatelessWidget {
       return [];
     }
 
+    var width = MediaQuery.of(context).size.width * .45;
+
     return list
         .map(
           (e) => SizedBox(
-            width: 190,
+            width: width,
             child: Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15.0),
-              ),
-              child: ListTile(
-                // dense: true,
-                contentPadding: const EdgeInsets.only(left: 10, right: 10),
-                leading: SizedBox(
-                  height: 45,
-                  width: 45,
-                  child: CachedNetworkImage(
-                    imageUrl: SpeciesProperties.iconUrl(e),
-                    errorWidget: (context, url, error) =>
-                        const Icon(Icons.error),
+              clipBehavior: Clip.hardEdge,
+              child: Row(
+                children: [
+                  SizedBox(
+                    height: 45,
+                    width: 45,
+                    child: CachedNetworkImage(
+                      imageUrl: SpeciesProperties.iconUrl(e),
+                      errorWidget: (context, url, error) =>
+                          const Icon(Icons.error),
+                    ),
                   ),
-                ),
-                title: Text(title),
-                subtitle: Text(e.name),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(title),
+                      Text(
+                        e.name,
+                        style: Theme.of(context).textTheme.caption,
+                      ),
+                    ],
+                  )
+                ],
               ),
             ),
           ),

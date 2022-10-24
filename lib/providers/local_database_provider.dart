@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:fungid_flutter/domain/predictions.dart';
 import 'package:fungid_flutter/domain/species.dart';
 import 'package:fungid_flutter/domain/species_properties.dart';
@@ -55,6 +53,27 @@ class LocalDatabaseProvider {
     }
   }
 
+  Future<SimpleSpecies?> getSimpleSpecies(int specieskey) async {
+    var dbSpecies = await _db.getSpeciesByKey(specieskey);
+
+    if (dbSpecies == null) {
+      return null;
+    } else {
+      return SimpleSpecies(
+        family: dbSpecies.family,
+        genus: dbSpecies.genus,
+        species: dbSpecies.species,
+        familyKey: dbSpecies.familyKey,
+        genusKey: dbSpecies.genusKey,
+        speciesKey: dbSpecies.speciesKey,
+        total: dbSpecies.total,
+        properties: await getProperties(dbSpecies.speciesKey),
+        commonName: await getCommonName(dbSpecies.speciesKey),
+        image: await getImage(dbSpecies.speciesKey),
+      );
+    }
+  }
+
   Future<String?> getSpeciesName(int speciesKey) async {
     var dbSpecies = await _db.getSpeciesByKey(speciesKey);
 
@@ -101,13 +120,12 @@ class LocalDatabaseProvider {
   Future<List<BasicPrediction>> getSimilarSpecies(int speciesKey) async {
     var similarSpecies = await _db.getSimilarSpecies(speciesKey);
 
-    var maxScore = similarSpecies.map((e) => e.similarity).reduce(max);
-
+    // var maxScore = similarSpecies.map((e) => e.similarity).reduce(max);
+    var maxScore = .005;
     var similar = await Future.wait(similarSpecies.map((e) async {
       return BasicPrediction(
-        probability: e.similarity / maxScore,
+        probability: e.similarity > maxScore ? 1.0 : e.similarity / maxScore,
         specieskey: e.similarSpecieskey,
-        image: await getImage(e.similarSpecieskey),
         speciesName: await getSpeciesName(e.similarSpecieskey),
       );
     }).toList());
@@ -148,6 +166,16 @@ class LocalDatabaseProvider {
   Future<List<CommonName>> getCommonNames(int speciesKey) async {
     var names = await _db.getCommonNames(speciesKey);
     return _buildCommonNames(names);
+  }
+
+  Future<CommonName?> getCommonName(int speciesKey) async {
+    var names = await _db.getCommonNames(speciesKey);
+    return names.isEmpty
+        ? null
+        : CommonName(
+            name: names.first.name,
+            language: names.first.language,
+          );
   }
 
   List<CommonName> _buildCommonNames(List<ClassifierCommonName> dbCommonNames) {

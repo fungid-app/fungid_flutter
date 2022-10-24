@@ -1,5 +1,6 @@
 //https://stackoverflow.com/questions/55413525/flutter-carousel-image-slider-open-separate-page-during-on-tap-event-is-called
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:fungid_flutter/domain/species.dart';
 import 'package:fungid_flutter/presentation/widgets/species_image_display.dart';
@@ -57,6 +58,14 @@ class ViewSpeciesImagesPageState extends State<ViewSpeciesImagesPage> {
                 },
                 itemCount: widget.images.length,
                 itemBuilder: (context, index) {
+                  if (index < widget.images.length) {
+                    precacheImage(
+                      CachedNetworkImageProvider(
+                        widget.images[index + 1].fungidUrl,
+                      ),
+                      context,
+                    );
+                  }
                   return InteractiveViewer(
                     constrained: true,
                     clipBehavior: Clip.hardEdge,
