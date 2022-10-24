@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:fungid_flutter/domain/observations.dart';
 import 'package:fungid_flutter/domain/predictions.dart';
+import 'package:local_db/local_db.dart';
 // import 'package:pytorch_mobile/model.dart';
 // import 'package:pytorch_mobile/pytorch_mobile.dart';
 
@@ -11,22 +12,27 @@ class OfflinePredictionsProvider {
   final String _modelPath;
   final String _labelPath;
   List<String>? _labels;
+  final DatabaseHandler _db;
   // Model? _imageModel;
   String currentVersion = "0.4.1";
 
   OfflinePredictionsProvider._({
     required String modelPath,
     required String labelPath,
+    required DatabaseHandler db,
   })  : _modelPath = modelPath,
-        _labelPath = labelPath;
+        _labelPath = labelPath,
+        _db = db;
 
   static Future<OfflinePredictionsProvider> create(
     String modelPath,
     String labelPath,
+    DatabaseHandler db,
   ) async {
     var provider = OfflinePredictionsProvider._(
       modelPath: modelPath,
       labelPath: labelPath,
+      db: db,
     );
 
     await provider._init();
@@ -91,10 +97,10 @@ class OfflinePredictionsProvider {
     return combinedResults.map((e) => e / results.length).toList();
   }
 
-  List<Prediction> _makePredictions(
+  Future<List<Prediction>> _makePredictions(
     List<double> results,
     Set<String>? localSpecies,
-  ) {
+  ) async {
     if (results.length != _labels!.length) {
       throw Exception('Image model results and labels are not the same length');
     }
@@ -110,15 +116,20 @@ class OfflinePredictionsProvider {
       }
 
       if (probability > 0.001) {
-        predictions.add(Prediction(
-          species: _labels![i],
-          probability: probability,
-          localProbability: localProb,
-          imageScore: null,
-          isLocal: null,
-          localScore: null,
-          tabScore: null,
-        ));
+        int? specieskey = (await _db.getSpecies(_labels![i]))?.speciesKey;
+
+        if (specieskey != null) {
+          predictions.add(Prediction(
+            specieskey: specieskey,
+            species: _labels![i],
+            probability: probability,
+            localProbability: localProb,
+            imageScore: null,
+            isLocal: null,
+            localScore: null,
+            tabScore: null,
+          ));
+        }
       }
     }
 
@@ -138,7 +149,7 @@ class OfflinePredictionsProvider {
 
     return Predictions(
       observationID: observationID,
-      predictions: _makePredictions(results, localSpecies),
+      predictions: await _makePredictions(results, localSpecies),
       dateCreated: DateTime.now().toUtc(),
       inferred: null,
       predictionType: PredictionType.offline,

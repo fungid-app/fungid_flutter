@@ -91,6 +91,7 @@ Prediction _$PredictionFromJson(Map<String, dynamic> json) => $checkedCreate(
       json,
       ($checkedConvert) {
         final val = Prediction(
+          specieskey: $checkedConvert('specieskey', (v) => v as int),
           species: $checkedConvert('species', (v) => v as String),
           probability:
               $checkedConvert('probability', (v) => (v as num).toDouble()),
@@ -111,13 +112,14 @@ Prediction _$PredictionFromJson(Map<String, dynamic> json) => $checkedCreate(
         'imageScore': 'image_score',
         'tabScore': 'tab_score',
         'localScore': 'local_score',
-        'isLocal': 'is_local'
+        'isLocal': 'is_local',
       },
     );
 
 Map<String, dynamic> _$PredictionToJson(Prediction instance) =>
     <String, dynamic>{
       'species': instance.species,
+      'specieskey': instance.specieskey,
       'probability': instance.probability,
       'local_probability': instance.localProbability,
       'image_score': instance.imageScore,
@@ -132,8 +134,7 @@ BasicPrediction _$BasicPredictionFromJson(Map<String, dynamic> json) =>
       json,
       ($checkedConvert) {
         final val = BasicPrediction(
-          specieskey: $checkedConvert('specieskey', (v) => v as int?),
-          speciesName: $checkedConvert('species_name', (v) => v as String?),
+          specieskey: $checkedConvert('specieskey', (v) => v as int),
           probability: $checkedConvert('probability', (v) => v as num),
         );
         return val;
@@ -144,6 +145,5 @@ BasicPrediction _$BasicPredictionFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$BasicPredictionToJson(BasicPrediction instance) =>
     <String, dynamic>{
       'specieskey': instance.specieskey,
-      'species_name': instance.speciesName,
       'probability': instance.probability,
     };

@@ -44,9 +44,9 @@ class SpeciesRepository {
     return await Future.wait(
       similar.map((s) async {
         return BasicPrediction(
-            specieskey: s.specieskey,
-            speciesName: s.speciesName,
-            probability: s.probability);
+          specieskey: s.specieskey,
+          probability: s.probability,
+        );
       }),
     );
   }

@@ -7,22 +7,6 @@ import 'package:geolocator/geolocator.dart';
 class LocationRepository {
   LocationRepository();
 
-  Future<String> getLocationName(double latitude, double longitude) async {
-    try {
-      var data = await placemarkFromCoordinates(
-        latitude,
-        longitude,
-      );
-
-      var first = data.first;
-      return "${first.street}, ${first.locality}, ${first.administrativeArea}, ${first.isoCountryCode}"
-          .replaceAll(", ,", ",");
-    } catch (e) {
-      log(e.toString());
-      return "Unknown";
-    }
-  }
-
   Future<void> checkPermissions() async {
     bool serviceEnabled;
     LocationPermission permission;
@@ -45,6 +29,24 @@ class LocationRepository {
     if (permission == LocationPermission.deniedForever) {
       return Future.error(
           'Location permissions are permanently denied, we cannot request permissions.');
+    }
+  }
+
+  Future<String> getLocationName(double latitude, double longitude) async {
+    await checkPermissions();
+
+    try {
+      var data = await placemarkFromCoordinates(
+        latitude,
+        longitude,
+      );
+
+      var first = data.first;
+      return "${first.street}, ${first.locality}, ${first.administrativeArea}, ${first.isoCountryCode}"
+          .replaceAll(", ,", ",");
+    } catch (e) {
+      log(e.toString());
+      return "Unknown";
     }
   }
 

@@ -8,10 +8,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_pretty_dio_logger/flutter_pretty_dio_logger.dart';
 import 'package:fungid_api/fungid_api.dart';
 import 'package:fungid_flutter/bootstrap.dart';
+import 'package:fungid_flutter/providers/local_database_provider.dart';
 import 'package:fungid_flutter/providers/offline_predictions_provider.dart';
 import 'package:fungid_flutter/providers/online_predictions_provider.dart';
 import 'package:fungid_flutter/providers/saved_predictions_provider.dart';
-import 'package:fungid_flutter/providers/local_database_provider.dart';
 import 'package:fungid_flutter/providers/user_observation_image_provider.dart';
 import 'package:fungid_flutter/providers/user_observation_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -30,14 +30,13 @@ Future<void> main() async {
       WidgetsFlutterBinding.ensureInitialized();
 
       var fungidApi = getFungidApi();
-
+      var localdb = await getLocalDb();
       var responses = await Future.wait<dynamic>([
         setupFirebase(),
         getObservationsApi(),
         getOnlinePredictions(fungidApi),
-        getOfflinePredictions(),
+        getOfflinePredictions(localdb),
         getPredictions(),
-        getLocalDb(),
         UserObservationImageFileSystemProvider.create()
       ]);
 
@@ -46,8 +45,8 @@ Future<void> main() async {
         onlinePredictionsProvider: responses[2],
         offlinePredictionsProvider: responses[3],
         savedPredictionsProvider: responses[4],
-        localDatabaseProvider: responses[5],
-        imageProvider: responses[6],
+        localDatabaseProvider: LocalDatabaseProvider(localdb),
+        imageProvider: responses[5],
       );
     },
     (error, stack) =>
@@ -97,7 +96,7 @@ Future<SavedPredictionsSharedPrefProvider> getPredictions() async {
   return predictionsProvider;
 }
 
-Future<LocalDatabaseProvider> getLocalDb() async {
+Future<DatabaseHandler> getLocalDb() async {
   // Setup local DB
   // Construct a file path to copy database to
 
@@ -156,13 +155,16 @@ Future<LocalDatabaseProvider> getLocalDb() async {
 
   var db = await DatabaseHandler.create(p);
 
-  return LocalDatabaseProvider(db);
+  return db;
 }
 
-Future<OfflinePredictionsProvider> getOfflinePredictions() async {
+Future<OfflinePredictionsProvider> getOfflinePredictions(
+  DatabaseHandler db,
+) async {
   return await OfflinePredictionsProvider.create(
     'assets/models/mobile-image-model.pt',
     'assets/models/labels.csv',
+    db,
   );
 }
 

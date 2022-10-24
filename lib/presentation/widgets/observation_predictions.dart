@@ -7,10 +7,12 @@ import 'package:fungid_flutter/domain/predictions.dart';
 import 'package:fungid_flutter/domain/species.dart';
 import 'package:fungid_flutter/presentation/bloc/view_prediction_bloc.dart';
 import 'package:fungid_flutter/presentation/pages/view_species.dart';
+import 'package:fungid_flutter/presentation/widgets/basic_predictions_widgets.dart';
 import 'package:fungid_flutter/presentation/widgets/species_image_display.dart';
 import 'package:fungid_flutter/repositories/predictions_repository.dart';
 import 'package:fungid_flutter/repositories/species_repository.dart';
 import 'package:fungid_flutter/repositories/user_observation_repository.dart';
+import 'package:fungid_flutter/utils/hue_calculation.dart';
 import 'package:fungid_flutter/utils/ui_helpers.dart';
 
 class ObservationPredictionsView extends StatelessWidget {
@@ -191,18 +193,20 @@ class ViewPredictionList extends StatelessWidget {
       );
     }
 
-    final imageMap =
-        context.select((ViewPredictionBloc bloc) => bloc.state.imageMap) ?? {};
-
     return ListView.separated(
       separatorBuilder: (BuildContext context, int index) =>
           UiHelpers.basicDivider,
       itemCount: predictions.predictions.length,
       itemBuilder: (context, index) {
-        return getPredictionTile(
-          context,
-          predictions.predictions[index],
-          imageMap[predictions.predictions[index].species],
+        var pred = predictions.predictions[index];
+        var bp = BasicPrediction(
+          specieskey: pred.specieskey,
+          probability: pred.probability,
+        );
+
+        return BasicPredictionTile(
+          prediction: bp,
+          hueCalculation: ConservativeHueCalculation(),
         );
       },
     );

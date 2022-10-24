@@ -126,7 +126,6 @@ class LocalDatabaseProvider {
       return BasicPrediction(
         probability: e.similarity > maxScore ? 1.0 : e.similarity / maxScore,
         specieskey: e.similarSpecieskey,
-        speciesName: await getSpeciesName(e.similarSpecieskey),
       );
     }).toList());
 

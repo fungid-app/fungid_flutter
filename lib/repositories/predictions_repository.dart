@@ -29,8 +29,14 @@ class PredictionsRepository {
   final LocalDatabaseProvider _localDatabaseProvider;
 
   Future<Predictions> getPredictions(UserObservation observation) async {
-    var preds =
-        _savedPredictionsProvider.getObservationPredictions(observation.id);
+    Predictions? preds;
+
+    try {
+      preds =
+          _savedPredictionsProvider.getObservationPredictions(observation.id);
+    } catch (e) {
+      log(e.toString());
+    }
 
     if (preds == null) {
       return await refreshPredictions(observation);
@@ -63,7 +69,49 @@ class PredictionsRepository {
           .toList(),
     );
 
-    return Predictions.fromApi(preds, observation.id);
+    return fromApi(preds, observation.id);
+  }
+
+  Future<Prediction?> fromApiPrediction(api.FullPrediction prediction) async {
+    int? specieskey =
+        await _localDatabaseProvider.getSpeciesKey(prediction.species);
+
+    if (specieskey == null) {
+      return null;
+    }
+
+    return Prediction(
+      specieskey: specieskey,
+      species: prediction.species,
+      probability: prediction.probability.toDouble(),
+      localProbability: prediction.localProbability.toDouble(),
+      imageScore: prediction.imageScore.toDouble(),
+      tabScore: prediction.tabScore.toDouble(),
+      localScore: prediction.localScore.toDouble(),
+      isLocal: prediction.isLocal,
+    );
+  }
+
+  Future<Predictions> fromApi(
+    api.FullPredictions apiPreds,
+    String observationID,
+  ) async {
+    var preds = (await Future.wait(
+      apiPreds.predictions.map(
+        (e) => fromApiPrediction(e),
+      ),
+    ))
+        .whereType<Prediction>()
+        .toList();
+
+    return Predictions(
+      observationID: observationID,
+      predictions: preds,
+      dateCreated: DateTime.now().toUtc(),
+      inferred: InferredData.fromApi(apiPreds.inferred),
+      predictionType: PredictionType.online,
+      modelVersion: apiPreds.version,
+    );
   }
 
   Future<Predictions> _getNewOfflinePredictions(
@@ -133,18 +181,24 @@ class PredictionsRepository {
 
   Future<List<BasicPrediction>> _buildBasicPredictionFromApi(
       List<api.BasicPrediction> preds) async {
-    return await Future.wait(
+    List<BasicPrediction?> basicPreds = await Future.wait(
       preds.map(
         (e) async {
           var specieskey =
               await _localDatabaseProvider.getSpeciesKey(e.species);
 
+          if (specieskey == null) {
+            return null;
+          }
+
           return BasicPrediction(
-              speciesName: e.species,
-              specieskey: specieskey,
-              probability: e.probability);
+            specieskey: specieskey,
+            probability: e.probability,
+          );
         },
       ).toList(),
     );
+
+    return basicPreds.whereType<BasicPrediction>().toList();
   }
 }

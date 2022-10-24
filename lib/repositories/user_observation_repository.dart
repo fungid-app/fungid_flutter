@@ -38,7 +38,7 @@ class UserObservationsRepository {
     if (prevObs != null) {
       // Delete old images
       for (var img in prevObs.images) {
-        if (!obs.images.any((element) => element.id == img.id)) {
+        if (!images.any((element) => element.id == img.id)) {
           _imageProvider.deleteImage(
             img.getFilePath(_imageProvider.storageDirectory),
           );

@@ -18,7 +18,6 @@ class ViewPredictionState extends Equatable {
     this.observation,
     this.errorMessage,
     this.predictions,
-    this.imageMap,
     this.isCurrentModelVersion = true,
   });
 
@@ -27,7 +26,6 @@ class ViewPredictionState extends Equatable {
   final UserObservation? observation;
   final String? errorMessage;
   final Predictions? predictions;
-  final Map<String, SpeciesImage>? imageMap;
   final bool isCurrentModelVersion;
 
   bool get isStale => (observation?.lastUpdated ?? DateTime.now())
@@ -47,7 +45,6 @@ class ViewPredictionState extends Equatable {
     String Function()? id,
     String Function()? errorMessage,
     Predictions Function()? predictions,
-    Map<String, SpeciesImage> Function()? imageMap,
     bool Function()? isCurrentModelVersion,
   }) =>
       ViewPredictionState(
@@ -56,7 +53,6 @@ class ViewPredictionState extends Equatable {
         observation: observation != null ? observation() : this.observation,
         errorMessage: errorMessage != null ? errorMessage() : this.errorMessage,
         predictions: predictions != null ? predictions() : this.predictions,
-        imageMap: imageMap != null ? imageMap() : this.imageMap,
         isCurrentModelVersion: isCurrentModelVersion != null
             ? isCurrentModelVersion()
             : this.isCurrentModelVersion,

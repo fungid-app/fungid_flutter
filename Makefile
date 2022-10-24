@@ -18,18 +18,21 @@ clean:
 
 deploy-ios-beta:
 	flutter clean \
+	&& source .env \
 	&& flutter build ipa \
 	&& cd ios \
 	&& fastlane ios beta
 
 deploy-android-draft:
 	flutter clean \
+	&& source .env \
 	&& flutter build appbundle \
 	&& cd android \
 	&& fastlane android draft
 
 deploy-android-release:
 	flutter build appbundle \
+	&& source .env \
 	&& cd android \
 	&& fastlane android release
 

@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 import 'package:fungid_api/fungid_api.dart' as api;
-import 'package:fungid_flutter/domain/species.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'predictions.g.dart';
@@ -83,27 +82,12 @@ class Predictions extends Equatable {
       _$PredictionsFromJson(json);
 
   Map<String, dynamic> toJson() => _$PredictionsToJson(this);
-
-  factory Predictions.fromApi(
-    api.FullPredictions preds,
-    String observationID,
-  ) {
-    return Predictions(
-      observationID: observationID,
-      predictions: preds.predictions
-          .map((e) => Prediction.fromApiPrediction(e))
-          .toList(),
-      dateCreated: DateTime.now().toUtc(),
-      inferred: InferredData.fromApi(preds.inferred),
-      predictionType: PredictionType.online,
-      modelVersion: preds.version,
-    );
-  }
 }
 
 @JsonSerializable()
 class Prediction extends Equatable {
   final String species;
+  final int specieskey;
   final double probability;
   final double localProbability;
   final double? imageScore;
@@ -112,6 +96,7 @@ class Prediction extends Equatable {
   final bool? isLocal;
 
   const Prediction({
+    required this.specieskey,
     required this.species,
     required this.probability,
     required this.localProbability,
@@ -128,17 +113,6 @@ class Prediction extends Equatable {
   @override
   List<Object?> get props => [species, probability];
 
-  factory Prediction.fromApiPrediction(api.FullPrediction prediction) =>
-      Prediction(
-        species: prediction.species,
-        probability: prediction.probability.toDouble(),
-        localProbability: prediction.localProbability.toDouble(),
-        imageScore: prediction.imageScore.toDouble(),
-        tabScore: prediction.tabScore.toDouble(),
-        localScore: prediction.localScore.toDouble(),
-        isLocal: prediction.isLocal,
-      );
-
   factory Prediction.fromJson(Map<String, dynamic> json) =>
       _$PredictionFromJson(json);
 
@@ -147,20 +121,17 @@ class Prediction extends Equatable {
 
 @JsonSerializable()
 class BasicPrediction extends Equatable {
-  final int? specieskey;
-  final String? speciesName;
+  final int specieskey;
   final num probability;
 
   const BasicPrediction({
     required this.specieskey,
-    required this.speciesName,
     required this.probability,
   });
 
   @override
   List<Object?> get props => [
         specieskey,
-        speciesName,
         probability,
       ];
 

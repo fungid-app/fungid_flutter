@@ -12,6 +12,7 @@
 migrate_working_dir/
 assets_staging/
 assets/app.sqlite
+.env
 
 .vscode/launch.json
 local.properties

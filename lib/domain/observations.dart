@@ -96,6 +96,8 @@ class ObservationLocation extends Equatable {
   final double lng;
   final String placeName;
 
+  String get placeDisplay => placeName;
+
   const ObservationLocation({
     required this.lat,
     required this.lng,

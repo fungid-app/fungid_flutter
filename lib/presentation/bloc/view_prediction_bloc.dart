@@ -91,15 +91,10 @@ class ViewPredictionBloc
     try {
       final preds = await loadFunc();
 
-      final speciesMap = await speciesRepository.getImageMap(
-        species: preds.predictions.map((e) => e.species).toList(),
-      );
-
       emit(
         state.copyWith(
           status: () => ViewPredictionStatus.success,
           predictions: () => preds,
-          imageMap: () => speciesMap,
           isCurrentModelVersion: () =>
               predictionsRepository.isCurrentVersion(preds),
         ),

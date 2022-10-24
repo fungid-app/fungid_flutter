@@ -69,7 +69,7 @@ class BasicPredictionTile extends StatelessWidget {
           SimpleSpeciesBloc(speciesRepository: speciesRepository)
             ..add(
               SimpleSpeciesLoad(
-                specieskey: prediction.specieskey!,
+                specieskey: prediction.specieskey,
               ),
             ),
       child: BasicPredictionTileView(
