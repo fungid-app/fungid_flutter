@@ -52,8 +52,8 @@ class SpeciesSeasonalityView extends StatelessWidget {
         ],
         titlesData: titlesData(theme),
         borderData: borderData(theme),
-        minX: 1,
-        maxX: 12,
+        minX: 0.5,
+        maxX: 12.5,
         minY: 0,
         maxY: 1.05,
       ),
@@ -126,6 +126,17 @@ SideTitleWidget Function(double, TitleMeta) bottomTitleWidgets(
 
 LineChartBarData getBarData(ThemeData theme, List<SpeciesStat> stats) {
   stats.sort((a, b) => double.parse(a.value).compareTo(double.parse(b.value)));
+  var adjusted = [
+    SpeciesStat(
+      value: "0",
+      likelihood: stats.last.likelihood,
+    ),
+    ...stats,
+    SpeciesStat(
+      value: "13",
+      likelihood: stats.first.likelihood,
+    ),
+  ];
   return LineChartBarData(
     isCurved: true,
     color: theme.toggleableActiveColor,
@@ -136,7 +147,7 @@ LineChartBarData getBarData(ThemeData theme, List<SpeciesStat> stats) {
       show: true,
       color: theme.primaryColorLight,
     ),
-    spots: stats
+    spots: adjusted
         .map(
           (e) => FlSpot(
             double.parse(e.value),
