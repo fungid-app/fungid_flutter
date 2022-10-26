@@ -269,7 +269,7 @@ Name | Type | Description  | Notes
  **lon** | **num**|  | 
  **date** | **Date**|  | [optional] 
  **page** | **int**|  | [optional] [default to 1]
- **size** | **int**|  | [optional] [default to 50]
+ **size** | **int**|  | [optional] [default to 500]
 
 ### Return type
 

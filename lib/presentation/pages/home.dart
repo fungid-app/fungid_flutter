@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fungid_flutter/presentation/bloc/observation_list_bloc.dart';
-import 'package:fungid_flutter/presentation/bloc/seasonal_species_bloc.dart';
 import 'package:fungid_flutter/presentation/pages/edit_observation.dart';
 import 'package:fungid_flutter/presentation/pages/observation_list.dart';
 import 'package:fungid_flutter/presentation/pages/seasonal_species_list.dart';
 import 'package:fungid_flutter/presentation/widgets/add_image_sheet.dart';
-import 'package:fungid_flutter/repositories/location_repository.dart';
-import 'package:fungid_flutter/repositories/predictions_repository.dart';
 import 'package:fungid_flutter/repositories/user_observation_repository.dart';
 
 class HomePage extends StatelessWidget {
@@ -24,14 +21,6 @@ class HomePage extends StatelessWidget {
             repository:
                 RepositoryProvider.of<UserObservationsRepository>(context),
           )..add(const ObservationListSubscriptionRequested()),
-        ),
-        BlocProvider(
-          create: (_) => SeasonalSpeciesBloc(
-            predictionsRepository:
-                RepositoryProvider.of<PredictionsRepository>(context),
-            locationRepository:
-                RepositoryProvider.of<LocationRepository>(context),
-          )..add(SeasonalSpeciesLoad(date: DateTime.now())),
         ),
       ],
       child: const HomeView(),

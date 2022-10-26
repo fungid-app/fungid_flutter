@@ -51,4 +51,11 @@ void main() {
           'https://api.fungid.app/static/properties/stipecharacter/bare.png'),
     );
   });
+  test('Test Icon Conversion Complex Name', () {
+    expect(
+      SpeciesProperties.iconUrl(SporePrintColor.blackishBrown),
+      equals(
+          'https://api.fungid.app/static/properties/sporeprintcolor/blackishbrown.png'),
+    );
+  });
 }

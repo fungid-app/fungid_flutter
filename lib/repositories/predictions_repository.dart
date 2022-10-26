@@ -8,6 +8,7 @@ import 'package:fungid_flutter/providers/local_database_provider.dart';
 import 'package:fungid_flutter/providers/offline_predictions_provider.dart';
 import 'package:fungid_flutter/providers/online_predictions_provider.dart';
 import 'package:fungid_flutter/providers/saved_predictions_provider.dart';
+import 'package:fungid_flutter/utils/internet.dart';
 
 class PredictionsRepository {
   const PredictionsRepository({
@@ -116,7 +117,7 @@ class PredictionsRepository {
 
   Future<Predictions> _getNewOfflinePredictions(
     UserObservation observation,
-    Set<String>? localSpecies,
+    Set<String> localSpecies,
   ) async {
     var preds = await _offlinePredictionsProvider.getPredictions(
       observation.id,
@@ -158,22 +159,32 @@ class PredictionsRepository {
     );
 
     if (preds == null) {
-      var seasonal = await _onlinePredictionsProvider.getSeasonalSpecies(
-        lat: lat,
-        lon: lon,
-        date: date != null ? api.Date(date.year, date.month, date.day) : null,
-        size: 100,
-        page: 1,
-      );
+      if (await isOnline()) {
+        var seasonal = await _onlinePredictionsProvider.getSeasonalSpecies(
+          lat: lat,
+          lon: lon,
+          date: date != null ? api.Date(date.year, date.month, date.day) : null,
+          size: 10000,
+          page: 1,
+        );
 
-      preds = await _buildBasicPredictionFromApi(seasonal);
+        preds = await _buildBasicPredictionFromApi(seasonal);
 
-      await _savedPredictionsProvider.saveSeasonalPredictions(
-        date ?? DateTime.now(),
-        lat,
-        lon,
-        preds,
-      );
+        await _savedPredictionsProvider.saveSeasonalPredictions(
+          date ?? DateTime.now(),
+          lat,
+          lon,
+          preds,
+        );
+      } else {
+        preds = _savedPredictionsProvider.getLatestSeasonalPredictions();
+
+        if (preds == null) {
+          throw Exception(
+            'No seasonal predictions available, check to see if you are offline.',
+          );
+        }
+      }
     }
 
     return preds;

@@ -4,21 +4,23 @@ import 'package:fungid_flutter/domain/predictions.dart';
 import 'package:fungid_flutter/presentation/bloc/simple_species_bloc.dart';
 import 'package:fungid_flutter/presentation/pages/view_species.dart';
 import 'package:fungid_flutter/presentation/widgets/circular_prediction_indicator.dart';
+import 'package:fungid_flutter/presentation/widgets/inline_species_properties_icons.dart';
 import 'package:fungid_flutter/presentation/widgets/species_image_display.dart';
 import 'package:fungid_flutter/repositories/species_repository.dart';
 import 'package:fungid_flutter/utils/hue_calculation.dart';
 import 'package:fungid_flutter/utils/ui_helpers.dart';
-import 'package:intersperse/intersperse.dart';
 
 class BasicPredictionsView extends StatelessWidget {
   final List<BasicPrediction> basicPredictions;
   final HueCalculation hueCalculation;
   final String? title;
+  final ScrollPhysics? physics;
 
   const BasicPredictionsView({
     Key? key,
     required this.basicPredictions,
     this.title,
+    this.physics,
     required this.hueCalculation,
   }) : super(key: key);
 
@@ -36,25 +38,58 @@ class BasicPredictionsView extends StatelessWidget {
                   )
                 ],
               ),
-        ...intersperse(
-          UiHelpers.basicDivider,
-          basicPredictions.map(
-            (e) => BasicPredictionTile(
-              prediction: e,
-              hueCalculation: hueCalculation,
-            ),
-          ),
-        ),
+        BasicPredictionsList(
+          basicPredictions: basicPredictions,
+          hueCalculation: hueCalculation,
+          physics: physics ?? const NeverScrollableScrollPhysics(),
+        )
       ],
     );
   }
 }
 
-class BasicPredictionTile extends StatelessWidget {
+class BasicPredictionsList extends StatelessWidget {
+  final List<BasicPrediction> basicPredictions;
+  final HueCalculation hueCalculation;
+  final ScrollPhysics? physics;
+
+  const BasicPredictionsList({
+    Key? key,
+    required this.basicPredictions,
+    required this.hueCalculation,
+    this.physics,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.separated(
+      shrinkWrap: true,
+      physics: physics,
+      separatorBuilder: (BuildContext context, int index) =>
+          UiHelpers.basicDivider,
+      itemCount: basicPredictions.length,
+      itemBuilder: (context, index) {
+        var pred = basicPredictions[index];
+        var bp = BasicPrediction(
+          specieskey: pred.specieskey,
+          probability: pred.probability,
+        );
+
+        return _BasicPredictionTile(
+          key: ValueKey(pred.specieskey),
+          prediction: bp,
+          hueCalculation: hueCalculation,
+        );
+      },
+    );
+  }
+}
+
+class _BasicPredictionTile extends StatelessWidget {
   final BasicPrediction prediction;
   final HueCalculation hueCalculation;
 
-  const BasicPredictionTile({
+  const _BasicPredictionTile({
     Key? key,
     required this.prediction,
     required this.hueCalculation,
@@ -112,6 +147,8 @@ class BasicPredictionTileView extends StatelessWidget {
           title: Text(state.message),
         );
       } else if (state is SimpleSpeciesLoaded) {
+        var edible = state.species.properties.howEdible;
+
         return ListTile(
           leading: state.species.image == null
               ? null
@@ -136,9 +173,20 @@ class BasicPredictionTileView extends StatelessWidget {
             state.species.commonName?.name ?? state.species.species,
             overflow: TextOverflow.ellipsis,
           ),
-          subtitle: state.species.commonName != null
-              ? Text(state.species.species)
-              : null,
+          subtitle: Row(
+            children: [
+              InlineSpeciesPropertiesIcons(
+                properties: edible,
+                padding: const EdgeInsets.only(right: 10, top: 5),
+              ),
+              state.species.commonName != null
+                  ? Text(
+                      state.species.species,
+                      overflow: TextOverflow.ellipsis,
+                    )
+                  : const SizedBox.shrink(),
+            ],
+          ),
           trailing: CircularPredictionIndicator(
             probability: prediction.probability,
             hueCalculation: hueCalculation,

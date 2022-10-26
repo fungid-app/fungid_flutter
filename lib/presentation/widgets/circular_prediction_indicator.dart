@@ -34,12 +34,20 @@ class CircularPredictionIndicator extends StatelessWidget {
           ),
           Center(
             child: Text(
-              '${(probability * 100).round()}',
+              _getProbText(probability),
               style: Theme.of(context).textTheme.bodyText2,
             ),
           ),
         ],
       ),
     );
+  }
+
+  String _getProbText(num probability) {
+    if (probability < .1) {
+      return (probability * 100).toStringAsFixed(1);
+    } else {
+      return '${(probability * 100).round()}';
+    }
   }
 }

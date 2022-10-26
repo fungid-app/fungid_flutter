@@ -496,7 +496,7 @@ class ClassifierApi {
     required num lon,
     Date? date,
     int? page = 1,
-    int? size = 50,
+    int? size = 500,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
     Map<String, dynamic>? extra,

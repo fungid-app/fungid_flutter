@@ -22,7 +22,7 @@ import 'firebase_options.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io' as io;
 
-const String _dbVersion = '0.4.4';
+const String _dbVersion = '0.4.5';
 
 Future<void> main() async {
   runZonedGuarded<Future<void>>(
@@ -115,7 +115,7 @@ Future<DatabaseHandler> getLocalDb() async {
       if (_dbVersion != await db.getDbVersion()) {
         log('Database version mismatch, reloading');
         loadDb = true;
-        db.destroy();
+        await db.destroy();
       } else {
         log('Database version match, not reloading');
       }
@@ -123,7 +123,7 @@ Future<DatabaseHandler> getLocalDb() async {
       log('Error loading database version, reloading',
           error: e, stackTrace: stacktrace);
       loadDb = true;
-      db.destroy();
+      await db.destroy();
 
       await FirebaseCrashlytics.instance.recordError(
         e,
@@ -150,7 +150,7 @@ Future<DatabaseHandler> getLocalDb() async {
 
     var db = await DatabaseHandler.create(p);
 
-    db.setDbVersion(_dbVersion);
+    await db.setDbVersion(_dbVersion);
   }
 
   var db = await DatabaseHandler.create(p);

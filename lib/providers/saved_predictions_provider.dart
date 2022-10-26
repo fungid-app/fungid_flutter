@@ -12,7 +12,9 @@ class SavedPredictionsSharedPrefProvider {
   final SharedPreferences _prefs;
 
   static const _observationPredictionsKey = 'predictions_';
-  static const _seasonalPredictionsKey = 'seasonal_';
+  static const _seasonalPredictionsKey = 'seasonal_v2_';
+
+  static const _latestSeasonalKey = '_latest_seasonal';
 
   String? _getValue(String key) => _prefs.getString(key);
 
@@ -50,6 +52,17 @@ class SavedPredictionsSharedPrefProvider {
     return decodeBasicPredictionList(predsJson);
   }
 
+  List<BasicPrediction>? getLatestSeasonalPredictions() {
+    var key = _getValue(_latestSeasonalKey);
+
+    if (key != null) {
+      final predsJson = _getValue(key);
+      return decodeBasicPredictionList(predsJson);
+    }
+
+    return null;
+  }
+
   List<BasicPrediction>? decodeBasicPredictionList(String? predsJson) {
     if (predsJson != null) {
       return List<Map<dynamic, dynamic>>.from(json.decode(predsJson) as List)
@@ -66,9 +79,12 @@ class SavedPredictionsSharedPrefProvider {
     num lat,
     num lon,
     List<BasicPrediction> preds,
-  ) {
-    return _setValue(
-      _buildSeasonalPredictionsKey(date, lat, lon),
+  ) async {
+    var key = _buildSeasonalPredictionsKey(date, lat, lon);
+    // Remember the most recent seasonal prediction key.
+    await _setValue(_latestSeasonalKey, key);
+    return await _setValue(
+      key,
       json.encode(preds),
     );
   }

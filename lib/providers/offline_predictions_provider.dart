@@ -99,7 +99,7 @@ class OfflinePredictionsProvider {
 
   Future<List<Prediction>> _makePredictions(
     List<double> results,
-    Set<String>? localSpecies,
+    Set<String> localSpecies,
   ) async {
     if (results.length != _labels!.length) {
       throw Exception('Image model results and labels are not the same length');
@@ -109,10 +109,10 @@ class OfflinePredictionsProvider {
 
     for (int i = 0; i < results.length; i++) {
       double probability = results[i];
-      double localProb = probability;
+      double localProb = 0;
 
-      if (localSpecies != null && !localSpecies.contains(_labels![i])) {
-        localProb = localProb * 0.1;
+      if (localSpecies.contains(_labels![i])) {
+        localProb = probability;
       }
 
       if (probability > 0.001) {
@@ -142,7 +142,7 @@ class OfflinePredictionsProvider {
     String observationID,
     DateTime date,
     List<UserObservationImage> images,
-    Set<String>? localSpecies,
+    Set<String> localSpecies,
     Directory imagesDirectory,
   ) async {
     var results = await getImagesPrediction(images, imagesDirectory);

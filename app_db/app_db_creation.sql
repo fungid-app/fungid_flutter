@@ -152,3 +152,5 @@ DROP TABLE classifier_species_images;
 
 
 
+
+SELECT similarity FROM similar_species ss ORDER BY 1 DESC LIMIT 200

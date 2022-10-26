@@ -15,6 +15,11 @@
 
 default_platform(:ios)
 
+app_team_id = 'AB83BKF89B'
+itc_team_id = '1384242'
+itc_provider_id = 'AwesomeOrgLLC'
+
+
 platform :ios do
   desc "Push a new beta build to TestFlight"
   lane :beta do
@@ -22,7 +27,16 @@ platform :ios do
       skip_build_archive: true,
       archive_path: "../build/ios/archive/Runner.xcarchive",
     )
-    upload_to_testflight
+    
+    upload_to_testflight(
+      itc_provider: "QVF4W6GHP4"
+    )
+  end
+
+  lane :upload do
+    upload_to_testflight(
+      itc_provider: "QVF4W6GHP4"
+    )
   end
 
   lane :crashlytics do

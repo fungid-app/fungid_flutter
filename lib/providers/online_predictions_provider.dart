@@ -92,6 +92,7 @@ class OnlinePredictionsProvider {
       var data = result.data;
 
       if (data != null) {
+        log(data.toString());
         return data;
       } else {
         throw Exception('No data returned');

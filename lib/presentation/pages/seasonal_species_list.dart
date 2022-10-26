@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fungid_flutter/presentation/bloc/seasonal_species_bloc.dart';
 import 'package:fungid_flutter/presentation/widgets/basic_predictions_widgets.dart';
 import 'package:fungid_flutter/utils/hue_calculation.dart';
-import 'package:fungid_flutter/utils/ui_helpers.dart';
 
 class SeasonalSpeciesListView extends StatelessWidget {
   const SeasonalSpeciesListView({Key? key}) : super(key: key);
@@ -23,18 +22,9 @@ class SeasonalSpeciesListView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  child: ListView.separated(
-                    shrinkWrap: true,
-                    itemCount: state.predictions.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return BasicPredictionTile(
-                        prediction: state.predictions[index],
-                        hueCalculation: BasicHueCalculation(),
-                      );
-                    },
-                    separatorBuilder: (context, index) =>
-                        UiHelpers.basicDivider,
-                  ),
+                  child: BasicPredictionsList(
+                      basicPredictions: state.predictions,
+                      hueCalculation: BasicHueCalculation()),
                 ),
               ],
             ),

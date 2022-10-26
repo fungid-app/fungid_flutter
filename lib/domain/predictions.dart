@@ -85,41 +85,6 @@ class Predictions extends Equatable {
 }
 
 @JsonSerializable()
-class Prediction extends Equatable {
-  final String species;
-  final int specieskey;
-  final double probability;
-  final double localProbability;
-  final double? imageScore;
-  final double? tabScore;
-  final double? localScore;
-  final bool? isLocal;
-
-  const Prediction({
-    required this.specieskey,
-    required this.species,
-    required this.probability,
-    required this.localProbability,
-    required this.imageScore,
-    required this.tabScore,
-    required this.localScore,
-    required this.isLocal,
-  });
-
-  String displayProbabilty() {
-    return "${(probability * 100).toStringAsFixed(4)}%";
-  }
-
-  @override
-  List<Object?> get props => [species, probability];
-
-  factory Prediction.fromJson(Map<String, dynamic> json) =>
-      _$PredictionFromJson(json);
-
-  Map<String, dynamic> toJson() => _$PredictionToJson(this);
-}
-
-@JsonSerializable()
 class BasicPrediction extends Equatable {
   final int specieskey;
   final num probability;
@@ -139,4 +104,69 @@ class BasicPrediction extends Equatable {
       _$BasicPredictionFromJson(json);
 
   Map<String, dynamic> toJson() => _$BasicPredictionToJson(this);
+}
+
+@JsonSerializable()
+class LocalPrediction extends BasicPrediction {
+  final bool isLocal;
+  final num localProbability;
+
+  const LocalPrediction({
+    required specieskey,
+    required probability,
+    required this.isLocal,
+    required this.localProbability,
+  }) : super(
+          specieskey: specieskey,
+          probability: probability,
+        );
+
+  @override
+  List<Object?> get props => [
+        specieskey,
+        probability,
+      ];
+
+  factory LocalPrediction.fromJson(Map<String, dynamic> json) =>
+      _$LocalPredictionFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => _$LocalPredictionToJson(this);
+}
+
+@JsonSerializable()
+class Prediction extends LocalPrediction {
+  final String species;
+  final double? imageScore;
+  final double? localScore;
+  final double? tabScore;
+
+  const Prediction({
+    required specieskey,
+    required this.species,
+    required probability,
+    required localProbability,
+    required this.imageScore,
+    required this.tabScore,
+    required this.localScore,
+    required isLocal,
+  }) : super(
+          specieskey: specieskey,
+          probability: probability,
+          localProbability: localProbability,
+          isLocal: isLocal,
+        );
+
+  String displayProbabilty() {
+    return "${(probability * 100).toStringAsFixed(4)}%";
+  }
+
+  @override
+  List<Object?> get props => [species, probability];
+
+  factory Prediction.fromJson(Map<String, dynamic> json) =>
+      _$PredictionFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => _$PredictionToJson(this);
 }

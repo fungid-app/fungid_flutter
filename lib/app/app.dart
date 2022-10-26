@@ -1,6 +1,7 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fungid_flutter/presentation/bloc/seasonal_species_bloc.dart';
 import 'package:fungid_flutter/presentation/cubit/internet_cubit.dart';
 import 'package:fungid_flutter/presentation/cubit/observation_image_cubit.dart';
 import 'package:fungid_flutter/presentation/pages/home.dart';
@@ -71,6 +72,14 @@ class AppView extends StatelessWidget {
           create: (context) => ObservationImageCubit(
               userObservationsRepository:
                   RepositoryProvider.of<UserObservationsRepository>(context)),
+        ),
+        BlocProvider(
+          create: (context) => SeasonalSpeciesBloc(
+            predictionsRepository:
+                RepositoryProvider.of<PredictionsRepository>(context),
+            locationRepository:
+                RepositoryProvider.of<LocationRepository>(context),
+          )..add(SeasonalSpeciesLoad(date: DateTime.now())),
         ),
       ],
       child: MaterialApp(

@@ -22,10 +22,11 @@ class SeasonalSpeciesLoading extends SeasonalSpeciesState {
 
 class SeasonalSpeciesLoaded extends SeasonalSpeciesState {
   final List<BasicPrediction> predictions;
+  final Set<int> localSpeciesKeys;
 
-  const SeasonalSpeciesLoaded({
+  SeasonalSpeciesLoaded({
     required this.predictions,
-  });
+  }) : localSpeciesKeys = predictions.map((p) => p.specieskey).toSet();
 
   @override
   List<Object> get props => [

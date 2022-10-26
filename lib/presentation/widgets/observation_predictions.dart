@@ -1,19 +1,13 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fungid_flutter/domain/observations.dart';
 import 'package:fungid_flutter/domain/predictions.dart';
-import 'package:fungid_flutter/domain/species.dart';
 import 'package:fungid_flutter/presentation/bloc/view_prediction_bloc.dart';
-import 'package:fungid_flutter/presentation/pages/view_species.dart';
-import 'package:fungid_flutter/presentation/widgets/basic_predictions_widgets.dart';
-import 'package:fungid_flutter/presentation/widgets/species_image_display.dart';
+import 'package:fungid_flutter/presentation/widgets/local_predictions_widget.dart';
 import 'package:fungid_flutter/repositories/predictions_repository.dart';
 import 'package:fungid_flutter/repositories/species_repository.dart';
 import 'package:fungid_flutter/repositories/user_observation_repository.dart';
 import 'package:fungid_flutter/utils/hue_calculation.dart';
-import 'package:fungid_flutter/utils/ui_helpers.dart';
 
 class ObservationPredictionsView extends StatelessWidget {
   final String observationID;
@@ -193,91 +187,10 @@ class ViewPredictionList extends StatelessWidget {
       );
     }
 
-    return ListView.separated(
-      separatorBuilder: (BuildContext context, int index) =>
-          UiHelpers.basicDivider,
-      itemCount: predictions.predictions.length,
-      itemBuilder: (context, index) {
-        var pred = predictions.predictions[index];
-        var bp = BasicPrediction(
-          specieskey: pred.specieskey,
-          probability: pred.probability,
-        );
-
-        return BasicPredictionTile(
-          prediction: bp,
-          hueCalculation: ConservativeHueCalculation(),
-        );
-      },
+    return LocalPredictionsView(
+      basicPredictions: predictions.predictions,
+      hueCalculation: ConservativeHueCalculation(),
+      isInline: false,
     );
-  }
-
-  ListTile getPredictionTile(
-    BuildContext context,
-    Prediction pred,
-    SpeciesImage? image,
-  ) {
-    return ListTile(
-      leading: image == null
-          ? null
-          : SpeciesImageDisplay(
-              image: image,
-              width: 50,
-              height: 50,
-              fit: BoxFit.cover,
-            ),
-      onTap: () => {
-        Navigator.push(
-          context,
-          ViewSpeciesPage.route(
-            species: pred.species,
-            specieskey: null,
-            observation: null,
-          ),
-        )
-      },
-      minLeadingWidth: 0,
-      title: Text(pred.species),
-      trailing: SizedBox(
-        height: 40,
-        width: 40,
-        child: Stack(
-          children: [
-            Center(
-              child: CircularProgressIndicator(
-                value: pred.probability,
-                backgroundColor: Theme.of(context).backgroundColor,
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  HSLColor.fromAHSL(
-                    1,
-                    _getHueFromProbability(pred.probability),
-                    .75,
-                    .5,
-                  ).toColor(),
-                ),
-              ),
-            ),
-            Center(
-              child: Text(
-                _getProbText(pred.probability),
-                style: Theme.of(context).textTheme.bodyText2,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  String _getProbText(double probability) {
-    if (probability < .1) {
-      return (probability * 100).toStringAsFixed(1);
-    } else {
-      return '${(probability * 100).round()}';
-    }
-  }
-
-  double _getHueFromProbability(double probability) {
-    return 100 * (pow(2 * probability, 3) / pow(2, 3));
   }
 }
