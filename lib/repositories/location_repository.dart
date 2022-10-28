@@ -50,11 +50,18 @@ class LocationRepository {
     }
   }
 
-  Future<ObservationLocation> determinePosition() async {
+  Future<Position> determinePosition() async {
     await checkPermissions();
 
-    Position pos = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.bestForNavigation);
+    return Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+  }
+
+  Future<ObservationLocation> getObservationLocation() async {
+    await checkPermissions();
+
+    var pos = await determinePosition();
 
     return ObservationLocation(
       lat: pos.latitude,

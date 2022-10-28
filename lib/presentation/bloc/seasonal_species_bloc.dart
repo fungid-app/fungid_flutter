@@ -39,7 +39,7 @@ class SeasonalSpeciesBloc
     }
 
     try {
-      var location = await locationRepository.determinePosition();
+      var location = await locationRepository.getObservationLocation();
       final predictions = await predictionsRepository.getSeasonalSpecies(
         date: event.date,
         lat: location.lat,

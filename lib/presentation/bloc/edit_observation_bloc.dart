@@ -51,7 +51,7 @@ class EditObservationBloc
     }
 
     if (state.isNewObservation) {
-      var location = await locationRepository.determinePosition();
+      var location = await locationRepository.getObservationLocation();
       var now = DateTime.now();
 
       emit(state.copyWith(

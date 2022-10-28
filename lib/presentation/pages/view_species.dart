@@ -4,12 +4,14 @@ import 'package:fungid_flutter/domain/observations.dart';
 import 'package:fungid_flutter/presentation/bloc/species_detail_bloc.dart';
 import 'package:fungid_flutter/presentation/widgets/species_common_names.dart';
 import 'package:fungid_flutter/presentation/widgets/species_lookalikes.dart';
+import 'package:fungid_flutter/presentation/widgets/species_observation_map.dart';
 import 'package:fungid_flutter/presentation/widgets/species_seasonality_view.dart';
 import 'package:fungid_flutter/presentation/widgets/species_image_carousel.dart';
 import 'package:fungid_flutter/presentation/widgets/species_links_view.dart';
 import 'package:fungid_flutter/presentation/widgets/species_properties_view.dart';
 import 'package:fungid_flutter/presentation/widgets/species_stats_view.dart';
 import 'package:fungid_flutter/repositories/species_repository.dart';
+import 'package:fungid_flutter/utils/ui_helpers.dart';
 
 class ViewSpeciesPage extends StatelessWidget {
   final String? speciesName;
@@ -83,7 +85,25 @@ class ViewSpeciesPage extends StatelessWidget {
                 SpeciesPropertiesView(properties: state.species.properties),
                 SpeciesSeasonalityView(stats: state.species.stats),
                 SpeciesLinksView(species: state.species.species),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            "Local Observations",
+                            style: Theme.of(context).textTheme.headline6,
+                          ),
+                        ],
+                      ),
+                      SpeciesObservationMapView(species: state.species.species),
+                    ],
+                  ),
+                ),
+                UiHelpers.basicDivider,
                 SpeciesLookalikesView(lookalikes: state.similarSpecies),
+                UiHelpers.basicDivider,
                 SpeciesStatsView(stats: state.species.stats)
               ],
             ),

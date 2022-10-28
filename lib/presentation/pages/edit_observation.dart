@@ -235,45 +235,6 @@ class _LocationField extends StatelessWidget {
     ]);
   }
 
-  // ListTile _getMap(BuildContext context, ObservationLocation location) {
-  //   var pos = LatLng(location.lat, location.lng);
-
-  //   var marker = Marker(
-  //     markerId: MarkerId(location.placeName),
-  //     position: pos,
-  //     onTap: () => _navigateToMap(context, location.lat, location.lng),
-  //   );
-
-  //   CameraPosition kCurrentLocation = CameraPosition(
-  //     target: pos,
-  //     zoom: 14.4746,
-  //   );
-
-  //   return ListTile(
-  //     leading: const SizedBox(
-  //       height: double.infinity,
-  //       child: Icon(Icons.map),
-  //     ),
-  //     minLeadingWidth: 0,
-  //     onTap: () => _navigateToMap(context, location.lat, location.lng),
-  //     title: SizedBox(
-  //       height: 200,
-  //       child: GoogleMap(
-  //         key: Key('map-${location.lat}-${location.lng}'),
-  //         initialCameraPosition: kCurrentLocation,
-  //         markers: {
-  //           marker,
-  //         },
-  //         mapType: MapType.normal,
-  //         scrollGesturesEnabled: false,
-  //         zoomGesturesEnabled: false,
-  //         zoomControlsEnabled: false,
-  //         onTap: (_) => _navigateToMap(context, location.lat, location.lng),
-  //       ),
-  //     ),
-  //   );
-  // }
-
   void _navigateToMap(BuildContext context, double latitute, double longitude) {
     Navigator.push(
       context,
