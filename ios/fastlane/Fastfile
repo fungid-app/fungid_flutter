@@ -40,14 +40,19 @@ platform :ios do
     # https://github.com/fastlane/fastlane/issues/20773
     ENV['ITMSTRANSPORTER_FORCE_ITMS_PACKAGE_UPLOAD'] = "true"
 
-    upload_to_testflight(
+    # upload_to_testflight(
+    #   itc_provider: "QVF4W6GHP4",
+    #   ipa: "../build/ios/ipa/fungid_flutter.ipa"
+    # )
+    upload_to_app_store(
       itc_provider: "QVF4W6GHP4",
-      ipa: "../build/ios/ipa/fungid_flutter.ipa"
+      ipa: "../build/ios/ipa/fungid_flutter.ipa",
+      automatic_release: true,
     )
+
   end
 
   lane :crashlytics do
     upload_symbols_to_crashlytics(dsym_path: "./Runner.app.dSYM.zip")
   end
-
 end

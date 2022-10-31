@@ -180,9 +180,12 @@ class BasicPredictionTileView extends StatelessWidget {
                 padding: const EdgeInsets.only(right: 10, top: 5),
               ),
               state.species.commonName != null
-                  ? Text(
-                      state.species.species,
-                      overflow: TextOverflow.ellipsis,
+                  ? Expanded(
+                      child: Text(
+                        state.species.species,
+                        overflow: TextOverflow.ellipsis,
+                        softWrap: false,
+                      ),
                     )
                   : const SizedBox.shrink(),
             ],

@@ -2,4 +2,4 @@ FungID is the most advanced mushroom identification app on the market.  It combi
 
 Our app will always be free as we want to encourage people to go out and freely explore nature with confidence. 
 
-This app is currently under active development.  Please understand that some things in the app may not work properly. If you find any issues, please feel free to report them and it will be fixed as soon as possilbe.
+This app is currently under active development.  Please understand that some things in the app may not work properly. If you find any issues, please feel free to report them and it will be fixed as soon as possible.

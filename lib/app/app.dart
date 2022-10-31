@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -41,6 +42,11 @@ class FungIDApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var path =
+        "${observationsRepsoitory.imageStorageDirectory.path}/screenshot";
+    log(path);
+    Directory(path).createSync(recursive: true);
+
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider.value(
@@ -56,17 +62,17 @@ class FungIDApp extends StatelessWidget {
           value: speciesRepository,
         ),
       ],
-      child: DevicePreview(
-        enabled: true,
-        builder: (context) => const AppView(), // Wrap your app
-        tools: [
-          ...DevicePreview.defaultTools,
-          DevicePreviewScreenshot(
-            onScreenshot: screenshotAsFiles(
-                Directory("${Directory.current.path}/screenshot")),
-          ),
-        ],
-      ),
+      child: const AppView(),
+      // child: DevicePreview(
+      //   enabled: !kReleaseMode,
+      //   builder: (context) => const AppView(), // Wrap your app
+      //   tools: [
+      //     ...DevicePreview.defaultTools,
+      //     DevicePreviewScreenshot(
+      //       onScreenshot: screenshotAsFiles(Directory(path)),
+      //     ),
+      //   ],
+      // ),
     );
   }
 }
@@ -96,6 +102,7 @@ class AppView extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         useInheritedMediaQuery: true,
         locale: DevicePreview.locale(context),
         builder: DevicePreview.appBuilder,

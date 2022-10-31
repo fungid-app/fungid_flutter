@@ -57,6 +57,10 @@ class UserObservationsRepository {
     return _observationsProvider.clear();
   }
 
+  Directory getObservationImageStorageDirectory() {
+    return _imageProvider.storageDirectory;
+  }
+
   Future<void> deleteObservation(String id) async {
     var prevObs = getObservation(id);
 
