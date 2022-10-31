@@ -1,16 +1,8 @@
-# fungid_flutter
+# FungID
+This is the mobile app for FungID.  You can download it for [ios](https://apps.apple.com/us/app/fungid-mushroom-fungus-ids/1644525684) or [android](https://play.google.com/store/apps/details?id=app.fungid.fungid_app). 
 
-A new Flutter project.
+## Goals
+This as a personal project and I intend it to be free forever.  My goal is to provide people with a high quality app that encourages them to get out, explore, and learn about the amazing world of fungi.
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Contributing.
+If you are interested in helping to develop the app, please feel free to fork the repo and submit pull requests.  As this is relatively new, there is a lot of low hanging fruit.  Any and all contributions are welcome.  

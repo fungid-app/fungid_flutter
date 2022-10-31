@@ -4,7 +4,7 @@ generate-icons:
 	flutter pub run flutter_launcher_icons:main
 
 get-openapi:
-	wget https://api.fungid.app/openapi.json -O fungid-openapi.json
+	wget https://api.fungid.app/openapi.json -O tmp/fungid-openapi.json
 
 generate-code: get-openapi
 	flutter pub run build_runner build --delete-conflicting-outputs
