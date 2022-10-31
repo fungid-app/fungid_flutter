@@ -14,6 +14,8 @@ assets_staging/
 assets/app.sqlite
 .env
 
+**/google-services.json
+
 .vscode/launch.json
 local.properties
 assets/models
