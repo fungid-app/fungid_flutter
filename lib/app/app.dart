@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:device_preview_screenshot/device_preview_screenshot.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fungid_flutter/presentation/bloc/seasonal_species_bloc.dart';
@@ -53,7 +56,17 @@ class FungIDApp extends StatelessWidget {
           value: speciesRepository,
         ),
       ],
-      child: const AppView(),
+      child: DevicePreview(
+        enabled: true,
+        builder: (context) => const AppView(), // Wrap your app
+        tools: [
+          ...DevicePreview.defaultTools,
+          DevicePreviewScreenshot(
+            onScreenshot: screenshotAsFiles(
+                Directory("${Directory.current.path}/screenshot")),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -83,6 +96,9 @@ class AppView extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
+        useInheritedMediaQuery: true,
+        locale: DevicePreview.locale(context),
+        builder: DevicePreview.appBuilder,
         title: 'FungID',
         theme: UiHelpers.lightTheme,
         darkTheme: UiHelpers.darkTheme,

@@ -1,0 +1,5 @@
+FungID is the most advanced mushroom identification app on the market.  It combines over 4,000,000 images with 15,000,000 high quality identifications and state of the art deep learning models to give you the best possible predictions.
+
+Our app will always be free as we want to encourage people to go out and freely explore nature with confidence. 
+
+This app is currently under active development.  Please understand that some things in the app may not work properly. If you find any issues, please feel free to report them and it will be fixed as soon as possilbe.

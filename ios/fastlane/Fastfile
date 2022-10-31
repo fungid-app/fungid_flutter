@@ -27,15 +27,22 @@ platform :ios do
       skip_build_archive: true,
       archive_path: "../build/ios/archive/Runner.xcarchive",
     )
-    
+    # https://github.com/fastlane/fastlane/issues/20773
+    ENV['ITMSTRANSPORTER_FORCE_ITMS_PACKAGE_UPLOAD'] = "true"
+
     upload_to_testflight(
-      itc_provider: "QVF4W6GHP4"
+      itc_provider: "QVF4W6GHP4",
+      ipa: "../build/ios/ipa/fungid_flutter.ipa"
     )
   end
 
   lane :upload do
+    # https://github.com/fastlane/fastlane/issues/20773
+    ENV['ITMSTRANSPORTER_FORCE_ITMS_PACKAGE_UPLOAD'] = "true"
+
     upload_to_testflight(
-      itc_provider: "QVF4W6GHP4"
+      itc_provider: "QVF4W6GHP4",
+      ipa: "../build/ios/ipa/fungid_flutter.ipa"
     )
   end
 
