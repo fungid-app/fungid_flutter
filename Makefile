@@ -52,3 +52,8 @@ direct-install:
 	&& flutter build appbundle \
 	&& bundletool build-apks --bundle=build/app/outputs/bundle/release/app-release.aab --output=build/app/outputs/bundle/release/app-release.apks \
 	&& bundletool install-apks --apks=build/app/outputs/bundle/release/app-release.apks
+
+setup-assets: 
+	cp assets_staging/wikipedia.tar.bz2 assets/ \
+		&& bzip2 -9 assets_staging/app.sqlite3 -c > assets/app.sqlite3.bz2 \
+		&& cp assets_staging/models/labels.csv assets/models

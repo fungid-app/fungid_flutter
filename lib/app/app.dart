@@ -1,6 +1,3 @@
-import 'dart:developer';
-import 'dart:io';
-
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:device_preview_screenshot/device_preview_screenshot.dart';
 import 'package:flutter/material.dart';
@@ -42,11 +39,6 @@ class FungIDApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var path =
-        "${observationsRepsoitory.imageStorageDirectory.path}/screenshot";
-    log(path);
-    Directory(path).createSync(recursive: true);
-
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider.value(
@@ -68,9 +60,6 @@ class FungIDApp extends StatelessWidget {
       //   builder: (context) => const AppView(), // Wrap your app
       //   tools: [
       //     ...DevicePreview.defaultTools,
-      //     DevicePreviewScreenshot(
-      //       onScreenshot: screenshotAsFiles(Directory(path)),
-      //     ),
       //   ],
       // ),
     );

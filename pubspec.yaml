@@ -45,6 +45,8 @@ dependencies:
   latlong2: ^0.8.1
   device_preview_screenshot: ^1.0.0
   device_preview: ^1.1.0
+  firebase_analytics: ^9.3.8
+  archive: ^3.3.2
   # pytorch_mobile: ^0.2.2
   # pytorch_mobile_v2:
   #   git:
@@ -69,7 +71,7 @@ dev_dependencies:
 # flutter_icons:
 #   android: true
 #   ios: true
-#   image_path: 'assets/logo/icon.png'
+#   image_path: 'assets_staging/logo/icon.png'
 #   remove_alpha_ios: true
 
 # For information on the generic Dart part of this file, see the
@@ -77,7 +79,8 @@ dev_dependencies:
 
 flutter:
   assets:
-    - assets/db/app.sqlite3
-    - assets/models/
+    - assets/app.sqlite3.bz2
+    - assets/wikipedia.tar.bz2
+    - assets/models/labels.csv
 
   uses-material-design: true

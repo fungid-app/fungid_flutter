@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:archive/archive_io.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
@@ -15,38 +16,38 @@ import 'package:fungid_flutter/providers/saved_predictions_provider.dart';
 import 'package:fungid_flutter/providers/user_observation_image_provider.dart';
 import 'package:fungid_flutter/providers/user_observation_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:fungid_flutter/utils/filesystem.dart';
 import 'package:local_db/local_db.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 import 'firebase_options.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io' as io;
 
-const String _dbVersion = '0.4.5';
+const String _bundleDbVersion = '0.4.5';
+const String _bundleWikiVersion = '0.4.1';
 
 Future<void> main() async {
   runZonedGuarded<Future<void>>(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
+      await setupFirebase();
 
-      var fungidApi = getFungidApi();
-      var localdb = await getLocalDb();
       var responses = await Future.wait<dynamic>([
-        setupFirebase(),
         getObservationsApi(),
-        getOnlinePredictions(fungidApi),
-        getOfflinePredictions(localdb),
+        getOnlinePredictions(getFungidApi()),
+        getLocalDb(),
         getPredictions(),
-        UserObservationImageFileSystemProvider.create()
+        UserObservationImageFileSystemProvider.create(),
+        setupWikipedia(),
       ]);
 
       bootstrap(
-        observationsProvider: responses[1],
-        onlinePredictionsProvider: responses[2],
-        offlinePredictionsProvider: responses[3],
-        savedPredictionsProvider: responses[4],
-        localDatabaseProvider: LocalDatabaseProvider(localdb),
-        imageProvider: responses[5],
+        observationsProvider: responses[0],
+        onlinePredictionsProvider: responses[1],
+        offlinePredictionsProvider: await getOfflinePredictions(responses[2]),
+        savedPredictionsProvider: responses[3],
+        localDatabaseProvider: LocalDatabaseProvider(responses[2]),
+        imageProvider: responses[4],
       );
     },
     (error, stack) =>
@@ -102,19 +103,18 @@ Future<DatabaseHandler> getLocalDb() async {
 
   // Setup local DB
   // Construct a file path to copy database to
-  io.Directory documentsDirectory = await getApplicationDocumentsDirectory();
-  String p = path.join(documentsDirectory.path, "app.sqlite3");
+  String localDbPath = await getLocalFilePath("app.sqlite3");
 
-  var loadDb =
-      io.FileSystemEntity.typeSync(p) == io.FileSystemEntityType.notFound;
+  var loadLocalDb = io.FileSystemEntity.typeSync(localDbPath) ==
+      io.FileSystemEntityType.notFound;
 
-  if (!loadDb) {
-    var db = await DatabaseHandler.create(p);
+  if (!loadLocalDb) {
+    var db = await DatabaseHandler.create(localDbPath);
 
     try {
-      if (_dbVersion != await db.getDbVersion()) {
+      if (_bundleDbVersion != await db.getDbVersion()) {
         log('Database version mismatch, reloading');
-        loadDb = true;
+        loadLocalDb = true;
         await db.destroy();
       } else {
         log('Database version match, not reloading');
@@ -122,7 +122,7 @@ Future<DatabaseHandler> getLocalDb() async {
     } catch (e, stacktrace) {
       log('Error loading database version, reloading',
           error: e, stackTrace: stacktrace);
-      loadDb = true;
+      loadLocalDb = true;
       await db.destroy();
 
       await FirebaseCrashlytics.instance.recordError(
@@ -134,28 +134,33 @@ Future<DatabaseHandler> getLocalDb() async {
   }
 
   // Only copy if the database doesn't exist
-  if (loadDb) {
+  if (loadLocalDb) {
     // Load database from asset and copy
-    log("Loading database from asset and copying to $p");
+    log("Loading database from assets and copying to $localDbPath");
+
     ByteData data =
-        await rootBundle.load(path.join('assets', 'db/app.sqlite3'));
-    List<int> bytes =
+        await rootBundle.load(path.join('assets', 'app.sqlite3.bz2'));
+
+    List<int> compressed =
         data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
 
-    log('Database ${bytes.length} bytes loaded');
+    log('Database ${compressed.length} bytes compressed');
+    var decompressed = BZip2Decoder().decodeBytes(compressed);
+    log('Database ${decompressed.length} bytes decompressed');
+
     // Save copied asset to documents
-    await io.File(p).writeAsBytes(bytes);
+    await io.File(localDbPath).writeAsBytes(decompressed);
 
-    log('Database saved to $p');
+    log('Database saved to $localDbPath');
 
-    var db = await DatabaseHandler.create(p);
+    var localDb = await DatabaseHandler.create(localDbPath);
 
-    await db.setDbVersion(_dbVersion);
+    await localDb.setDbVersion(_bundleDbVersion);
   }
 
-  var db = await DatabaseHandler.create(p);
+  var localDb = await DatabaseHandler.create(localDbPath);
 
-  return db;
+  return localDb;
 }
 
 Future<OfflinePredictionsProvider> getOfflinePredictions(
@@ -166,6 +171,33 @@ Future<OfflinePredictionsProvider> getOfflinePredictions(
     'assets/models/labels.csv',
     db,
   );
+}
+
+Future<void> setupWikipedia() async {
+  String versionFilePath = await getLocalFilePath("wikipedia/version.txt");
+  log(versionFilePath);
+  io.File versionFile = io.File(versionFilePath);
+
+  if (await versionFile.exists() &&
+      _bundleWikiVersion == await versionFile.readAsString()) {
+    log('Wikipedia version match, not reloading');
+  } else {
+    log('Wikipedia version mismatch, bundle $_bundleWikiVersion != local ${await versionFile.readAsString()}');
+
+    ByteData data =
+        await rootBundle.load(path.join('assets', 'wikipedia.tar.bz2'));
+
+    List<int> compressed =
+        data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+
+    List<int> decompressed = BZip2Decoder().decodeBytes(compressed);
+
+    var tar = TarDecoder().decodeBytes(decompressed);
+
+    extractArchiveToDisk(tar, await getLocalFilePath('wikipedia'));
+
+    io.File(versionFilePath).writeAsString(_bundleWikiVersion);
+  }
 }
 
 Future<OnlinePredictionsProvider> getOnlinePredictions(FungidApi api) async {
