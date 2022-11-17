@@ -24,7 +24,7 @@ class SpeciesSeasonalityView extends StatelessWidget {
                   padding: const EdgeInsets.only(bottom: 8),
                   child: Text(
                     "Seasonality",
-                    style: Theme.of(context).textTheme.headline6,
+                    style: Theme.of(context).textTheme.headline5,
                   ),
                 ),
               ],

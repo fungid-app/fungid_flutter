@@ -24,4 +24,14 @@ class UiHelpers {
         appBarOpacity: 0.90,
         visualDensity: FlexColorScheme.comfortablePlatformDensity,
       );
+
+  static TextStyle linkStyle(BuildContext context) {
+    return TextStyle(
+      color: linkColor(context),
+    );
+  }
+
+  static Color linkColor(BuildContext context) {
+    return Theme.of(context).toggleableActiveColor;
+  }
 }

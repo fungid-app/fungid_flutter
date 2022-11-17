@@ -10,6 +10,7 @@ import 'package:fungid_flutter/presentation/widgets/species_image_carousel.dart'
 import 'package:fungid_flutter/presentation/widgets/species_links_view.dart';
 import 'package:fungid_flutter/presentation/widgets/species_properties_view.dart';
 import 'package:fungid_flutter/presentation/widgets/species_stats_view.dart';
+import 'package:fungid_flutter/presentation/widgets/wikipedia_article_view.dart';
 import 'package:fungid_flutter/repositories/species_repository.dart';
 import 'package:fungid_flutter/utils/ui_helpers.dart';
 
@@ -93,7 +94,7 @@ class ViewSpeciesPage extends StatelessWidget {
                         children: [
                           Text(
                             "Local Observations",
-                            style: Theme.of(context).textTheme.headline6,
+                            style: Theme.of(context).textTheme.headline5,
                           ),
                         ],
                       ),
@@ -101,6 +102,9 @@ class ViewSpeciesPage extends StatelessWidget {
                     ],
                   ),
                 ),
+                if (state.wikipediaArticle != null) UiHelpers.basicDivider,
+                if (state.wikipediaArticle != null)
+                  WikipediaArticleView(article: state.wikipediaArticle!),
                 UiHelpers.basicDivider,
                 SpeciesLookalikesView(lookalikes: state.similarSpecies),
                 UiHelpers.basicDivider,

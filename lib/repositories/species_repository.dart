@@ -1,13 +1,18 @@
 import 'package:fungid_flutter/domain/predictions.dart';
 import 'package:fungid_flutter/domain/species.dart';
+import 'package:fungid_flutter/domain/wikipedia.dart';
 import 'package:fungid_flutter/providers/local_database_provider.dart';
+import 'package:fungid_flutter/providers/wikipedia_article_provider.dart';
 
 class SpeciesRepository {
   const SpeciesRepository({
     required LocalDatabaseProvider speciesProvider,
-  }) : _speciesProvider = speciesProvider;
+    required WikipediaArticleProvider wikipediaProvider,
+  })  : _speciesProvider = speciesProvider,
+        _wikipediaProvider = wikipediaProvider;
 
   final LocalDatabaseProvider _speciesProvider;
+  final WikipediaArticleProvider _wikipediaProvider;
 
   Future<Species?> getSpecies(String species) async {
     return await _speciesProvider.getSpecies(species);
@@ -37,6 +42,17 @@ class SpeciesRepository {
     }
 
     return imageMap;
+  }
+
+  Future<bool> isSpeciesActive(String species) async {
+    return await _speciesProvider.getSpecies(species) != null;
+  }
+
+  Future<WikipediaArticle?> getWikipediaArticle(String species) async {
+    return _wikipediaProvider.getSpeciesArticle(
+      species,
+      isSpeciesActive,
+    );
   }
 
   Future<List<BasicPrediction>> getSimilarSpecies(int speciesKey) async {

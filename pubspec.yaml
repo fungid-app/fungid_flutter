@@ -47,6 +47,7 @@ dependencies:
   device_preview: ^1.1.0
   firebase_analytics: ^9.3.8
   archive: ^3.3.2
+  expandable: ^5.0.1
   # pytorch_mobile: ^0.2.2
   # pytorch_mobile_v2:
   #   git:

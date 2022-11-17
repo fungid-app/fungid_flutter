@@ -8,6 +8,7 @@ import 'package:fungid_flutter/providers/saved_predictions_provider.dart';
 import 'package:fungid_flutter/providers/local_database_provider.dart';
 import 'package:fungid_flutter/providers/user_observation_image_provider.dart';
 import 'package:fungid_flutter/providers/user_observation_provider.dart';
+import 'package:fungid_flutter/providers/wikipedia_article_provider.dart';
 import 'package:fungid_flutter/repositories/location_repository.dart';
 import 'package:fungid_flutter/repositories/predictions_repository.dart';
 import 'package:fungid_flutter/repositories/species_repository.dart';
@@ -21,6 +22,7 @@ void bootstrap({
   required OfflinePredictionsProvider offlinePredictionsProvider,
   required SavedPredictionsSharedPrefProvider savedPredictionsProvider,
   required LocalDatabaseProvider localDatabaseProvider,
+  required WikipediaArticleProvider wikipediaArticleProvider,
 }) {
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
 
@@ -41,6 +43,7 @@ void bootstrap({
 
   final speciesRepository = SpeciesRepository(
     speciesProvider: localDatabaseProvider,
+    wikipediaProvider: wikipediaArticleProvider,
   );
 
   runApp(

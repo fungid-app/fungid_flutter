@@ -22,7 +22,7 @@ class SpeciesStatsView extends StatelessWidget {
             children: [
               Text(
                 "Ecological Affinity",
-                style: Theme.of(context).textTheme.headline6,
+                style: Theme.of(context).textTheme.headline5,
               )
             ],
           ),

@@ -16,6 +16,7 @@ import 'package:fungid_flutter/providers/saved_predictions_provider.dart';
 import 'package:fungid_flutter/providers/user_observation_image_provider.dart';
 import 'package:fungid_flutter/providers/user_observation_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:fungid_flutter/providers/wikipedia_article_provider.dart';
 import 'package:fungid_flutter/utils/filesystem.dart';
 import 'package:local_db/local_db.dart';
 import 'package:path/path.dart' as path;
@@ -48,6 +49,7 @@ Future<void> main() async {
         savedPredictionsProvider: responses[3],
         localDatabaseProvider: LocalDatabaseProvider(responses[2]),
         imageProvider: responses[4],
+        wikipediaArticleProvider: responses[5],
       );
     },
     (error, stack) =>
@@ -173,10 +175,13 @@ Future<OfflinePredictionsProvider> getOfflinePredictions(
   );
 }
 
-Future<void> setupWikipedia() async {
-  String versionFilePath = await getLocalFilePath("wikipedia/version.txt");
+Future<WikipediaArticleProvider> setupWikipedia() async {
+  String localWikiPath = await getLocalFilePath('wikipedia');
+  String versionFilePath = "version.txt";
+
   log(versionFilePath);
-  io.File versionFile = io.File(versionFilePath);
+
+  io.File versionFile = io.File("$localWikiPath/$versionFilePath");
 
   if (await versionFile.exists() &&
       _bundleWikiVersion == await versionFile.readAsString()) {
@@ -198,6 +203,10 @@ Future<void> setupWikipedia() async {
 
     io.File(versionFilePath).writeAsString(_bundleWikiVersion);
   }
+
+  return WikipediaArticleProvider(
+    wikiPath: localWikiPath,
+  );
 }
 
 Future<OnlinePredictionsProvider> getOnlinePredictions(FungidApi api) async {

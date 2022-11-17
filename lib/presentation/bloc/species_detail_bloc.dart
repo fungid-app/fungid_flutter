@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:fungid_flutter/domain/observations.dart';
 import 'package:fungid_flutter/domain/predictions.dart';
 import 'package:fungid_flutter/domain/species.dart';
+import 'package:fungid_flutter/domain/wikipedia.dart';
 import 'package:fungid_flutter/repositories/species_repository.dart';
 
 part 'species_detail_event.dart';
@@ -28,6 +29,7 @@ class SpeciesDetailBloc extends Bloc<SpeciesDetailEvent, SpeciesDetailState> {
     ));
 
     Species? species;
+
     if (event.speciesName != null) {
       species = await speciesRepository.getSpecies(event.speciesName!);
     } else if (event.specieskey != null) {
@@ -49,6 +51,9 @@ class SpeciesDetailBloc extends Bloc<SpeciesDetailEvent, SpeciesDetailState> {
         species: species,
         similarSpecies: similar,
         observation: event.observation,
+        wikipediaArticle: await speciesRepository.getWikipediaArticle(
+          species.species,
+        ),
       ));
     }
   }

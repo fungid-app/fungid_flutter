@@ -30,11 +30,13 @@ class SpeciesDetailReady extends SpeciesDetailState {
   final Species species;
   final List<BasicPrediction> similarSpecies;
   final UserObservation? observation;
+  final WikipediaArticle? wikipediaArticle;
 
   SpeciesDetailReady({
     required this.species,
     required this.similarSpecies,
-    this.observation,
+    required this.observation,
+    required this.wikipediaArticle,
   }) : super();
 
   @override
