@@ -187,7 +187,7 @@ Future<WikipediaArticleProvider> setupWikipedia() async {
       _bundleWikiVersion == await versionFile.readAsString()) {
     log('Wikipedia version match, not reloading');
   } else {
-    log('Wikipedia version mismatch, bundle $_bundleWikiVersion != local ${await versionFile.readAsString()}');
+    log('Wikipedia version mismatch, bundle $_bundleWikiVersion != local');
 
     ByteData data =
         await rootBundle.load(path.join('assets', 'wikipedia.tar.bz2'));
@@ -201,7 +201,7 @@ Future<WikipediaArticleProvider> setupWikipedia() async {
 
     extractArchiveToDisk(tar, await getLocalFilePath('wikipedia'));
 
-    io.File(versionFilePath).writeAsString(_bundleWikiVersion);
+    await versionFile.writeAsString(_bundleWikiVersion);
   }
 
   return WikipediaArticleProvider(
