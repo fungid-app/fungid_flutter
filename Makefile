@@ -23,6 +23,13 @@ deploy-ios-beta:
 	&& cd ios \
 	&& fastlane ios beta
 
+deploy-ios-release:
+	flutter clean \
+	&& source .env \
+	&& flutter build ipa \
+	&& cd ios \
+	&& fastlane ios upload
+
 deploy-android-draft:
 	flutter clean \
 	&& source .env \
@@ -31,10 +38,13 @@ deploy-android-draft:
 	&& fastlane android draft
 
 deploy-android-release:
-	flutter build appbundle \
+	flutter clean \
 	&& source .env \
+	&& flutter build appbundle \
 	&& cd android \
-	&& fastlane android release
+	&& fastlane android deploy
+
+deploy: deploy-android-release deploy-ios-release
 
 generate-imagedb-file:
 	sqlite3 ../fungid-api/dbs/gbif.sqlite3 < app_db/create-image-table.sql \

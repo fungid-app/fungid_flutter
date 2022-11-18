@@ -21,10 +21,23 @@ platform :android do
     gradle(task: "test")
   end
 
+  desc "Submit a new Beta Build to Google Play"
+  lane :draft do
+    # crashlytics
+  
+    upload_to_play_store(
+      track: 'beta',
+      release_status: 'draft',
+      mapping: "../build/app/outputs/mapping/release/mapping.txt",
+      aab: "../build/app/outputs/bundle/release/app-release.aab"
+    )
+  end
+
   desc "Deploy a new version to the Google Play"
   lane :deploy do
-    gradle(task: "clean assembleRelease")
     upload_to_play_store(
+      track: 'production',
+      release_status: 'completed',
       aab: "../build/app/outputs/bundle/release/app-release.aab",
       mapping: "../build/app/outputs/mapping/release/mapping.txt"
     )

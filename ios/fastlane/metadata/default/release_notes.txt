@@ -1,1 +1,1 @@
-Added offline capable wikipedia text into the species information page.  
+Added offline capable wikipedia text into the species information page.

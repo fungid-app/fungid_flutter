@@ -29,15 +29,7 @@ Runs all the tests
 [bundle exec] fastlane android draft
 ```
 
-
-
-### android internal
-
-```sh
-[bundle exec] fastlane android internal
-```
-
-
+Submit a new Beta Build to Google Play
 
 ### android deploy
 
