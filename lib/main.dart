@@ -6,6 +6,7 @@ import 'package:dio/dio.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_map_tile_caching/fmtc_advanced.dart';
 import 'package:flutter_pretty_dio_logger/flutter_pretty_dio_logger.dart';
 import 'package:fungid_api/fungid_api.dart';
 import 'package:fungid_flutter/bootstrap.dart';
@@ -24,7 +25,7 @@ import 'firebase_options.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io' as io;
 
-const String _bundleDbVersion = '0.4.5';
+const String _bundleDbVersion = '0.4.6';
 const String _bundleWikiVersion = '0.4.1';
 
 Future<void> main() async {
@@ -32,6 +33,7 @@ Future<void> main() async {
     () async {
       WidgetsFlutterBinding.ensureInitialized();
       await setupFirebase();
+      FlutterMapTileCaching.initialise(await RootDirectory.normalCache);
 
       var responses = await Future.wait<dynamic>([
         getObservationsApi(),

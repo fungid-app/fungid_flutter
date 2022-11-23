@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fungid_flutter/presentation/bloc/seasonal_species_bloc.dart';
+import 'package:fungid_flutter/presentation/pages/seasonal_observation_map.dart';
 import 'package:fungid_flutter/presentation/widgets/basic_predictions_widgets.dart';
 import 'package:fungid_flutter/utils/hue_calculation.dart';
 
@@ -16,17 +17,28 @@ class SeasonalSpeciesListView extends StatelessWidget {
             child: CircularProgressIndicator(),
           );
         } else if (state is SeasonalSpeciesLoaded) {
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: BasicPredictionsList(
-                      basicPredictions: state.predictions,
-                      hueCalculation: BasicHueCalculation()),
+          return Scaffold(
+            body: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: BasicPredictionsList(
+                        basicPredictions: state.predictions,
+                        hueCalculation: BasicHueCalculation()),
+                  ),
+                ],
+              ),
+            ),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () => Navigator.push<Widget>(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SeasonalObservationMapView(),
                 ),
-              ],
+              ),
+              child: const Icon(Icons.map),
             ),
           );
         } else if (state is SeasonalSpeciesError) {

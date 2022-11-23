@@ -93,14 +93,6 @@ class LocationPickerView extends StatelessWidget {
             onSourceTapped: () {},
           ),
         ],
-        // initialCameraPosition: kCurrentLocation,
-        // markers: {
-        //   marker,
-        // },
-        // mapType: MapType.normal,
-        // onCameraMove: (position) {
-        //   context.read<LocationCubit>().updateLocation(position.target);
-        // },
         children: [
           TileLayer(
             urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",

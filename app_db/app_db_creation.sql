@@ -115,7 +115,8 @@ CREATE TABLE IF NOT EXISTS classifier_species_stats2(
 	specieskey INTEGER NOT NULL, 
 	stat VARCHAR COLLATE NOCASE, 
 	value VARCHAR COLLATE NOCASE, 
-	likelihood FLOAT
+	likelihood FLOAT,
+	PRIMARY KEY (specieskey, stat, value)
 );
 
 

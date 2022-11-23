@@ -5,7 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fungid_flutter/domain/observations.dart';
 import 'package:fungid_flutter/presentation/bloc/observation_list_bloc.dart';
 import 'package:fungid_flutter/presentation/cubit/observation_image_cubit.dart';
+import 'package:fungid_flutter/presentation/pages/edit_observation.dart';
 import 'package:fungid_flutter/presentation/pages/view_observation.dart';
+import 'package:fungid_flutter/presentation/widgets/add_image_sheet.dart';
 import 'package:fungid_flutter/utils/ui_helpers.dart';
 
 class ObservationListView extends StatelessWidget {
@@ -17,24 +19,28 @@ class ObservationListView extends StatelessWidget {
 
     return BlocBuilder<ObservationListBloc, ObservationListState>(
       builder: (context, state) {
-        return Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: ListView.separated(
-                  shrinkWrap: true,
-                  itemCount: state.observations.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return _observationCard(context, state.observations[index],
-                        imageStorageDirectory);
-                  },
-                  separatorBuilder: (context, index) => UiHelpers.basicDivider,
+        return Scaffold(
+          body: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    itemCount: state.observations.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return _observationCard(context,
+                          state.observations[index], imageStorageDirectory);
+                    },
+                    separatorBuilder: (context, index) =>
+                        UiHelpers.basicDivider,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
+          floatingActionButton: createObservationAction(context),
         );
       },
     );
@@ -65,5 +71,27 @@ ListTile _observationCard(
         ViewObservationPage.route(
           id: observation.id,
         )),
+  );
+}
+
+FloatingActionButton createObservationAction(BuildContext context) {
+  return FloatingActionButton(
+    onPressed: () {
+      createAddImageSheet(
+        context: context,
+        onImagesSelected: (images) => {
+          if (images.isNotEmpty)
+            {
+              Navigator.push(
+                context,
+                EditObservationPage.route(
+                  initialImages: images,
+                ),
+              )
+            },
+        },
+      );
+    },
+    child: const Icon(Icons.add),
   );
 }

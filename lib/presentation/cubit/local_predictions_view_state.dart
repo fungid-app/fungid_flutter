@@ -20,7 +20,9 @@ class LocalPredictionsViewState extends Equatable {
                   ),
                 )
                 .toList()
-            : predictions;
+            : predictions {
+    visiblePredictions.sort((a, b) => b.probability.compareTo(a.probability));
+  }
 
   @override
   List<Object> get props => [

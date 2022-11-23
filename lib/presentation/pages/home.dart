@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fungid_flutter/presentation/bloc/observation_list_bloc.dart';
-import 'package:fungid_flutter/presentation/pages/edit_observation.dart';
 import 'package:fungid_flutter/presentation/pages/observation_list.dart';
 import 'package:fungid_flutter/presentation/pages/seasonal_species_list.dart';
-import 'package:fungid_flutter/presentation/widgets/add_image_sheet.dart';
 import 'package:fungid_flutter/repositories/user_observation_repository.dart';
 
 class HomePage extends StatelessWidget {
@@ -45,7 +43,7 @@ class HomeView extends StatelessWidget {
             ],
           ),
         ),
-        floatingActionButton: createObservationAction(context),
+        // floatingActionButton: createObservationAction(context),
         body: const TabBarView(
           children: [
             ObservationListView(),
@@ -56,26 +54,4 @@ class HomeView extends StatelessWidget {
       ),
     );
   }
-}
-
-FloatingActionButton createObservationAction(BuildContext context) {
-  return FloatingActionButton(
-    onPressed: () {
-      createAddImageSheet(
-        context: context,
-        onImagesSelected: (images) => {
-          if (images.isNotEmpty)
-            {
-              Navigator.push(
-                context,
-                EditObservationPage.route(
-                  initialImages: images,
-                ),
-              )
-            },
-        },
-      );
-    },
-    child: const Icon(Icons.add),
-  );
 }
