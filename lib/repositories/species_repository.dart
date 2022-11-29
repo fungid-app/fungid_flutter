@@ -26,6 +26,18 @@ class SpeciesRepository {
     return await _speciesProvider.getSpeciesByKey(specieskey);
   }
 
+  Future<Set<int>> getEdibleSpeciesKeys() async {
+    return await _speciesProvider.getEdibleSpeciesKeys();
+  }
+
+  Future<Set<int>> getPoisonousSpeciesKeys() async {
+    return await _speciesProvider.getPoisonousSpeciesKeys();
+  }
+
+  Future<Set<int>> searchSpecies(String query) async {
+    return await _speciesProvider.searchSpecies(query);
+  }
+
   Future<Map<String, SpeciesImage>> getImageMap({
     required List<String> species,
   }) async {

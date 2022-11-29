@@ -76,6 +76,27 @@ class DatabaseHandler {
     }
   }
 
+  Future<List<MapEntry<int, int>>> getObservationCounts() async {
+    final List<Map<String, dynamic>> maps = await database.query(
+      'classifier_species',
+      columns: ['specieskey', 'total'],
+      orderBy: 'total DESC',
+    );
+
+    if (maps.isNotEmpty) {
+      return maps
+          .map(
+            (e) => MapEntry(
+              e['specieskey'] as int,
+              e['total'] as int,
+            ),
+          )
+          .toList();
+    } else {
+      return [];
+    }
+  }
+
   Future<ClassifierSpecies?> getSpeciesByKey(int specieskey) async {
     final List<Map<String, dynamic>> maps = await database.query(
         'classifier_species',
@@ -105,11 +126,32 @@ class DatabaseHandler {
     return maps.map((e) => ClassifierCommonName.fromMap(e)).toList();
   }
 
+  Future<List<int>> searchCommonNames(String searchText) async {
+    final List<Map<String, dynamic>> maps = await database.query(
+        'classifier_names',
+        where: 'name LIKE ?',
+        whereArgs: ['%$searchText%'],
+        columns: ['specieskey']);
+
+    return maps.map((e) => e['specieskey'] as int).toList();
+  }
+
+  Future<List<int>> searchSpecies(String searchText) async {
+    final List<Map<String, dynamic>> maps = await database.query(
+        'classifier_species',
+        where: 'species LIKE ?',
+        whereArgs: ['%$searchText%'],
+        columns: ['specieskey']);
+
+    return maps.map((e) => e['specieskey'] as int).toList();
+  }
+
   Future<List<ClassifierSpeciesImages>> getSpeciesImages(int speciesKey) async {
     final List<Map<String, dynamic>> maps = await database.query(
-        'classifier_species_images',
-        where: 'specieskey = ?',
-        whereArgs: [speciesKey]);
+      'classifier_species_images',
+      where: 'specieskey = ?',
+      whereArgs: [speciesKey],
+    );
 
     return maps.map((e) => ClassifierSpeciesImages.fromMap(e)).toList();
   }
@@ -131,6 +173,53 @@ class DatabaseHandler {
         whereArgs: [speciesKey]);
 
     return maps.map((e) => ClassifierSpeciesProp.fromMap(e)).toList();
+  }
+
+  Future<List<int>> getEdibleSpeciesKeys() async {
+    return await getSpeciesKeyByProperty(
+      prop: 'howedible',
+      values: [
+        'allergenic',
+        'caution',
+        'choice',
+        'edible',
+      ],
+    );
+  }
+
+  Future<List<int>> getPoisonousSpeciesKeys() async {
+    return await getSpeciesKeyByProperty(
+      prop: 'howedible',
+      values: [
+        'allergenic',
+        'caution',
+        'poisonous',
+        'deadly',
+        'psychoactive',
+      ],
+    );
+  }
+
+  Future<List<int>> getSpeciesKeyByProperty({
+    required String prop,
+    required List<String> values,
+  }) async {
+    final List<Map<String, dynamic>> ids = await database.query(
+        'classifier_species_props',
+        where: 'prop = ? AND value IN (${values.map((e) => '?').join(',')})',
+        whereArgs: [
+          prop,
+          ...values,
+        ],
+        columns: [
+          'specieskey'
+        ]);
+
+    if (ids.isNotEmpty) {
+      return ids.map((e) => e['specieskey'] as int).toList();
+    } else {
+      return [];
+    }
   }
 
   Future<List<ClassifierSpeciesStat>> getSpeciesStats(int specieskey) async {

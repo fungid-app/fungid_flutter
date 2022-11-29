@@ -37,7 +37,7 @@ final Map<String, String> kgNames = {
 };
 
 class LocalDatabaseProvider {
-  const LocalDatabaseProvider(
+  LocalDatabaseProvider(
     DatabaseHandler db,
   ) : _db = db;
 
@@ -51,6 +51,26 @@ class LocalDatabaseProvider {
     } else {
       return _buildFromDB(dbSpecies);
     }
+  }
+
+  Future<List<BasicPrediction>> getObservationCounts() async {
+    var counts = await _db.getObservationCounts();
+
+    if (counts.isEmpty) {
+      return [];
+    }
+
+    double topCount = counts[7].value.toDouble();
+
+    return counts
+        .map(
+          (e) => BasicPrediction(
+            specieskey: e.key,
+            probability:
+                e.value > topCount ? 1.0 : e.value.toDouble() / topCount,
+          ),
+        )
+        .toList();
   }
 
   Future<SimpleSpecies?> getSimpleSpecies(int specieskey) async {
@@ -255,5 +275,31 @@ class LocalDatabaseProvider {
         .where((prop) => prop.prop == propName)
         .map((dbProp) => SpeciesProperties.stringToEnum(dbProp.value, values))
         .toList();
+  }
+
+  Set<int>? _edibileSpeciesKeys;
+  Future<Set<int>> getEdibleSpeciesKeys() async {
+    if (_edibileSpeciesKeys == null) {
+      var dbSpecies = await _db.getEdibleSpeciesKeys();
+      _edibileSpeciesKeys = dbSpecies.toSet();
+    }
+
+    return _edibileSpeciesKeys!;
+  }
+
+  Set<int>? poisonousSpeciesKeys;
+  Future<Set<int>> getPoisonousSpeciesKeys() async {
+    if (poisonousSpeciesKeys == null) {
+      var dbSpecies = await _db.getPoisonousSpeciesKeys();
+      poisonousSpeciesKeys = dbSpecies.toSet();
+    }
+
+    return poisonousSpeciesKeys!;
+  }
+
+  Future<Set<int>> searchSpecies(String query) async {
+    var dbSpecies =
+        await _db.searchCommonNames(query) + await _db.searchSpecies(query);
+    return dbSpecies.toSet();
   }
 }

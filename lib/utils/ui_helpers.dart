@@ -34,4 +34,15 @@ class UiHelpers {
   static Color linkColor(BuildContext context) {
     return Theme.of(context).toggleableActiveColor;
   }
+
+  static Widget header(BuildContext context, String text) {
+    return Row(
+      children: [
+        Text(
+          text,
+          style: Theme.of(context).textTheme.headline5,
+        )
+      ],
+    );
+  }
 }

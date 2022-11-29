@@ -212,4 +212,8 @@ class PredictionsRepository {
 
     return basicPreds.whereType<BasicPrediction>().toList();
   }
+
+  Future<List<BasicPrediction>> getAllSpecies() async {
+    return await _localDatabaseProvider.getObservationCounts();
+  }
 }

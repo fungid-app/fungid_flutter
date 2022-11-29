@@ -49,8 +49,6 @@ dependencies:
   archive: ^3.3.2
   expandable: ^5.0.1
   flutter_map_tile_caching: ^6.2.0
-  flutter_background_service: ^2.4.5
-  flutter_background: ^1.1.0
   # pytorch_mobile: ^0.2.2
   # pytorch_mobile_v2:
   #   git:

@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fungid_flutter/presentation/bloc/seasonal_species_bloc.dart';
 import 'package:fungid_flutter/presentation/pages/seasonal_observation_map.dart';
-import 'package:fungid_flutter/presentation/widgets/basic_predictions_widgets.dart';
+import 'package:fungid_flutter/presentation/widgets/filtered_predictions_widget.dart';
 import 'package:fungid_flutter/utils/hue_calculation.dart';
+import 'package:fungid_flutter/utils/ui_helpers.dart';
 
 class SeasonalSpeciesListView extends StatelessWidget {
   const SeasonalSpeciesListView({Key? key}) : super(key: key);
@@ -21,12 +22,19 @@ class SeasonalSpeciesListView extends StatelessWidget {
             body: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: BasicPredictionsList(
-                        basicPredictions: state.predictions,
-                        hueCalculation: BasicHueCalculation()),
+                  const SizedBox(height: 10),
+                  UiHelpers.header(context, "Mushrooms In Season Locally"),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: const [
+                      Text("Ranked by number of in-season local observations"),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  FilteredPredictionsView(
+                    basicPredictions: state.predictions,
+                    hueCalculation: BasicHueCalculation(),
                   ),
                 ],
               ),
