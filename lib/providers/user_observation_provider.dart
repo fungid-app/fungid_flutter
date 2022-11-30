@@ -40,7 +40,7 @@ class SharedPrefsStorageProvider {
   Stream<List<UserObservation>> getObservations() =>
       _observationStreamController.asBroadcastStream();
 
-  Future<void> saveObservation(UserObservation obs) {
+  Future<void> saveObservation(UserObservation obs) async {
     final observations = [..._observationStreamController.value];
     final index = observations.indexWhere((o) => o.id == obs.id);
     if (index >= 0) {
@@ -50,7 +50,8 @@ class SharedPrefsStorageProvider {
     }
 
     _observationStreamController.add(observations);
-    return _setValue(_obsevationCollectionsKey, json.encode(observations));
+    return await _setValue(
+        _obsevationCollectionsKey, json.encode(observations));
   }
 
   UserObservation? getObservation(String id) {
@@ -71,7 +72,8 @@ class SharedPrefsStorageProvider {
     } else {
       observations.removeAt(index);
       _observationStreamController.add(observations);
-      return _setValue(_obsevationCollectionsKey, json.encode(observations));
+      return await _setValue(
+          _obsevationCollectionsKey, json.encode(observations));
     }
   }
 

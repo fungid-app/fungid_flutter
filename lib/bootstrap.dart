@@ -2,6 +2,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fungid_flutter/app/app.dart';
+import 'package:fungid_flutter/providers/app_settings_provider.dart';
 import 'package:fungid_flutter/providers/offline_predictions_provider.dart';
 import 'package:fungid_flutter/providers/online_predictions_provider.dart';
 import 'package:fungid_flutter/providers/saved_predictions_provider.dart';
@@ -9,6 +10,7 @@ import 'package:fungid_flutter/providers/local_database_provider.dart';
 import 'package:fungid_flutter/providers/user_observation_image_provider.dart';
 import 'package:fungid_flutter/providers/user_observation_provider.dart';
 import 'package:fungid_flutter/providers/wikipedia_article_provider.dart';
+import 'package:fungid_flutter/repositories/app_settings_repository.dart';
 import 'package:fungid_flutter/repositories/location_repository.dart';
 import 'package:fungid_flutter/repositories/predictions_repository.dart';
 import 'package:fungid_flutter/repositories/species_repository.dart';
@@ -23,6 +25,7 @@ void bootstrap({
   required SavedPredictionsSharedPrefProvider savedPredictionsProvider,
   required LocalDatabaseProvider localDatabaseProvider,
   required WikipediaArticleProvider wikipediaArticleProvider,
+  required AppSettingsSharedPrefProvider appSettingsProvider,
 }) {
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
 
@@ -46,12 +49,17 @@ void bootstrap({
     wikipediaProvider: wikipediaArticleProvider,
   );
 
+  final appSettingsRepository = AppSettingsRepository(
+    appSettingsProvider: appSettingsProvider,
+  );
+
   runApp(
     FungIDApp(
       observationsRepsoitory: observationsRepository,
       locationRepository: locationRepository,
       predictionsRepository: predictionsRepository,
       speciesRepository: speciesRepository,
+      appSettingsRepository: appSettingsRepository,
     ),
   );
 }

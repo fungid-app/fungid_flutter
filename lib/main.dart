@@ -10,13 +10,14 @@ import 'package:flutter_map_tile_caching/fmtc_advanced.dart';
 import 'package:flutter_pretty_dio_logger/flutter_pretty_dio_logger.dart';
 import 'package:fungid_api/fungid_api.dart';
 import 'package:fungid_flutter/bootstrap.dart';
+import 'package:fungid_flutter/providers/app_settings_provider.dart';
 import 'package:fungid_flutter/providers/local_database_provider.dart';
 import 'package:fungid_flutter/providers/offline_predictions_provider.dart';
 import 'package:fungid_flutter/providers/online_predictions_provider.dart';
 import 'package:fungid_flutter/providers/saved_predictions_provider.dart';
 import 'package:fungid_flutter/providers/user_observation_image_provider.dart';
-import 'package:fungid_flutter/providers/user_observation_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:fungid_flutter/providers/user_observation_provider.dart';
 import 'package:fungid_flutter/providers/wikipedia_article_provider.dart';
 import 'package:fungid_flutter/utils/filesystem.dart';
 import 'package:local_db/local_db.dart';
@@ -36,22 +37,32 @@ Future<void> main() async {
       FlutterMapTileCaching.initialise(await RootDirectory.normalCache);
 
       var responses = await Future.wait<dynamic>([
-        getObservationsApi(),
         getOnlinePredictions(getFungidApi()),
         getLocalDb(),
-        getPredictions(),
         UserObservationImageFileSystemProvider.create(),
         setupWikipedia(),
+        SharedPreferences.getInstance()
       ]);
 
       bootstrap(
-        observationsProvider: responses[0],
-        onlinePredictionsProvider: responses[1],
-        offlinePredictionsProvider: await getOfflinePredictions(responses[2]),
-        savedPredictionsProvider: responses[3],
-        localDatabaseProvider: LocalDatabaseProvider(responses[2]),
-        imageProvider: responses[4],
-        wikipediaArticleProvider: responses[5],
+        onlinePredictionsProvider: responses[0],
+        offlinePredictionsProvider: await getOfflinePredictions(
+          responses[1],
+        ),
+        localDatabaseProvider: LocalDatabaseProvider(
+          responses[1],
+        ),
+        imageProvider: responses[2],
+        wikipediaArticleProvider: responses[3],
+        savedPredictionsProvider: SavedPredictionsSharedPrefProvider(
+          prefs: responses[4],
+        ),
+        observationsProvider: SharedPrefsStorageProvider(
+          prefs: responses[4],
+        ),
+        appSettingsProvider: AppSettingsSharedPrefProvider(
+          prefs: responses[4],
+        ),
       );
     },
     (error, stack) =>
@@ -92,13 +103,6 @@ FungidApi getFungidApi() {
       ),
     ],
   );
-}
-
-Future<SavedPredictionsSharedPrefProvider> getPredictions() async {
-  final predictionsProvider = SavedPredictionsSharedPrefProvider(
-    prefs: await SharedPreferences.getInstance(),
-  );
-  return predictionsProvider;
 }
 
 Future<DatabaseHandler> getLocalDb() async {
@@ -215,11 +219,4 @@ Future<OnlinePredictionsProvider> getOnlinePredictions(FungidApi api) async {
   final onlinePredictionsProvider = await OnlinePredictionsProvider.create(api);
 
   return onlinePredictionsProvider;
-}
-
-Future<SharedPrefsStorageProvider> getObservationsApi() async {
-  final observationsApi = SharedPrefsStorageProvider(
-    prefs: await SharedPreferences.getInstance(),
-  );
-  return observationsApi;
 }

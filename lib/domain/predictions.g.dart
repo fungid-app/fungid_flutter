@@ -115,11 +115,14 @@ LocalPrediction _$LocalPredictionFromJson(Map<String, dynamic> json) =>
           probability: $checkedConvert('probability', (v) => v),
           isLocal: $checkedConvert('is_local', (v) => v as bool),
           localProbability:
-              $checkedConvert('local_score', (v) => (v as num).toDouble()),
+              $checkedConvert('local_probability', (v) => v as num),
         );
         return val;
       },
-      fieldKeyMap: const {'isLocal': 'is_local', 'localScore': 'local_score'},
+      fieldKeyMap: const {
+        'isLocal': 'is_local',
+        'localProbability': 'local_probability'
+      },
     );
 
 Map<String, dynamic> _$LocalPredictionToJson(LocalPrediction instance) =>
@@ -138,8 +141,7 @@ Prediction _$PredictionFromJson(Map<String, dynamic> json) => $checkedCreate(
           specieskey: $checkedConvert('specieskey', (v) => v),
           species: $checkedConvert('species', (v) => v as String),
           probability: $checkedConvert('probability', (v) => v),
-          localProbability: $checkedConvert(
-              'local_probability', (v) => (v as num).toDouble()),
+          localProbability: $checkedConvert('local_probability', (v) => v),
           imageScore:
               $checkedConvert('image_score', (v) => (v as num?)?.toDouble()),
           tabScore:
@@ -164,9 +166,9 @@ Map<String, dynamic> _$PredictionToJson(Prediction instance) =>
       'specieskey': instance.specieskey,
       'probability': instance.probability,
       'is_local': instance.isLocal,
-      'local_score': instance.localScore,
-      'species': instance.species,
       'local_probability': instance.localProbability,
+      'species': instance.species,
       'image_score': instance.imageScore,
+      'local_score': instance.localScore,
       'tab_score': instance.tabScore,
     };

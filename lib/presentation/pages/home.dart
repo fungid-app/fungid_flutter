@@ -5,6 +5,7 @@ import 'package:fungid_flutter/presentation/bloc/species_explorer_bloc.dart';
 import 'package:fungid_flutter/presentation/pages/observation_list.dart';
 import 'package:fungid_flutter/presentation/pages/seasonal_species_list.dart';
 import 'package:fungid_flutter/presentation/pages/species_explorer.dart';
+import 'package:fungid_flutter/presentation/widgets/settings_drawer.dart';
 import 'package:fungid_flutter/repositories/predictions_repository.dart';
 import 'package:fungid_flutter/repositories/user_observation_repository.dart';
 
@@ -42,9 +43,20 @@ class HomeView extends StatelessWidget {
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 3,
+      // floatingActionButton: createObservationAction(context),
       child: Scaffold(
+        drawer: const SettingsDrawer(),
         appBar: AppBar(
+          leading: Builder(
+            builder: (BuildContext context) {
+              return IconButton(
+                icon: const Icon(Icons.settings),
+                onPressed: () => Scaffold.of(context).openDrawer(),
+              );
+            },
+          ),
           title: const TabBar(
+            labelPadding: EdgeInsets.zero,
             tabs: [
               Tab(text: 'Observations'),
               Tab(text: 'In Season'),
@@ -53,7 +65,6 @@ class HomeView extends StatelessWidget {
             ],
           ),
         ),
-        // floatingActionButton: createObservationAction(context),
         body: const TabBarView(
           children: [
             ObservationListView(),

@@ -1,15 +1,15 @@
 
 
-generate-icons:
-	flutter pub run flutter_launcher_icons:main
+# generate-icons:
+# 	flutter pub run flutter_launcher_icons:main
 
-get-openapi:
+get-openapi-spec:
 	wget https://api.fungid.app/openapi.json -O tmp/fungid-openapi.json
 
-generate-code: get-openapi
+generate-code:
 	flutter pub run build_runner build --delete-conflicting-outputs
 
-generate: generate-icons generate-code 
+generate: get-openapi-spec generate-code 
 
 deploy-beta: deploy-android-draft deploy-ios-beta
 
