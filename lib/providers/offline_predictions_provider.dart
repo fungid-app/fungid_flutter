@@ -1,76 +1,55 @@
-import 'dart:developer';
 import 'dart:io';
 
-import 'package:flutter/services.dart';
-import 'package:fungid_flutter/domain/observations.dart';
 import 'package:fungid_flutter/domain/predictions.dart';
+import 'package:fungid_flutter/utils/offline_predictions_dowloader.dart';
 import 'package:local_db/local_db.dart';
-// import 'package:pytorch_mobile/model.dart';
-// import 'package:pytorch_mobile/pytorch_mobile.dart';
 
 class OfflinePredictionsProvider {
-  final String _modelPath;
-  final String _labelPath;
-  List<String>? _labels;
   final DatabaseHandler _db;
-  // Model? _imageModel;
-  String currentVersion = "0.4.1";
+  int classifierImageSize = 384;
+  final OfflinePredictionsDownloader _downloader;
+
+  get currentVersion => _downloader.currentVersion;
 
   OfflinePredictionsProvider._({
-    required String modelPath,
-    required String labelPath,
+    required String dataPath,
     required DatabaseHandler db,
-  })  : _modelPath = modelPath,
-        _labelPath = labelPath,
-        _db = db;
+  })  : _db = db,
+        _downloader = OfflinePredictionsDownloader(dataPath: dataPath);
 
-  static Future<OfflinePredictionsProvider> create(
-    String modelPath,
-    String labelPath,
-    DatabaseHandler db,
-  ) async {
+  static Future<OfflinePredictionsProvider> create({
+    required String dataPath,
+    required DatabaseHandler db,
+  }) async {
     var provider = OfflinePredictionsProvider._(
-      modelPath: modelPath,
-      labelPath: labelPath,
+      dataPath: dataPath,
       db: db,
     );
-
-    await provider._init();
 
     // Return the fully initialized object
     return provider;
   }
 
-  Future<void> _init() async {
-    log('Loading model from $_modelPath');
-    try {
-      await Future.wait([
-        // PyTorchMobile.loadModel(_modelPath),
-        rootBundle.loadString(_labelPath),
-      ]).then((results) {
-        // _imageModel = results[0] as Model;
-        log('Model loaded');
-        _labels = (results[1]).split('\n');
-        log('Found ${_labels!.length} labels');
-      });
-    } catch (e) {
-      log('Error loading model: $e');
-    }
-  }
-
-  Future<List<dynamic>?> getImagePrediction(
+  Future<List<dynamic>?> _getImagePrediction(
     File img,
   ) async {
-    // return await _imageModel!.getImagePredictionList(img, 384, 384);
-    return [];
+    return await _downloader.imageModel!.getImagePredictionList(
+      img,
+      classifierImageSize,
+      classifierImageSize,
+      // Model not trained with normalization
+      std: [1.0, 1.0, 1.0],
+      mean: [0.0, 0.0, 0.0],
+    );
   }
 
-  Future<List<double>> getImagesPrediction(
-    List<UserObservationImage> images,
-    Directory imagesDirectory,
+  Future<List<double>> _getImagesPrediction(
+    List<String> images,
   ) async {
     var results = await Future.wait(images.map(
-      (img) => getImagePrediction(img.getFile(imagesDirectory)),
+      (img) => _getImagePrediction(
+        File(img),
+      ),
     ));
 
     if (results.length != images.length) {
@@ -99,9 +78,9 @@ class OfflinePredictionsProvider {
 
   Future<List<Prediction>> _makePredictions(
     List<double> results,
-    Set<String> localSpecies,
+    Set<String>? localSpecies,
   ) async {
-    if (results.length != _labels!.length) {
+    if (results.length != _downloader.labels!.length) {
       throw Exception('Image model results and labels are not the same length');
     }
 
@@ -109,24 +88,26 @@ class OfflinePredictionsProvider {
 
     for (int i = 0; i < results.length; i++) {
       double probability = results[i];
-      double localProb = 0;
+      double localProb = results[i];
 
-      if (localSpecies.contains(_labels![i])) {
-        localProb = probability;
+      if (localSpecies != null &&
+          !localSpecies.contains(_downloader.labels![i])) {
+        localProb = 0;
       }
 
       if (probability > 0.001) {
-        int? specieskey = (await _db.getSpecies(_labels![i]))?.speciesKey;
+        int? specieskey =
+            (await _db.getSpecies(_downloader.labels![i]))?.speciesKey;
 
         if (specieskey != null) {
           predictions.add(Prediction(
             specieskey: specieskey,
-            species: _labels![i],
+            species: _downloader.labels![i],
             probability: probability,
             localProbability: localProb,
             imageScore: null,
-            isLocal: null,
-            localScore: null,
+            isLocal: localProb > 0,
+            localScore: localProb > 0 ? probability : null,
             tabScore: null,
           ));
         }
@@ -141,11 +122,14 @@ class OfflinePredictionsProvider {
   Future<Predictions> getPredictions(
     String observationID,
     DateTime date,
-    List<UserObservationImage> images,
-    Set<String> localSpecies,
-    Directory imagesDirectory,
+    List<String> images,
+    Set<String>? localSpecies,
   ) async {
-    var results = await getImagesPrediction(images, imagesDirectory);
+    if (!_downloader.isInitialized) {
+      throw Exception('Offline predictions are not initialized');
+    }
+
+    var results = await _getImagesPrediction(images);
 
     return Predictions(
       observationID: observationID,
@@ -153,7 +137,15 @@ class OfflinePredictionsProvider {
       dateCreated: DateTime.now().toUtc(),
       inferred: null,
       predictionType: PredictionType.offline,
-      modelVersion: currentVersion,
+      modelVersion: _downloader.currentVersion,
     );
+  }
+
+  Stream<OfflinePredictionsDownloadStatus> enable() {
+    return _downloader.enable();
+  }
+
+  Future<void> disable() async {
+    return await _downloader.disable();
   }
 }

@@ -50,10 +50,13 @@ dependencies:
   expandable: ^5.0.1
   flutter_map_tile_caching: ^6.2.0
   # pytorch_mobile: ^0.2.2
-  # pytorch_mobile_v2:
-  #   git:
-  #     url: https://github.com/fungid-app/flutter_pytorch_mobile
-  #     ref: master # branch name
+  pytorch_mobile_v2:
+    path: ../flutter_pytorch_mobile
+  flutter_downloader:
+    ^1.9.1
+    # git:
+    #   url: https://github.com/fungid-app/flutter_pytorch_mobile
+    #   ref: master # branch name
 
 dev_dependencies:
   flutter_test:
@@ -83,6 +86,6 @@ flutter:
   assets:
     - assets/app.sqlite3.bz2
     - assets/wikipedia.tar.bz2
-    - assets/models/labels.csv
+    # - assets/models/
 
   uses-material-design: true

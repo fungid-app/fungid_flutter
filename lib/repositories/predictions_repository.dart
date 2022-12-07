@@ -8,7 +8,10 @@ import 'package:fungid_flutter/providers/local_database_provider.dart';
 import 'package:fungid_flutter/providers/offline_predictions_provider.dart';
 import 'package:fungid_flutter/providers/online_predictions_provider.dart';
 import 'package:fungid_flutter/providers/saved_predictions_provider.dart';
+import 'package:fungid_flutter/utils/images.dart';
 import 'package:fungid_flutter/utils/internet.dart';
+import 'package:fungid_flutter/utils/offline_predictions_dowloader.dart';
+import 'package:path_provider/path_provider.dart';
 
 class PredictionsRepository {
   const PredictionsRepository({
@@ -29,6 +32,8 @@ class PredictionsRepository {
   final OfflinePredictionsProvider _offlinePredictionsProvider;
   final LocalDatabaseProvider _localDatabaseProvider;
 
+  get offlineModelVersion => _offlinePredictionsProvider.currentVersion;
+
   Future<Predictions> getPredictions(UserObservation observation) async {
     Predictions? preds;
 
@@ -47,15 +52,32 @@ class PredictionsRepository {
   }
 
   Future<Predictions> refreshPredictions(UserObservation observation) async {
-    var preds = await _getNewOnlinePredictions(observation);
+    Predictions? preds;
 
-    // if (!await isOnline()) {
-    //   preds = await _getNewOfflinePredictions(observation, null);
-    // }
+    if (!await isOnline()) {
+      var species = _savedPredictionsProvider.getLocalSpecies();
+      preds = await _getNewOfflinePredictions(observation, species);
+    } else {
+      preds = await _getNewOnlinePredictions(observation);
+    }
 
     await _savedPredictionsProvider.saveObservationPredictions(preds);
 
     return preds;
+  }
+
+  Future<List<String>> prepareImages(
+    List<UserObservationImage> images,
+    int imageSize,
+    bool fillSquare,
+  ) async {
+    var tmpDir = await getTemporaryDirectory();
+    var prepped = await prepareImageFiles(
+        images.map((e) => e.getFilePath(_imageStorageDirectory)).toList(),
+        tmpDir,
+        imageSize,
+        fillSquare: fillSquare);
+    return prepped;
   }
 
   Future<Predictions> _getNewOnlinePredictions(
@@ -65,9 +87,11 @@ class PredictionsRepository {
       observation.dateCreated,
       observation.location.lat,
       observation.location.lng,
-      observation.images
-          .map((e) => e.getFilePath(_imageStorageDirectory))
-          .toList(),
+      await prepareImages(
+        observation.images,
+        _onlinePredictionsProvider.classifierImgSize!,
+        false,
+      ),
     );
 
     return fromApi(preds, observation.id);
@@ -117,14 +141,17 @@ class PredictionsRepository {
 
   Future<Predictions> _getNewOfflinePredictions(
     UserObservation observation,
-    Set<String> localSpecies,
+    Set<String>? localSpecies,
   ) async {
     var preds = await _offlinePredictionsProvider.getPredictions(
       observation.id,
       observation.dateCreated,
-      observation.images,
+      await prepareImages(
+        observation.images,
+        _offlinePredictionsProvider.classifierImageSize,
+        true,
+      ),
       localSpecies,
-      _imageStorageDirectory,
     );
 
     return preds;
@@ -145,6 +172,10 @@ class PredictionsRepository {
   bool _isCurrentOfflineVersion(String? version) {
     var curVersion = _offlinePredictionsProvider.currentVersion;
     return version == curVersion;
+  }
+
+  Set<String>? getLocalSpecies() {
+    return _savedPredictionsProvider.getLocalSpecies();
   }
 
   Future<List<BasicPrediction>> getSeasonalSpecies({
@@ -175,6 +206,7 @@ class PredictionsRepository {
           lat,
           lon,
           preds,
+          seasonal.map((e) => e.species).toSet(),
         );
       } else {
         preds = _savedPredictionsProvider.getLatestSeasonalPredictions();
@@ -215,5 +247,13 @@ class PredictionsRepository {
 
   Future<List<BasicPrediction>> getAllSpecies() async {
     return await _localDatabaseProvider.getObservationCounts();
+  }
+
+  Stream<OfflinePredictionsDownloadStatus> enableOfflinePredictions() {
+    return _offlinePredictionsProvider.enable();
+  }
+
+  Future<void> disableOfflinePredictions() async {
+    return await _offlinePredictionsProvider.disable();
   }
 }

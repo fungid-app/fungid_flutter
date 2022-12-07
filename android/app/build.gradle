@@ -104,6 +104,10 @@ android {
         pickFirst 'lib/x86_64/libfbjni.so'
         pickFirst 'lib/armeabi-v7a/libfbjni.so'
         pickFirst 'lib/arm64-v8a/libfbjni.so'    
+        pickFirst 'lib/x86/libpytorch_jni_lite.so'
+        pickFirst 'lib/x86_64/libpytorch_jni_lite.so'
+        pickFirst 'lib/armeabi-v7a/libpytorch_jni_lite.so'
+        pickFirst 'lib/arm64-v8a/libpytorch_jni_lite.so'
     }
 }
 

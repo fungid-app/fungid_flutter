@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fungid_flutter/domain/observations.dart';
 import 'package:fungid_flutter/domain/predictions.dart';
 import 'package:fungid_flutter/presentation/bloc/view_prediction_bloc.dart';
+import 'package:fungid_flutter/presentation/cubit/internet_cubit.dart';
 import 'package:fungid_flutter/presentation/widgets/local_predictions_widget.dart';
 import 'package:fungid_flutter/repositories/predictions_repository.dart';
 import 'package:fungid_flutter/repositories/species_repository.dart';
@@ -90,7 +91,7 @@ class ViewPredictionList extends StatelessWidget {
     final predictions =
         context.select((ViewPredictionBloc bloc) => bloc.state.predictions);
 
-    ListTile? infoTile = getInfoTile(observation, predictions, context);
+    Widget? infoTile = getInfoTile(observation, predictions, context);
 
     return Column(
       children: [
@@ -103,7 +104,7 @@ class ViewPredictionList extends StatelessWidget {
     );
   }
 
-  ListTile? getInfoTile(UserObservation observation, Predictions? predictions,
+  Widget? getInfoTile(UserObservation observation, Predictions? predictions,
       BuildContext context) {
     final status =
         context.select((ViewPredictionBloc bloc) => bloc.state.status);
@@ -115,15 +116,15 @@ class ViewPredictionList extends StatelessWidget {
     if (context.select((ViewPredictionBloc bloc) => bloc.state.isStale)) {
       return _buildWarningTile(
         "These predictions are stale.",
-        "Tap to refresh",
         context,
       );
     }
 
     if (predictions?.predictionType == PredictionType.offline) {
+      // return tile based on if offline or not
+
       return _buildWarningTile(
         "These predictions were generated offline.",
-        "Tap to generate better predictions.",
         context,
       );
     }
@@ -132,7 +133,6 @@ class ViewPredictionList extends StatelessWidget {
         (ViewPredictionBloc bloc) => bloc.state.isCurrentModelVersion)) {
       return _buildWarningTile(
         "There is a newer model available.",
-        "Tap to generate better predictions.",
         context,
       );
     }
@@ -140,17 +140,28 @@ class ViewPredictionList extends StatelessWidget {
     return null;
   }
 
-  ListTile _buildWarningTile(
-      String title, String subtitle, BuildContext context) {
-    return ListTile(
-      leading: const Icon(Icons.warning),
-      trailing: const Icon(Icons.refresh),
-      title: Text(title),
-      dense: true,
-      subtitle: Text(subtitle),
-      onTap: () => context
-          .read<ViewPredictionBloc>()
-          .add(const ViewPredictionRefreshPredctions()),
+  Widget _buildWarningTile(String title, BuildContext context) {
+    return BlocBuilder<InternetCubit, InternetState>(
+      builder: (context, state) {
+        return state is InternetConnected
+            ? ListTile(
+                leading: const Icon(Icons.warning),
+                trailing: const Icon(Icons.refresh),
+                title: Text(title),
+                dense: true,
+                subtitle: const Text("Tap to get better predictions."),
+                onTap: () => context
+                    .read<ViewPredictionBloc>()
+                    .add(const ViewPredictionRefreshPredctions()),
+              )
+            : ListTile(
+                leading: const Icon(Icons.warning),
+                title: Text(title),
+                subtitle: const Text(
+                    "Connect to the internet to get better predictions."),
+                dense: true,
+              );
+      },
     );
   }
 

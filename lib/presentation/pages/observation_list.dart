@@ -3,11 +3,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fungid_flutter/domain/observations.dart';
+import 'package:fungid_flutter/presentation/bloc/app_settings_bloc.dart';
 import 'package:fungid_flutter/presentation/bloc/observation_list_bloc.dart';
+import 'package:fungid_flutter/presentation/cubit/internet_cubit.dart';
 import 'package:fungid_flutter/presentation/cubit/observation_image_cubit.dart';
 import 'package:fungid_flutter/presentation/pages/edit_observation.dart';
 import 'package:fungid_flutter/presentation/pages/view_observation.dart';
 import 'package:fungid_flutter/presentation/widgets/add_image_sheet.dart';
+import 'package:fungid_flutter/presentation/widgets/confirm_dialog.dart';
 import 'package:fungid_flutter/utils/ui_helpers.dart';
 
 class ObservationListView extends StatelessWidget {
@@ -25,6 +28,7 @@ class ObservationListView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                enableOfflinePredictionsTile(context),
                 Expanded(
                   child: ListView.separated(
                     shrinkWrap: true,
@@ -45,6 +49,46 @@ class ObservationListView extends StatelessWidget {
       },
     );
   }
+}
+
+Widget enableOfflinePredictionsTile(BuildContext context) {
+  return BlocBuilder<InternetCubit, InternetState>(
+    builder: (context, internetState) {
+      return BlocBuilder<AppSettingsBloc, AppSettingsState>(
+        builder: (context, appSettingsState) {
+          if (appSettingsState is AppSettingsLoaded &&
+              !appSettingsState.isOfflineModeActive) {
+            if (internetState is InternetConnected) {
+              return Column(
+                children: [
+                  ListTile(
+                      title: const Text('Enable offline predictions'),
+                      subtitle:
+                          const Text('Get IDs without an internet connection.'),
+                      trailing: const Icon(
+                        Icons.wifi_off,
+                      ),
+                      onTap: () => offlineModeConfirmDialog(context)),
+                  UiHelpers.basicDivider,
+                ],
+              );
+            } else {
+              return const ListTile(
+                title: Text('Enable offline predictions'),
+                subtitle:
+                    Text('Connect to the internet to enable offline mode.'),
+                trailing: Icon(
+                  Icons.wifi_off,
+                ),
+              );
+            }
+          }
+
+          return const SizedBox.shrink();
+        },
+      );
+    },
+  );
 }
 
 ListTile _observationCard(

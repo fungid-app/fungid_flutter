@@ -6,6 +6,7 @@ import 'package:dio/dio.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_map_tile_caching/fmtc_advanced.dart';
 import 'package:flutter_pretty_dio_logger/flutter_pretty_dio_logger.dart';
 import 'package:fungid_api/fungid_api.dart';
@@ -35,6 +36,11 @@ Future<void> main() async {
       WidgetsFlutterBinding.ensureInitialized();
       await setupFirebase();
       FlutterMapTileCaching.initialise(await RootDirectory.normalCache);
+
+      await FlutterDownloader.initialize(
+        debug:
+            true, // optional: set to false to disable printing logs to console (default: true)
+      );
 
       var responses = await Future.wait<dynamic>([
         getOnlinePredictions(getFungidApi()),
@@ -175,9 +181,8 @@ Future<OfflinePredictionsProvider> getOfflinePredictions(
   DatabaseHandler db,
 ) async {
   return await OfflinePredictionsProvider.create(
-    'assets/models/mobile-image-model.pt',
-    'assets/models/labels.csv',
-    db,
+    dataPath: 'models',
+    db: db,
   );
 }
 

@@ -12,19 +12,29 @@ class InternetCubit extends Cubit<InternetState> {
 
   InternetCubit({
     required this.connectivity,
-  }) : super(InternetLoading());
+  }) : super(InternetLoading()) {
+    monitorInternetConnection();
+  }
 
-  StreamSubscription<ConnectivityResult> monitorInternetConnection() {
+  Future<StreamSubscription<ConnectivityResult>>
+      monitorInternetConnection() async {
+    var result = await connectivity.checkConnectivity();
+    emitResult(result);
+
     return connectivityStreamSubscription =
         connectivity.onConnectivityChanged.listen((connectivityResult) {
-      if (connectivityResult == ConnectivityResult.wifi) {
-        emitInternetConnected(ConnectionType.wifi);
-      } else if (connectivityResult == ConnectivityResult.mobile) {
-        emitInternetConnected(ConnectionType.mobile);
-      } else if (connectivityResult == ConnectivityResult.none) {
-        emitInternetDisconnected();
-      }
+      emitResult(connectivityResult);
     });
+  }
+
+  void emitResult(ConnectivityResult result) {
+    if (result == ConnectivityResult.wifi) {
+      emitInternetConnected(ConnectionType.wifi);
+    } else if (result == ConnectivityResult.mobile) {
+      emitInternetConnected(ConnectionType.mobile);
+    } else if (result == ConnectivityResult.none) {
+      emitInternetDisconnected();
+    }
   }
 
   void emitInternetConnected(ConnectionType connectionType) =>

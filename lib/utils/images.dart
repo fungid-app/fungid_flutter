@@ -8,7 +8,32 @@ Future<Image> resizeFromFile(Map<String, dynamic> values) async {
   // Read a jpeg image from file.
   var path = values['path'] as String;
   var maxSize = values['maxSize'] as int;
+  var fillSquare = values['fillSquare'] as bool;
 
+  var img = await resizeImage(path, maxSize);
+
+  if (fillSquare) {
+    img = fillSquareImage(img, maxSize);
+  }
+
+  return img;
+}
+
+Image fillSquareImage(Image img, int size) {
+  var square = Image(
+    size,
+    size,
+    channels: img.channels,
+    exif: img.exif,
+  );
+
+  var x = (size - img.width) ~/ 2;
+  var y = (size - img.height) ~/ 2;
+  copyInto(square, img, dstX: x, dstY: y);
+  return square;
+}
+
+Future<Image> resizeImage(String path, int maxSize) async {
   File file = File(path);
 
   if (!(await file.exists())) return throw Exception('Image file not found');
@@ -45,7 +70,11 @@ String base64String(Uint8List data) {
 }
 
 Future<List<String>> prepareImageFiles(
-    Iterable<String> paths, Directory tmpDir, int maxSize) async {
+  Iterable<String> paths,
+  Directory tmpDir,
+  int maxSize, {
+  bool fillSquare = false,
+}) async {
   return await Future.wait(
     paths.map(
       (path) async {
@@ -54,6 +83,7 @@ Future<List<String>> prepareImageFiles(
         var args = {
           'path': path,
           'maxSize': maxSize,
+          'fillSquare': fillSquare,
         };
 
         var img = await compute(resizeFromFile, args);

@@ -9,14 +9,16 @@ class ConnectivityWarning extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var state = context.select((InternetCubit cubit) => cubit.state);
-    return const SizedBox.shrink();
-    // return state is InternetConnected
-    //     ? const SizedBox.shrink()
-    //     : const ListTile(
-    //         leading: Icon(Icons.warning),
-    //         title: Text('No internet. Using offline predictions.'),
-    //         dense: true,
-    //       );
+    return BlocBuilder<InternetCubit, InternetState>(
+      builder: (context, state) {
+        return state is InternetConnected
+            ? const SizedBox.shrink()
+            : const ListTile(
+                leading: Icon(Icons.warning),
+                title: Text('No internet. Using offline predictions.'),
+                dense: true,
+              );
+      },
+    );
   }
 }

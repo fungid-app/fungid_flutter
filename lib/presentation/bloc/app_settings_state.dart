@@ -52,19 +52,67 @@ class AppSettingsError extends AppSettingsState {
 }
 
 class AppSettingsLoadingOffline extends AppSettingsLoaded {
+  final double progress;
   const AppSettingsLoadingOffline({
     bool? isDarkMode,
     required bool isOfflineModeActive,
-    required bool effectiveDarkMode,
+    required bool effectiveIsDarkMode,
+    required this.progress,
   }) : super(
           isDarkMode: isDarkMode,
           isOfflineModeActive: isOfflineModeActive,
-          effectiveIsDarkMode: effectiveDarkMode,
+          effectiveIsDarkMode: effectiveIsDarkMode,
         );
 
   @override
   List<Object> get props => [
         isDarkMode ?? "",
         isOfflineModeActive,
+        effectiveIsDarkMode,
+        progress,
+      ];
+}
+
+class AppSettingsErrorOffline extends AppSettingsLoaded {
+  final String message;
+  const AppSettingsErrorOffline({
+    bool? isDarkMode,
+    required bool isOfflineModeActive,
+    required bool effectiveIsDarkMode,
+    required this.message,
+  }) : super(
+          isDarkMode: isDarkMode,
+          isOfflineModeActive: isOfflineModeActive,
+          effectiveIsDarkMode: effectiveIsDarkMode,
+        );
+
+  @override
+  List<Object> get props => [
+        isDarkMode ?? "",
+        isOfflineModeActive,
+        effectiveIsDarkMode,
+        message,
+      ];
+}
+
+class AppSettingsLoadedOffline extends AppSettingsLoaded {
+  final String version;
+  const AppSettingsLoadedOffline({
+    bool? isDarkMode,
+    required bool isOfflineModeActive,
+    required bool effectiveIsDarkMode,
+    required this.version,
+  }) : super(
+          isDarkMode: isDarkMode,
+          isOfflineModeActive: isOfflineModeActive,
+          effectiveIsDarkMode: effectiveIsDarkMode,
+        );
+
+  @override
+  List<Object> get props => [
+        isDarkMode ?? "",
+        isOfflineModeActive,
+        effectiveIsDarkMode,
+        version,
       ];
 }

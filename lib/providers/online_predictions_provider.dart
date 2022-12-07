@@ -1,11 +1,8 @@
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:dio/dio.dart';
 import 'package:fungid_api/fungid_api.dart';
-import 'package:fungid_flutter/utils/images.dart';
-import 'package:path_provider/path_provider.dart';
 
 class OnlinePredictionsProvider {
   final FungidApi fungidApi;
@@ -58,10 +55,8 @@ class OnlinePredictionsProvider {
   }
 
   Future<Iterable<MultipartFile>> _buildImageFiles(
-      Iterable<String> paths, Directory appDir) async {
-    var prepped = await prepareImageFiles(paths, appDir, classifierImgSize!);
-
-    return await Future.wait(prepped.map(
+      Iterable<String> paths) async {
+    return await Future.wait(paths.map(
       (path) async => await MultipartFile.fromFile(
         path,
         filename: 'images',
@@ -78,8 +73,7 @@ class OnlinePredictionsProvider {
   ) async {
     await _ensureCurrentVersion();
 
-    final appDir = await getTemporaryDirectory();
-    var files = await _buildImageFiles(imagePaths, appDir);
+    var files = await _buildImageFiles(imagePaths);
 
     var result = await classifierApi!.evaluateFullClassifierClassifierFullPut(
       date: date,
@@ -92,13 +86,11 @@ class OnlinePredictionsProvider {
       var data = result.data;
 
       if (data != null) {
-        log(data.toString());
         return data;
       } else {
         throw Exception('No data returned');
       }
     } else {
-      log(result.toString());
       throw Exception(['Error getting predictions', result]);
     }
   }

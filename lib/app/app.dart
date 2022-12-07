@@ -85,6 +85,8 @@ class FungIDApp extends StatelessWidget {
                   RepositoryProvider.of<AppSettingsRepository>(context),
               isSystemThemeDark:
                   Theme.of(context).brightness == Brightness.dark,
+              predictionsRepository:
+                  RepositoryProvider.of<PredictionsRepository>(context),
             )..add(AppSettingsLoad()),
           ),
         ],

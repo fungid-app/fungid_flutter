@@ -2,6 +2,8 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:fungid_flutter/domain/app_settings.dart';
 import 'package:fungid_flutter/repositories/app_settings_repository.dart';
+import 'package:fungid_flutter/repositories/predictions_repository.dart';
+import 'package:fungid_flutter/utils/offline_predictions_dowloader.dart';
 
 part 'app_settings_event.dart';
 part 'app_settings_state.dart';
@@ -10,6 +12,7 @@ class AppSettingsBloc extends Bloc<AppSettingsEvent, AppSettingsState> {
   AppSettingsBloc({
     required this.settingsRepository,
     required this.isSystemThemeDark,
+    required this.predictionsRepository,
   }) : super(AppSettingsInitial()) {
     on<AppSettingsLoad>(_onAppSettingsLoad);
     on<ToggleDarkMode>(_onToggleDarkMode);
@@ -17,20 +20,26 @@ class AppSettingsBloc extends Bloc<AppSettingsEvent, AppSettingsState> {
   }
   final bool isSystemThemeDark;
   final AppSettingsRepository settingsRepository;
+  final PredictionsRepository predictionsRepository;
 
-  void _onAppSettingsLoad(
+  Future<void> _onAppSettingsLoad(
     AppSettingsLoad event,
     Emitter<AppSettingsState> emit,
-  ) {
+  ) async {
     try {
       final settings = settingsRepository.getSettings();
-      emit(AppSettingsLoaded(
+      var currentState = AppSettingsLoaded(
         isDarkMode: settings.isDarkMode,
         isOfflineModeActive: settings.isOfflineModeActive,
         effectiveIsDarkMode: settings.isDarkMode ?? isSystemThemeDark,
-      ));
+      );
+      emit(currentState);
+
+      if (settings.isOfflineModeActive) {
+        await loadOfflineModel(emit, currentState);
+      }
     } catch (e) {
-      emit(AppSettingsError(e.toString()));
+      rethrow;
     }
   }
 
@@ -41,44 +50,93 @@ class AppSettingsBloc extends Bloc<AppSettingsEvent, AppSettingsState> {
     if (state is AppSettingsLoaded) {
       final currentState = state as AppSettingsLoaded;
 
-      final newState = currentState.copyWith(
+      emit(currentState.copyWith(
         isDarkMode: !currentState.effectiveIsDarkMode,
         effectiveIsDarkMode: !currentState.effectiveIsDarkMode,
-      );
+      ));
 
-      _saveSettings(newState, emit);
+      _saveSettings(
+        !currentState.effectiveIsDarkMode,
+        currentState.isOfflineModeActive,
+      );
     }
   }
 
-  void _onToggleOfflineMode(
+  Future<void> _onToggleOfflineMode(
     ToggleOfflineMode event,
     Emitter<AppSettingsState> emit,
-  ) {
+  ) async {
     if (state is AppSettingsLoaded) {
       final currentState = state as AppSettingsLoaded;
+      var offlineActive = !currentState.isOfflineModeActive;
 
-      final newState = currentState.copyWith(
-        isOfflineModeActive: !currentState.isOfflineModeActive,
-      );
+      _saveSettings(currentState.isDarkMode, offlineActive);
 
-      _saveSettings(newState, emit);
+      if (offlineActive) {
+        await loadOfflineModel(
+          emit,
+          currentState,
+        );
+      } else {
+        await predictionsRepository.disableOfflinePredictions();
+        emit(
+          AppSettingsLoaded(
+            isDarkMode: currentState.isDarkMode,
+            isOfflineModeActive: offlineActive,
+            effectiveIsDarkMode: currentState.effectiveIsDarkMode,
+          ),
+        );
+      }
     }
+  }
+
+  Future<void> loadOfflineModel(
+    Emitter<AppSettingsState> emit,
+    AppSettingsLoaded currentState,
+  ) async {
+    await emit.forEach<OfflinePredictionsDownloadStatus>(
+        predictionsRepository.enableOfflinePredictions(), onData: (status) {
+      if (status.status == OfflinePredictionsDownloadStatusEnum.success) {
+        _saveSettings(currentState.isDarkMode, true);
+
+        return AppSettingsLoadedOffline(
+          isDarkMode: currentState.isDarkMode,
+          isOfflineModeActive: true,
+          effectiveIsDarkMode: currentState.effectiveIsDarkMode,
+          version: predictionsRepository.offlineModelVersion,
+        );
+      } else if (status.status == OfflinePredictionsDownloadStatusEnum.failed) {
+        _saveSettings(currentState.isDarkMode, false);
+
+        return AppSettingsErrorOffline(
+          isDarkMode: currentState.isDarkMode,
+          isOfflineModeActive: false,
+          effectiveIsDarkMode: currentState.effectiveIsDarkMode,
+          message: status.message ?? "Unknown error",
+        );
+      } else if (status.status ==
+          OfflinePredictionsDownloadStatusEnum.downloading) {
+        return AppSettingsLoadingOffline(
+          isDarkMode: currentState.isDarkMode,
+          isOfflineModeActive: true,
+          effectiveIsDarkMode: currentState.effectiveIsDarkMode,
+          progress: double.parse(status.message ?? "0"),
+        );
+      }
+
+      return currentState;
+    });
   }
 
   void _saveSettings(
-    AppSettingsLoaded state,
-    Emitter<AppSettingsState> emit,
+    bool? isDarkMode,
+    bool isOfflineModeActive,
   ) {
-    try {
-      settingsRepository.saveSettings(
-        AppSettings(
-          isDarkMode: state.isDarkMode,
-          isOfflineModeActive: state.isOfflineModeActive,
-        ),
-      );
-      emit(state);
-    } catch (e) {
-      emit(AppSettingsError(e.toString()));
-    }
+    settingsRepository.saveSettings(
+      AppSettings(
+        isDarkMode: isDarkMode,
+        isOfflineModeActive: isOfflineModeActive,
+      ),
+    );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fungid_flutter/presentation/bloc/app_settings_bloc.dart';
+import 'package:fungid_flutter/presentation/widgets/confirm_dialog.dart';
 
 class SettingsDrawer extends StatelessWidget {
   const SettingsDrawer({Key? key}) : super(key: key);
@@ -25,13 +26,38 @@ class SettingsDrawer extends StatelessWidget {
                     );
               },
             ),
-            // SwitchListTile(
-            //   title: const Text("Offline Mode"),
-            //   value: state.isOfflineModeActive,
-            //   onChanged: (value) {
-            //     context.read<AppSettingsBloc>().add(ToggleOfflineMode());
-            //   },
-            // ),
+            SwitchListTile(
+              title: const Text("Enable Offline Predictions"),
+              value: state.isOfflineModeActive,
+              onChanged: (value) {
+                // Confirm that the user wants to switch to offline mode
+                if (value) {
+                  offlineModeConfirmDialog(context);
+                } else {
+                  context.read<AppSettingsBloc>().add(
+                        ToggleOfflineMode(),
+                      );
+                }
+              },
+            ),
+            state is AppSettingsLoadingOffline
+                ? Text(
+                    "Downloading offline model: ${state.progress}%",
+                    textAlign: TextAlign.center,
+                  )
+                : const SizedBox.shrink(),
+            state is AppSettingsErrorOffline
+                ? Text(
+                    "Error downloading offline predictions: ${state.message}",
+                    textAlign: TextAlign.center,
+                  )
+                : const SizedBox.shrink(),
+            state is AppSettingsLoadedOffline
+                ? Text(
+                    "Model Version: ${state.version}",
+                    textAlign: TextAlign.center,
+                  )
+                : const SizedBox.shrink(),
           ],
         ),
       );
