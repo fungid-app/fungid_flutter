@@ -1102,9 +1102,11 @@ packages:
   pytorch_mobile_v2:
     dependency: "direct main"
     description:
-      path: "../flutter_pytorch_mobile"
-      relative: true
-    source: path
+      path: "."
+      ref: master
+      resolved-ref: "76f6eb0753d78edcb5cdee64cc7ea7131625d39a"
+      url: "https://github.com/fungid-app/flutter_pytorch_mobile"
+    source: git
     version: "0.0.4"
   queue:
     dependency: transitive

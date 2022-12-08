@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:fungid_flutter/domain/predictions.dart';
-import 'package:fungid_flutter/utils/offline_predictions_dowloader.dart';
+import 'package:fungid_flutter/utils/offline_predictions_downloader.dart';
 import 'package:local_db/local_db.dart';
 
 class OfflinePredictionsProvider {

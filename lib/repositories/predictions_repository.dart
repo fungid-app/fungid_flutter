@@ -10,7 +10,7 @@ import 'package:fungid_flutter/providers/online_predictions_provider.dart';
 import 'package:fungid_flutter/providers/saved_predictions_provider.dart';
 import 'package:fungid_flutter/utils/images.dart';
 import 'package:fungid_flutter/utils/internet.dart';
-import 'package:fungid_flutter/utils/offline_predictions_dowloader.dart';
+import 'package:fungid_flutter/utils/offline_predictions_downloader.dart';
 import 'package:path_provider/path_provider.dart';
 
 class PredictionsRepository {

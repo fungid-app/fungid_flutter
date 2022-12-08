@@ -69,6 +69,9 @@ class OfflinePredictionsDownloader {
       deleteFiles: true,
     );
 
+    // Ensure directory exists
+    await Directory(await _fullDataPath).create(recursive: true);
+
     if (!(await modelExists()) || !(await labelsExist())) {
       port = ReceivePort();
       IsolateNameServer.registerPortWithName(
@@ -106,18 +109,21 @@ class OfflinePredictionsDownloader {
             yield OfflinePredictionsDownloadStatus(
               status: OfflinePredictionsDownloadStatusEnum.success,
             );
+
+            await _loadData();
             break;
           } else {
-            yield OfflinePredictionsDownloadStatus(
-              status: OfflinePredictionsDownloadStatusEnum.downloading,
-              message: (tasks.entries
-                          .where((e) =>
-                              e.value != null && working.contains(e.value![1]))
-                          .map((e) => (e.value![2] as int).toDouble())
-                          .reduce((value, element) => value + element) /
-                      tasks.length.toDouble())
-                  .toString(),
-            );
+            if (tasks.entries.every(
+                (e) => e.value != null && working.contains(e.value![1]))) {
+              yield OfflinePredictionsDownloadStatus(
+                status: OfflinePredictionsDownloadStatusEnum.downloading,
+                message: (tasks.entries
+                            .map((e) => (e.value![2] as int).toDouble())
+                            .reduce((value, element) => value + element) /
+                        tasks.length)
+                    .toString(),
+              );
+            }
           }
         } catch (e, stack) {
           yield OfflinePredictionsDownloadStatus(
@@ -129,7 +135,6 @@ class OfflinePredictionsDownloader {
           break;
         }
       }
-      await _loadData();
     }
   }
 

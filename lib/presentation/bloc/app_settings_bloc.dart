@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:fungid_flutter/domain/app_settings.dart';
 import 'package:fungid_flutter/repositories/app_settings_repository.dart';
 import 'package:fungid_flutter/repositories/predictions_repository.dart';
-import 'package:fungid_flutter/utils/offline_predictions_dowloader.dart';
+import 'package:fungid_flutter/utils/offline_predictions_downloader.dart';
 
 part 'app_settings_event.dart';
 part 'app_settings_state.dart';
