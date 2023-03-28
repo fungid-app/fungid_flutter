@@ -21,7 +21,7 @@ class CircularPredictionIndicator extends StatelessWidget {
           Center(
             child: CircularProgressIndicator(
               value: probability as double,
-              backgroundColor: Theme.of(context).backgroundColor,
+              backgroundColor: Theme.of(context).colorScheme.background,
               valueColor: AlwaysStoppedAnimation<Color>(
                 HSLColor.fromAHSL(
                   1,
@@ -35,7 +35,7 @@ class CircularPredictionIndicator extends StatelessWidget {
           Center(
             child: Text(
               _getProbText(probability),
-              style: Theme.of(context).textTheme.bodyText2,
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
           ),
         ],

@@ -1,7 +1,7 @@
 name: fungid_flutter
 description: The App for Fungid.app
 publish_to: 'none'
-version: 0.1.0+21
+version: 0.1.1+22
 
 environment:
   sdk: '>=2.17.5 <3.0.0'
@@ -31,21 +31,21 @@ dependencies:
   dio: '>=4.0.1 <5.0.0'
   built_collection: '>=5.1.0 <6.0.0'
   flutter_pretty_dio_logger: ^2.0.2
-  firebase_core: ^1.22.0
-  firebase_crashlytics: ^2.8.10
+  firebase_core: ^2.8.0
+  firebase_crashlytics: ^3.0.17
   url_launcher: ^6.1.5
   image_gallery_saver: ^1.7.1
   intl: ^0.17.0
   cached_network_image: ^3.2.2
-  fl_chart: ^0.55.2
+  fl_chart: ^0.61.0
   flex_color_scheme: ^6.0.1
-  connectivity_plus: ^2.3.9
+  connectivity_plus: ^3.0.3
   intersperse: ^2.0.0
   flutter_map: ^3.0.0
   latlong2: ^0.8.1
   device_preview_screenshot: ^1.0.0
   device_preview: ^1.1.0
-  firebase_analytics: ^9.3.8
+  firebase_analytics: ^10.1.6
   archive: ^3.3.2
   expandable: ^5.0.1
   flutter_map_tile_caching: ^6.2.0
@@ -63,7 +63,7 @@ dev_dependencies:
   bloc_test: ^9.0.3
   build_runner: ^2.0.0
   json_serializable: ^6.0.0
-  mocktail: ^0.2.0
+  mocktail: ^0.3.0
   openapi_generator: ^4.0.0
   flutter_lints: ^2.0.0
   test: ^1.21.4

@@ -70,7 +70,7 @@ class _LocalPredictionsView extends StatelessWidget {
               children: [
                 Text(
                   "${state.showOnlyLocal ? "Local" : "Global"} ${title!} (${state.visiblePredictions.length})",
-                  style: Theme.of(context).textTheme.headline5,
+                  style: Theme.of(context).textTheme.headlineSmall,
                 ),
                 const Spacer(),
                 IconButton(

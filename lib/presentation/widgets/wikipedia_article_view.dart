@@ -26,7 +26,7 @@ class WikipediaArticleView extends StatelessWidget {
               children: [
                 Text(
                   "Wikipedia",
-                  style: Theme.of(context).textTheme.headline5,
+                  style: Theme.of(context).textTheme.headlineSmall,
                 ),
               ],
             ),
@@ -92,7 +92,7 @@ Widget buildParagraph(
     child: RichText(
       text: TextSpan(
         children: paragraph.body.map((e) => buildText(context, e)).toList(),
-        style: Theme.of(context).textTheme.bodyText1,
+        style: Theme.of(context).textTheme.bodyLarge,
       ),
     ),
   );
@@ -103,7 +103,7 @@ Widget buildTitle(BuildContext context, WikipediaTitle title) {
     padding: const EdgeInsets.symmetric(vertical: 10),
     child: Text(
       title.title,
-      style: Theme.of(context).textTheme.headline6,
+      style: Theme.of(context).textTheme.titleLarge,
     ),
   );
 }

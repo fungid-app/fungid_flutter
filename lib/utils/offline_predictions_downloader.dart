@@ -1,10 +1,10 @@
 import 'dart:developer';
+import 'dart:io';
 import 'dart:isolate';
 import 'dart:ui';
 
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
-import 'package:flutter_map_tile_caching/fmtc_advanced.dart';
 import 'package:fungid_flutter/utils/filesystem.dart';
 import 'package:pytorch_mobile_v2/model.dart';
 import 'package:pytorch_mobile_v2/pytorch_mobile_v2.dart';

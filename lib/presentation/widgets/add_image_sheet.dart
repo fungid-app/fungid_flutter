@@ -19,8 +19,8 @@ void createAddImageSheet({
         images.add(image);
       }
     } else {
-      List<XFile>? imageList = await imagePicker.pickMultiImage();
-      if (imageList != null) {
+      List<XFile> imageList = await imagePicker.pickMultiImage();
+      if (imageList.isNotEmpty) {
         images.addAll(imageList);
       }
     }

@@ -34,7 +34,7 @@ class BasicPredictionsView extends StatelessWidget {
                 children: [
                   Text(
                     title!,
-                    style: Theme.of(context).textTheme.headline5,
+                    style: Theme.of(context).textTheme.headlineSmall,
                   )
                 ],
               ),

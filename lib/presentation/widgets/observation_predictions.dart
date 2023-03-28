@@ -70,7 +70,7 @@ class ViewPredictionList extends StatelessWidget {
       leading: const Icon(Icons.batch_prediction_sharp),
       title: Text(
         "Predictions",
-        style: Theme.of(context).textTheme.headline5,
+        style: Theme.of(context).textTheme.headlineSmall,
       ),
       trailing: icon,
     );

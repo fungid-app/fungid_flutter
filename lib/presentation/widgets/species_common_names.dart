@@ -23,7 +23,7 @@ class SpeciesCommonNamesView extends StatelessWidget {
             children: [
               Text(
                 "Common Name(s)",
-                style: Theme.of(context).textTheme.headline5,
+                style: Theme.of(context).textTheme.headlineSmall,
               )
             ],
           ),

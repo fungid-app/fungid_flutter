@@ -94,7 +94,7 @@ class ViewSpeciesPage extends StatelessWidget {
                         children: [
                           Text(
                             "Local Observations",
-                            style: Theme.of(context).textTheme.headline5,
+                            style: Theme.of(context).textTheme.headlineSmall,
                           ),
                         ],
                       ),

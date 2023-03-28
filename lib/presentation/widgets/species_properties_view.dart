@@ -34,7 +34,7 @@ class SpeciesPropertiesView extends StatelessWidget {
             children: [
               Text(
                 "Properties",
-                style: Theme.of(context).textTheme.headline5,
+                style: Theme.of(context).textTheme.headlineSmall,
               )
             ],
           ),
@@ -83,7 +83,7 @@ class SpeciesPropertiesView extends StatelessWidget {
                       Text(title),
                       Text(
                         e.name,
-                        style: Theme.of(context).textTheme.caption,
+                        style: Theme.of(context).textTheme.bodySmall,
                       ),
                     ],
                   )

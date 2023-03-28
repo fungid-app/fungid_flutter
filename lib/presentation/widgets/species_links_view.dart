@@ -19,7 +19,7 @@ class SpeciesLinksView extends StatelessWidget {
             children: [
               Text(
                 "Links",
-                style: Theme.of(context).textTheme.headline5,
+                style: Theme.of(context).textTheme.headlineSmall,
               )
             ],
           ),
