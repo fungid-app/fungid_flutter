@@ -1,0 +1,13 @@
+-keep class androidx.lifecycle.DefaultLifecycleObserver
+#Pytorch
+-dontwarn javax.annotation.Nullable
+-keep class org.pytorch.** { *; }
+-keep class com.facebook.jni.** { *; }
+
+#Flutter Wrapper
+-keep class io.flutter.app.** { *; }
+-keep class io.flutter.plugin.**  { *; }
+-keep class io.flutter.util.**  { *; }
+-keep class io.flutter.view.**  { *; }
+-keep class io.flutter.**  { *; }
+-keep class io.flutter.plugins.**  { *; }

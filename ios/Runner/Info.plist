@@ -70,5 +70,7 @@
 		<array>
 			<string>app.fungid.fungidapp</string>
 		</array>
-	</dict>
+		<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+</dict>
 </plist>

@@ -28,7 +28,6 @@ platform :ios do
       archive_path: "../build/ios/archive/Runner.xcarchive",
     )
     # https://github.com/fastlane/fastlane/issues/20773
-    ENV['ITMSTRANSPORTER_FORCE_ITMS_PACKAGE_UPLOAD'] = "true"
 
     upload_to_testflight(
       itc_provider: "QVF4W6GHP4",
@@ -38,7 +37,6 @@ platform :ios do
 
   lane :upload do
     # https://github.com/fastlane/fastlane/issues/20773
-    ENV['ITMSTRANSPORTER_FORCE_ITMS_PACKAGE_UPLOAD'] = "true"
 
     # upload_to_testflight(
     #   itc_provider: "QVF4W6GHP4",
@@ -48,9 +46,10 @@ platform :ios do
       itc_provider: "QVF4W6GHP4",
       ipa: "../build/ios/ipa/fungid_flutter.ipa",
       automatic_release: true,
-      export_compliance_compliance_required: false,
-      export_compliance_contains_third_party_cryptography: false,
-      export_compliance_contains_proprietary_cryptography: false
+      force: true,
+      # export_compliance_compliance_required: false,
+      # export_compliance_contains_third_party_cryptography: false,
+      # export_compliance_contains_proprietary_cryptography: false
     )
 
   end

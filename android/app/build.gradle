@@ -90,9 +90,7 @@ android {
            minifyEnabled true
            shrinkResources true
            
-           proguardFiles getDefaultProguardFile(
-                'proguard-android-optimize.txt'),
-                'proguard-android.txt'
+           proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
 
        }
        debug {
