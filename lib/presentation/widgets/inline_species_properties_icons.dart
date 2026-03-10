@@ -39,13 +39,16 @@ class InlineSpeciesPropertiesIcons extends StatelessWidget {
 
     return list
         .map(
-          (e) => SizedBox(
-            width: 20,
-            height: 20,
-            child: CachedNetworkImage(
-              imageUrl: SpeciesProperties.iconUrl(e),
-              errorWidget: (context, url, error) => const Icon(Icons.error),
-              fit: BoxFit.contain,
+          (e) => Semantics(
+            label: e.name,
+            child: SizedBox(
+              width: 20,
+              height: 20,
+              child: CachedNetworkImage(
+                imageUrl: SpeciesProperties.iconUrl(e),
+                errorWidget: (context, url, error) => const Icon(Icons.error),
+                fit: BoxFit.contain,
+              ),
             ),
           ),
         )

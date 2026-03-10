@@ -73,13 +73,9 @@ class ViewObservationView extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        leading: InkWell(
-          onTap: () {
-            Navigator.pop(context);
-          },
-          child: const Icon(
-            Icons.arrow_back,
-          ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
         ),
         actions: <Widget>[
           PopupMenuButton<Menu>(
@@ -99,14 +95,14 @@ class ViewObservationView extends StatelessWidget {
               const PopupMenuItem<Menu>(
                 value: Menu.edit,
                 child: ListTile(
-                  leading: Icon(Icons.edit),
+                  leading: Icon(Icons.edit_outlined),
                   title: Text('Edit'),
                 ),
               ),
               const PopupMenuItem<Menu>(
                 value: Menu.delete,
                 child: ListTile(
-                  leading: Icon(Icons.delete),
+                  leading: Icon(Icons.delete_outlined),
                   title: Text('Delete'),
                 ),
               ),
@@ -115,34 +111,45 @@ class ViewObservationView extends StatelessWidget {
         ],
         title: const Text("Your Observation"),
       ),
-      body: Column(
-        children: [
-          const ConnectivityWarning(),
-          Padding(
-            padding: const EdgeInsets.all(10),
-            child: ObservationImageCarousel(
-              images: observation.images,
+      body: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: Column(
+              children: [
+                const ConnectivityWarning(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: UiHelpers.horizontalPadding,
+                    vertical: UiHelpers.itemSpacing,
+                  ),
+                  child: Hero(
+                    tag: 'observation_image_${observation.id}',
+                    child: ObservationImageCarousel(
+                      images: observation.images,
+                    ),
+                  ),
+                ),
+                ListTile(
+                  dense: true,
+                  leading: const Icon(Icons.location_on_outlined),
+                  title: Text(observation.location.placeName),
+                ),
+                ListTile(
+                  dense: true,
+                  leading: const Icon(Icons.calendar_today_outlined),
+                  title: Text(observation.dayObserved()),
+                ),
+                if (observation.notes != null)
+                  ListTile(
+                    dense: true,
+                    leading: const Icon(Icons.notes_outlined),
+                    title: Text(observation.notes ?? ""),
+                  ),
+                UiHelpers.basicDivider,
+              ],
             ),
           ),
-          ListTile(
-            minLeadingWidth: 0,
-            leading: const Icon(Icons.location_on_outlined),
-            title: Text(observation.location.placeName),
-          ),
-          ListTile(
-            minLeadingWidth: 0,
-            leading: const Icon(Icons.date_range),
-            title: Text(observation.dayObserved()),
-          ),
-          observation.notes == null
-              ? const SizedBox.shrink()
-              : ListTile(
-                  minLeadingWidth: 0,
-                  leading: const Icon(Icons.notes),
-                  title: Text(observation.notes ?? ""),
-                ),
-          UiHelpers.basicDivider,
-          Expanded(
+          SliverFillRemaining(
             child: ObservationPredictionsView(
               observationID: observation.id,
             ),
@@ -154,29 +161,33 @@ class ViewObservationView extends StatelessWidget {
 }
 
 void _delete(BuildContext context) {
+  final colorScheme = Theme.of(context).colorScheme;
   showDialog(
-      context: context,
-      builder: (BuildContext ctx) {
-        return AlertDialog(
-          title: const Text('Please Confirm'),
-          content:
-              const Text('Are you sure you want to delete the observation?'),
-          actions: [
-            TextButton(
-                onPressed: () {
-                  // Close the dialog
-                  Navigator.of(context).pop();
-                },
-                child: const Text('Cancel')),
-            TextButton(
-                onPressed: () {
-                  context.read<ViewObservationBloc>().add(
-                        const ViewObservationDelete(),
-                      );
-                  Navigator.of(context).pop();
-                },
-                child: const Text('Delete')),
-          ],
-        );
-      });
+    context: context,
+    builder: (BuildContext ctx) {
+      return AlertDialog(
+        title: const Text('Delete Observation'),
+        content:
+            const Text('Are you sure you want to delete this observation? This cannot be undone.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            style: TextButton.styleFrom(
+              foregroundColor: colorScheme.error,
+            ),
+            onPressed: () {
+              context.read<ViewObservationBloc>().add(
+                    const ViewObservationDelete(),
+                  );
+              Navigator.of(context).pop();
+            },
+            child: const Text('Delete'),
+          ),
+        ],
+      );
+    },
+  );
 }

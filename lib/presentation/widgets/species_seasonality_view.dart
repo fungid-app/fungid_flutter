@@ -1,6 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:fungid_flutter/domain/species.dart';
+import 'package:fungid_flutter/utils/ui_helpers.dart';
 
 class SpeciesSeasonalityView extends StatelessWidget {
   final SpeciesStats stats;
@@ -12,28 +13,17 @@ class SpeciesSeasonalityView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0),
-      child: SizedBox(
-        height: 200,
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: Text(
-                    "Seasonality",
-                    style: Theme.of(context).textTheme.headlineSmall,
-                  ),
-                ),
-              ],
-            ),
-            Flexible(
-              child: getMonthGraph(context, stats.normalizedMonthStats),
-            ),
-          ],
-        ),
+    return SizedBox(
+      height: 200,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          UiHelpers.sectionHeader(context, "Seasonality"),
+          const SizedBox(height: UiHelpers.itemSpacing),
+          Flexible(
+            child: getMonthGraph(context, stats.normalizedMonthStats),
+          ),
+        ],
       ),
     );
   }

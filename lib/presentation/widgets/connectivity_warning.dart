@@ -11,13 +11,25 @@ class ConnectivityWarning extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<InternetCubit, InternetState>(
       builder: (context, state) {
-        return state is InternetConnected
-            ? const SizedBox.shrink()
-            : const ListTile(
-                leading: Icon(Icons.warning),
-                title: Text('No internet. Using offline predictions.'),
-                dense: true,
-              );
+        if (state is InternetConnected) return const SizedBox.shrink();
+        final colorScheme = Theme.of(context).colorScheme;
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          color: colorScheme.errorContainer,
+          child: Row(
+            children: [
+              Icon(Icons.wifi_off_rounded,
+                  size: 18, color: colorScheme.onErrorContainer),
+              const SizedBox(width: 8),
+              Text(
+                'No internet. Using offline predictions.',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: colorScheme.onErrorContainer,
+                    ),
+              ),
+            ],
+          ),
+        );
       },
     );
   }

@@ -13,41 +13,54 @@ class CircularPredictionIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 40,
-      width: 40,
-      child: Stack(
-        children: [
-          Center(
-            child: CircularProgressIndicator(
-              value: probability as double,
-              backgroundColor: Theme.of(context).colorScheme.background,
-              valueColor: AlwaysStoppedAnimation<Color>(
-                HSLColor.fromAHSL(
-                  1,
-                  hueCalculation.getHue(probability),
-                  .75,
-                  .5,
-                ).toColor(),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final hue = hueCalculation.getHue(probability);
+    final color = HSLColor.fromAHSL(
+      1,
+      hue,
+      0.75,
+      isDark ? 0.65 : 0.40,
+    ).toColor();
+
+    return Semantics(
+      label: '${(probability * 100).round()} percent probability',
+      child: ExcludeSemantics(
+        child: SizedBox(
+          height: 44,
+          width: 44,
+          child: Stack(
+            children: [
+              Center(
+                child: CircularProgressIndicator(
+                  value: probability as double,
+                  backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  strokeWidth: 3.5,
+                  valueColor: AlwaysStoppedAnimation<Color>(color),
+                ),
               ),
-            ),
+              Center(
+                child: MediaQuery.withClampedTextScaling(
+                  maxScaleFactor: 1.0,
+                  child: Text(
+                    _getProbText(probability),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                  ),
+                ),
+              ),
+            ],
           ),
-          Center(
-            child: Text(
-              _getProbText(probability),
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
 
   String _getProbText(num probability) {
     if (probability < .1) {
-      return (probability * 100).toStringAsFixed(1);
+      return '${(probability * 100).toStringAsFixed(1)}%';
     } else {
-      return '${(probability * 100).round()}';
+      return '${(probability * 100).round()}%';
     }
   }
 }

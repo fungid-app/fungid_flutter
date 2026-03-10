@@ -43,25 +43,25 @@ class HomeView extends StatelessWidget {
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 3,
-      // floatingActionButton: createObservationAction(context),
       child: Scaffold(
         drawer: const SettingsDrawer(),
         appBar: AppBar(
           leading: Builder(
             builder: (BuildContext context) {
               return IconButton(
-                icon: const Icon(Icons.settings),
+                icon: const Icon(Icons.settings_outlined),
                 onPressed: () => Scaffold.of(context).openDrawer(),
               );
             },
           ),
           title: const TabBar(
             labelPadding: EdgeInsets.zero,
+            labelStyle: TextStyle(fontWeight: FontWeight.w600),
+            unselectedLabelStyle: TextStyle(fontWeight: FontWeight.w400),
             tabs: [
               Tab(text: 'Observations'),
               Tab(text: 'In Season'),
               Tab(text: 'Explorer'),
-              // Tab(text: 'Species'),
             ],
           ),
         ),

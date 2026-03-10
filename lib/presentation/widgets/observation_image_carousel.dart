@@ -7,6 +7,7 @@ import 'package:fungid_flutter/domain/observations.dart';
 import 'package:fungid_flutter/presentation/cubit/observation_image_cubit.dart';
 import 'package:fungid_flutter/presentation/widgets/add_image_sheet.dart';
 import 'package:fungid_flutter/presentation/pages/view_image_page.dart';
+import 'package:fungid_flutter/utils/ui_helpers.dart';
 
 class ObservationImageCarousel extends StatelessWidget {
   const ObservationImageCarousel({
@@ -43,22 +44,27 @@ class ObservationImageCarouselView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var imageLen = images.length;
     Directory imageStorageDirectory = context
         .select((ObservationImageCubit bloc) => bloc.state.storageDirectory);
+
+    final carouselHeight = MediaQuery.of(context).size.height * 0.28;
 
     var items = (images)
         .map(
           (image) => Builder(
             builder: (BuildContext context) {
               return Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
                   width: MediaQuery.of(context).size.width,
                   child: GestureDetector(
-                      child: Image.file(
-                        image.getFile(imageStorageDirectory),
-                        fit: BoxFit.cover,
-                        cacheWidth: 250,
+                      child: ClipRRect(
+                        borderRadius:
+                            BorderRadius.circular(UiHelpers.cardBorderRadius),
+                        child: Image.file(
+                          image.getFile(imageStorageDirectory),
+                          fit: BoxFit.cover,
+                          cacheWidth: 500,
+                        ),
                       ),
                       onTap: () {
                         Navigator.push<Widget>(
@@ -80,18 +86,48 @@ class ObservationImageCarouselView extends StatelessWidget {
     if (onImagesAdded != null) {
       items.add(Builder(
         builder: (BuildContext context) {
-          return Center(
-            child: IconButton(
-              iconSize: 40,
-              icon: const Icon(Icons.add_a_photo),
-              onPressed: () {
-                createAddImageSheet(
-                  context: context,
-                  onImagesSelected: (images) {
-                    onImagesAdded!(images);
-                  },
-                );
-              },
+          final colorScheme = Theme.of(context).colorScheme;
+          return Container(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius:
+                    BorderRadius.circular(UiHelpers.cardBorderRadius),
+                color: colorScheme.surfaceContainerHighest,
+                border: Border.all(
+                  color: colorScheme.outlineVariant,
+                  width: 1.5,
+                ),
+              ),
+              child: InkWell(
+                borderRadius:
+                    BorderRadius.circular(UiHelpers.cardBorderRadius),
+                onTap: () {
+                  createAddImageSheet(
+                    context: context,
+                    onImagesSelected: (images) {
+                      onImagesAdded!(images);
+                    },
+                  );
+                },
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.add_a_photo_outlined,
+                      size: 32,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Add Photo',
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                            color: colorScheme.onSurfaceVariant,
+                          ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           );
         },
@@ -101,14 +137,14 @@ class ObservationImageCarouselView extends StatelessWidget {
     return CarouselSlider(
       items: items,
       options: CarouselOptions(
-        initialPage: imageLen - 1,
+        initialPage: 0,
         disableCenter: true,
         aspectRatio: 1,
-        viewportFraction: .3,
-        // enlargeCenterPage: true,
-
-        padEnds: false,
-        height: 100,
+        viewportFraction: 0.7,
+        enlargeCenterPage: true,
+        enlargeFactor: 0.2,
+        padEnds: true,
+        height: carouselHeight.clamp(160, 280),
         enableInfiniteScroll: false,
       ),
     );

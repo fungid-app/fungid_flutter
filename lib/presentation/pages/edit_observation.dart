@@ -82,7 +82,7 @@ class EditObservationView extends StatelessWidget {
             borderRadius: BorderRadius.all(Radius.circular(32)),
           ),
           backgroundColor: status.isLoading
-              ? fabBackgroundColor.withOpacity(0.5)
+              ? fabBackgroundColor.withValues(alpha: 0.5)
               : fabBackgroundColor,
           onPressed: status.isLoading
               ? null

@@ -130,11 +130,30 @@ class BasicPredictionTileView extends StatelessWidget {
     return BlocBuilder<SimpleSpeciesBloc, SimpleSpeciesState>(
         builder: (context, state) {
       if (state is SimpleSpeciesLoading || state is SimpleSpeciesInitial) {
-        return const ListTile(
-          leading: SizedBox(
-            width: 40,
-            height: 40,
-            child: CircularProgressIndicator(),
+        return const SizedBox(
+          height: 72,
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              children: [
+                // Image placeholder
+                _ShimmerBox(width: 48, height: 48, borderRadius: 6),
+                SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _ShimmerBox(width: 140, height: 14, borderRadius: 4),
+                      SizedBox(height: 6),
+                      _ShimmerBox(width: 100, height: 10, borderRadius: 4),
+                    ],
+                  ),
+                ),
+                SizedBox(width: 16),
+                _ShimmerBox(width: 44, height: 44, borderRadius: 22),
+              ],
+            ),
           ),
         );
       } else if (state is SimpleSpeciesError) {
@@ -152,11 +171,14 @@ class BasicPredictionTileView extends StatelessWidget {
         return ListTile(
           leading: state.species.image == null
               ? null
-              : SpeciesImageDisplay(
-                  image: state.species.image,
-                  width: 50,
-                  height: 50,
-                  fit: BoxFit.cover,
+              : ClipRRect(
+                  borderRadius: BorderRadius.circular(6),
+                  child: SpeciesImageDisplay(
+                    image: state.species.image,
+                    width: 48,
+                    height: 48,
+                    fit: BoxFit.cover,
+                  ),
                 ),
           onTap: () => {
             Navigator.push(
@@ -168,26 +190,27 @@ class BasicPredictionTileView extends StatelessWidget {
               ),
             )
           },
-          minLeadingWidth: 0,
           title: Text(
             state.species.commonName?.name ?? state.species.species,
             overflow: TextOverflow.ellipsis,
           ),
-          subtitle: Row(
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              InlineSpeciesPropertiesIcons(
-                properties: edible,
-                padding: const EdgeInsets.only(right: 10, top: 5),
-              ),
-              state.species.commonName != null
-                  ? Expanded(
-                      child: Text(
-                        state.species.species,
-                        overflow: TextOverflow.ellipsis,
-                        softWrap: false,
-                      ),
-                    )
-                  : const SizedBox.shrink(),
+              if (state.species.commonName != null)
+                Text(
+                  state.species.species,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontStyle: FontStyle.italic),
+                ),
+              if (edible.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: InlineSpeciesPropertiesIcons(
+                    properties: edible,
+                    padding: EdgeInsets.zero,
+                  ),
+                ),
             ],
           ),
           trailing: CircularPredictionIndicator(
@@ -199,5 +222,29 @@ class BasicPredictionTileView extends StatelessWidget {
         return const SizedBox.shrink();
       }
     });
+  }
+}
+
+class _ShimmerBox extends StatelessWidget {
+  final double width;
+  final double height;
+  final double borderRadius;
+
+  const _ShimmerBox({
+    required this.width,
+    required this.height,
+    required this.borderRadius,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(borderRadius),
+      ),
+    );
   }
 }

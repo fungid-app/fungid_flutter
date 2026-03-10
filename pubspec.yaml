@@ -75,6 +75,7 @@ flutter:
   assets:
     - assets/app.sqlite3.bz2
     - assets/wikipedia.tar.bz2
+    - assets/app_logo.png
     # - assets/models/
 
   uses-material-design: true

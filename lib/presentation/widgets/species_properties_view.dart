@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:fungid_flutter/domain/species_properties.dart';
+import 'package:fungid_flutter/utils/ui_helpers.dart';
 
 class SpeciesPropertiesView extends StatelessWidget {
   final SpeciesProperties properties;
@@ -26,26 +27,17 @@ class SpeciesPropertiesView extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Text(
-                "Properties",
-                style: Theme.of(context).textTheme.headlineSmall,
-              )
-            ],
-          ),
-          Wrap(
-            spacing: 5,
-            runSpacing: 5,
-            direction: Axis.horizontal,
-            children: tiles,
-          )
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        UiHelpers.sectionHeader(context, "Properties"),
+        const SizedBox(height: UiHelpers.itemSpacing),
+        Wrap(
+          spacing: UiHelpers.itemSpacing,
+          runSpacing: UiHelpers.itemSpacing,
+          children: tiles,
+        ),
+      ],
     );
   }
 
@@ -62,31 +54,47 @@ class SpeciesPropertiesView extends StatelessWidget {
           (e) => SizedBox(
             width: width,
             child: Card(
-              clipBehavior: Clip.hardEdge,
+              clipBehavior: Clip.antiAlias,
+              margin: EdgeInsets.zero,
               child: Row(
                 children: [
-                  SizedBox(
-                    height: 45,
-                    width: 45,
-                    child: CachedNetworkImage(
-                      imageUrl: SpeciesProperties.iconUrl(e),
-                      errorWidget: (context, url, error) =>
-                          const Icon(Icons.error),
+                  ClipRRect(
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(12),
+                      bottomLeft: Radius.circular(12),
+                    ),
+                    child: SizedBox(
+                      height: 48,
+                      width: 48,
+                      child: CachedNetworkImage(
+                        imageUrl: SpeciesProperties.iconUrl(e),
+                        fit: BoxFit.cover,
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.error),
+                      ),
                     ),
                   ),
-                  const SizedBox(
-                    width: 10,
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant,
+                              ),
+                        ),
+                        Text(
+                          e.name,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(title),
-                      Text(
-                        e.name,
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                    ],
-                  )
                 ],
               ),
             ),

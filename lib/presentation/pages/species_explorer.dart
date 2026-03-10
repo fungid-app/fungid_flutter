@@ -19,18 +19,19 @@ class SpeciesExplorerView extends StatelessWidget {
         } else if (state is SpeciesExplorerLoaded) {
           return Scaffold(
             body: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: UiHelpers.pagePadding,
               child: Column(
                 children: [
-                  const SizedBox(height: 10),
-                  UiHelpers.header(context, "Observation Database Explorer"),
-                  const SizedBox(height: 10),
-                  Row(
-                    children: const [
-                      Text("Ranked by number of global observations"),
-                    ],
+                  const SizedBox(height: UiHelpers.sectionSpacing),
+                  UiHelpers.sectionHeader(
+                      context, "Observation Database Explorer"),
+                  Text(
+                    "Ranked by number of global observations",
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: UiHelpers.itemSpacing),
                   FilteredPredictionsView(
                     basicPredictions: state.predictions,
                     hueCalculation: BasicHueCalculation(),

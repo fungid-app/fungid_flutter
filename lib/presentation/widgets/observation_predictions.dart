@@ -9,6 +9,7 @@ import 'package:fungid_flutter/repositories/predictions_repository.dart';
 import 'package:fungid_flutter/repositories/species_repository.dart';
 import 'package:fungid_flutter/repositories/user_observation_repository.dart';
 import 'package:fungid_flutter/utils/hue_calculation.dart';
+import 'package:fungid_flutter/utils/ui_helpers.dart';
 
 class ObservationPredictionsView extends StatelessWidget {
   final String observationID;
@@ -55,9 +56,13 @@ class ViewPredictionList extends StatelessWidget {
         context.select((ViewPredictionBloc bloc) => bloc.state.observation);
 
     var icon = status == ViewPredictionStatus.predictionsLoading
-        ? null
+        ? const SizedBox(
+            width: 20,
+            height: 20,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          )
         : IconButton(
-            icon: const Icon(Icons.refresh),
+            icon: const Icon(Icons.refresh_rounded),
             onPressed: () {
               context.read<ViewPredictionBloc>().add(
                     const ViewPredictionRefreshPredctions(),
@@ -65,14 +70,22 @@ class ViewPredictionList extends StatelessWidget {
             },
           );
 
-    var header = ListTile(
-      minLeadingWidth: 0,
-      leading: const Icon(Icons.batch_prediction_sharp),
-      title: Text(
-        "Predictions",
-        style: Theme.of(context).textTheme.headlineSmall,
+    var header = Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: UiHelpers.horizontalPadding,
+        vertical: UiHelpers.itemSpacing,
       ),
-      trailing: icon,
+      child: Row(
+        children: [
+          Icon(Icons.analytics_outlined,
+              color: Theme.of(context).colorScheme.primary),
+          const SizedBox(width: 8),
+          Expanded(
+            child: UiHelpers.sectionHeader(context, "Predictions"),
+          ),
+          icon,
+        ],
+      ),
     );
 
     if (observation == null) {
@@ -143,24 +156,65 @@ class ViewPredictionList extends StatelessWidget {
   Widget _buildWarningTile(String title, BuildContext context) {
     return BlocBuilder<InternetCubit, InternetState>(
       builder: (context, state) {
-        return state is InternetConnected
-            ? ListTile(
-                leading: const Icon(Icons.warning),
-                trailing: const Icon(Icons.refresh),
-                title: Text(title),
-                dense: true,
-                subtitle: const Text("Tap to get better predictions."),
-                onTap: () => context
-                    .read<ViewPredictionBloc>()
-                    .add(const ViewPredictionRefreshPredctions()),
-              )
-            : ListTile(
-                leading: const Icon(Icons.warning),
-                title: Text(title),
-                subtitle: const Text(
-                    "Connect to the internet to get better predictions."),
-                dense: true,
-              );
+        final isOnline = state is InternetConnected;
+        final colorScheme = Theme.of(context).colorScheme;
+        return Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: UiHelpers.horizontalPadding,
+            vertical: 4,
+          ),
+          child: Material(
+            borderRadius: BorderRadius.circular(12),
+            color: colorScheme.tertiaryContainer,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(12),
+              onTap: isOnline
+                  ? () => context
+                      .read<ViewPredictionBloc>()
+                      .add(const ViewPredictionRefreshPredctions())
+                  : null,
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                child: Row(
+                  children: [
+                    Icon(Icons.info_outline,
+                        size: 20, color: colorScheme.onTertiaryContainer),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            title,
+                            style:
+                                Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      color: colorScheme.onTertiaryContainer,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                          ),
+                          Text(
+                            isOnline
+                                ? "Tap to get better predictions."
+                                : "Connect to the internet to get better predictions.",
+                            style:
+                                Theme.of(context).textTheme.labelSmall?.copyWith(
+                                      color: colorScheme.onTertiaryContainer
+                                          .withValues(alpha: 0.8),
+                                    ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (isOnline)
+                      Icon(Icons.refresh_rounded,
+                          size: 20, color: colorScheme.onTertiaryContainer),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
       },
     );
   }
@@ -181,20 +235,57 @@ class ViewPredictionList extends StatelessWidget {
               .select((ViewPredictionBloc bloc) => bloc.state.errorMessage) ??
           "Error getting predictions";
 
-      return Text(errorMessage);
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(UiHelpers.horizontalPadding),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.error_outline,
+                  size: 48, color: Theme.of(context).colorScheme.error),
+              const SizedBox(height: 12),
+              Text(errorMessage,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodyMedium),
+              const SizedBox(height: 8),
+              FilledButton.tonal(
+                onPressed: () => context
+                    .read<ViewPredictionBloc>()
+                    .add(const ViewPredictionRefreshPredctions()),
+                child: const Text('Try again'),
+              ),
+            ],
+          ),
+        ),
+      );
     }
 
     final predictions =
         context.select((ViewPredictionBloc bloc) => bloc.state.predictions);
 
     if (predictions == null) {
-      return ListTile(
-        minLeadingWidth: 0,
-        title: const Text("No predictions available"),
-        subtitle: const Text("Tap to generate"),
-        onTap: () => context
-            .read<ViewPredictionBloc>()
-            .add(const ViewPredictionRefreshPredctions()),
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.analytics_outlined,
+                size: 48,
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurfaceVariant
+                    .withValues(alpha: 0.5)),
+            const SizedBox(height: 12),
+            Text('No predictions available',
+                style: Theme.of(context).textTheme.bodyMedium),
+            const SizedBox(height: 8),
+            FilledButton.tonal(
+              onPressed: () => context
+                  .read<ViewPredictionBloc>()
+                  .add(const ViewPredictionRefreshPredctions()),
+              child: const Text('Generate predictions'),
+            ),
+          ],
+        ),
       );
     }
 

@@ -14,50 +14,41 @@ class SpeciesStatsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Text(
-                "Ecological Affinity",
-                style: Theme.of(context).textTheme.headlineSmall,
-              )
-            ],
-          ),
-          DefaultTabController(
-            length: 4, // length of tabs
-            initialIndex: 0,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                const TabBar(
-                  tabs: [
-                    Tab(text: 'Landcover'),
-                    Tab(text: 'Topology'),
-                    Tab(text: 'Lithology'),
-                    Tab(text: 'Climate'),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        UiHelpers.sectionHeader(context, "Ecological Affinity"),
+        const SizedBox(height: UiHelpers.itemSpacing),
+        DefaultTabController(
+          length: 4,
+          initialIndex: 0,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              const TabBar(
+                labelPadding: EdgeInsets.zero,
+                tabs: [
+                  Tab(text: 'Landcover'),
+                  Tab(text: 'Topology'),
+                  Tab(text: 'Lithology'),
+                  Tab(text: 'Climate'),
+                ],
+              ),
+              SizedBox(
+                height: 480,
+                child: TabBarView(
+                  children: <Widget>[
+                    getStatsTiles(stats.eluClass3Stats),
+                    getStatsTiles(stats.eluClass1Stats),
+                    getStatsTiles(stats.eluClass2Stats),
+                    getStatsTiles(stats.kgStats),
                   ],
                 ),
-                Container(
-                  height: 580,
-                  decoration: const BoxDecoration(
-                      border: Border(top: BorderSide(width: 0.5))),
-                  child: TabBarView(
-                    children: <Widget>[
-                      getStatsTiles(stats.eluClass3Stats),
-                      getStatsTiles(stats.eluClass1Stats),
-                      getStatsTiles(stats.eluClass2Stats),
-                      getStatsTiles(stats.kgStats),
-                    ],
-                  ),
-                )
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

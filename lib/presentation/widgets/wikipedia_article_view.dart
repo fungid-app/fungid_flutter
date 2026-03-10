@@ -16,24 +16,13 @@ class WikipediaArticleView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: Row(
-              children: [
-                Text(
-                  "Wikipedia",
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-              ],
-            ),
-          ),
-          buildArticle(context, article),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        UiHelpers.sectionHeader(context, "Wikipedia"),
+        const SizedBox(height: UiHelpers.itemSpacing),
+        buildArticle(context, article),
+      ],
     );
   }
 }
@@ -110,9 +99,7 @@ Widget buildTitle(BuildContext context, WikipediaTitle title) {
 
 Widget buildSection(BuildContext context, WikipediaSection section) {
   final theme = Theme.of(context);
-  final floatingActionButtonTheme = theme.floatingActionButtonTheme;
-  final fabBackgroundColor =
-      floatingActionButtonTheme.backgroundColor ?? theme.colorScheme.secondary;
+  final iconColor = theme.colorScheme.primary;
 
   if (section.title == null) {
     return Column(
@@ -124,7 +111,7 @@ Widget buildSection(BuildContext context, WikipediaSection section) {
       theme: ExpandableThemeData(
         headerAlignment: ExpandablePanelHeaderAlignment.center,
         tapBodyToExpand: true,
-        iconColor: fabBackgroundColor,
+        iconColor: iconColor,
       ),
       collapsed: const SizedBox.shrink(),
       expanded: Column(

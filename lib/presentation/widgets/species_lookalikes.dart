@@ -36,14 +36,11 @@ class SpeciesLookalikesView extends StatelessWidget {
             return const SizedBox.shrink();
           }
 
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            child: LocalPredictionsView(
-              basicPredictions: localPredictions,
-              hueCalculation: BasicHueCalculation(),
-              isInline: true,
-              title: "Lookalikes",
-            ),
+          return LocalPredictionsView(
+            basicPredictions: localPredictions,
+            hueCalculation: BasicHueCalculation(),
+            isInline: true,
+            title: "Lookalikes",
           );
         } else {
           return const SizedBox.shrink();

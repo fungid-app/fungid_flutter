@@ -68,28 +68,35 @@ class _LocalPredictionsView extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  "${state.showOnlyLocal ? "Local" : "Global"} ${title!} (${state.visiblePredictions.length})",
-                  style: Theme.of(context).textTheme.headlineSmall,
+                Expanded(
+                  child: UiHelpers.sectionHeader(
+                    context,
+                    "${state.showOnlyLocal ? "Local" : "Global"} ${title!} (${state.visiblePredictions.length})",
+                  ),
                 ),
-                const Spacer(),
-                IconButton(
-                  icon: const Icon(Icons.gps_fixed_outlined),
-                  onPressed: () {
+                SegmentedButton<bool>(
+                  segments: const [
+                    ButtonSegment(
+                      value: true,
+                      label: Text('Local'),
+                      icon: Icon(Icons.gps_fixed_outlined, size: 16),
+                    ),
+                    ButtonSegment(
+                      value: false,
+                      label: Text('Global'),
+                      icon: Icon(Icons.public, size: 16),
+                    ),
+                  ],
+                  selected: {state.showOnlyLocal},
+                  onSelectionChanged: (value) {
                     context
                         .read<LocalPredictionsViewCubit>()
                         .toggleShowOnlyLocal();
                   },
-                ),
-                IconButton(
-                  icon: Icon(state.showOnlyLocal
-                      ? Icons.check_box_outlined
-                      : Icons.check_box_outline_blank),
-                  onPressed: () {
-                    context
-                        .read<LocalPredictionsViewCubit>()
-                        .toggleShowOnlyLocal();
-                  },
+                  style: SegmentedButton.styleFrom(
+                    visualDensity: VisualDensity.compact,
+                    textStyle: Theme.of(context).textTheme.labelSmall,
+                  ),
                 ),
               ],
             ),
@@ -114,21 +121,17 @@ class _LocalPredictionsView extends StatelessWidget {
         if (!isInline) {
           rows += [
             UiHelpers.basicDivider,
-            GestureDetector(
-              child: ListTile(
-                leading: Icon(state.showOnlyLocal
-                    ? Icons.gps_fixed_outlined
-                    : Icons.gps_not_fixed_outlined),
-                dense: true,
-                title: const Text(
-                  "Location Adjusted Predictions",
-                ),
-                trailing: Icon(state.showOnlyLocal
-                    ? Icons.check_box_outlined
-                    : Icons.check_box_outline_blank),
-              ),
-              onTap: () {
-                context.read<LocalPredictionsViewCubit>().toggleShowOnlyLocal();
+            SwitchListTile(
+              secondary: Icon(state.showOnlyLocal
+                  ? Icons.gps_fixed_outlined
+                  : Icons.gps_not_fixed_outlined),
+              dense: true,
+              title: const Text('Location Adjusted Predictions'),
+              value: state.showOnlyLocal,
+              onChanged: (_) {
+                context
+                    .read<LocalPredictionsViewCubit>()
+                    .toggleShowOnlyLocal();
               },
             ),
           ];

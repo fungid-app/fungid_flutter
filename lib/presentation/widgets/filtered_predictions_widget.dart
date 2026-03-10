@@ -52,7 +52,10 @@ class _FilteredPredictionsView extends StatelessWidget {
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: UiHelpers.horizontalPadding,
+                  vertical: UiHelpers.verticalPadding,
+                ),
                 child: Row(
                   children: [
                     Flexible(
