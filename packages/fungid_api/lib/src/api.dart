@@ -29,8 +29,8 @@ class FungidApi {
         this.dio = dio ??
             Dio(BaseOptions(
               baseUrl: basePathOverride ?? basePath,
-              connectTimeout: 5000,
-              receiveTimeout: 3000,
+              connectTimeout: const Duration(seconds: 5),
+              receiveTimeout: const Duration(seconds: 3),
             )) {
     if (interceptors == null) {
       this.dio.interceptors.addAll([

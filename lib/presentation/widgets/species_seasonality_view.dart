@@ -139,7 +139,7 @@ LineChartBarData getBarData(ThemeData theme, List<SpeciesStat> stats) {
   ];
   return LineChartBarData(
     isCurved: true,
-    color: theme.toggleableActiveColor,
+    color: theme.colorScheme.secondary,
     barWidth: 4,
     isStrokeCapRound: true,
     dotData: FlDotData(show: false),

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
+import 'dart:isolate';
 
 import 'package:archive/archive_io.dart';
 import 'package:dio/dio.dart';
@@ -7,7 +8,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
-import 'package:flutter_map_tile_caching/fmtc_advanced.dart';
+import 'package:flutter_map_tile_caching/flutter_map_tile_caching.dart';
 import 'package:flutter_pretty_dio_logger/flutter_pretty_dio_logger.dart';
 import 'package:fungid_api/fungid_api.dart';
 import 'package:fungid_flutter/bootstrap.dart';
@@ -35,7 +36,7 @@ Future<void> main() async {
     () async {
       WidgetsFlutterBinding.ensureInitialized();
       await setupFirebase();
-      FlutterMapTileCaching.initialise(await RootDirectory.normalCache);
+      await FMTCObjectBoxBackend().initialise();
 
       await FlutterDownloader.initialize(
         debug:
@@ -96,8 +97,8 @@ FungidApi getFungidApi() {
       // baseUrl: 'https://10.0.2.2:8080',
       // LocalIp
       // baseUrl: 'http://192.168.0.186:8080',
-      connectTimeout: 50000,
-      receiveTimeout: 60000,
+      connectTimeout: const Duration(seconds: 50),
+      receiveTimeout: const Duration(seconds: 60),
     )),
     interceptors: [
       PrettyDioLogger(
@@ -159,7 +160,8 @@ Future<DatabaseHandler> getLocalDb() async {
         data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
 
     log('Database ${compressed.length} bytes compressed');
-    var decompressed = BZip2Decoder().decodeBytes(compressed);
+    var decompressed =
+        await Isolate.run(() => BZip2Decoder().decodeBytes(compressed));
     log('Database ${decompressed.length} bytes decompressed');
 
     // Save copied asset to documents
@@ -168,13 +170,11 @@ Future<DatabaseHandler> getLocalDb() async {
     log('Database saved to $localDbPath');
 
     var localDb = await DatabaseHandler.create(localDbPath);
-
     await localDb.setDbVersion(_bundleDbVersion);
+    return localDb;
   }
 
-  var localDb = await DatabaseHandler.create(localDbPath);
-
-  return localDb;
+  return await DatabaseHandler.create(localDbPath);
 }
 
 Future<OfflinePredictionsProvider> getOfflinePredictions(
@@ -206,7 +206,8 @@ Future<WikipediaArticleProvider> setupWikipedia() async {
     List<int> compressed =
         data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
 
-    List<int> decompressed = BZip2Decoder().decodeBytes(compressed);
+    List<int> decompressed =
+        await Isolate.run(() => BZip2Decoder().decodeBytes(compressed));
 
     var tar = TarDecoder().decodeBytes(decompressed);
 

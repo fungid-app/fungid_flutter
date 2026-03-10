@@ -21,15 +21,15 @@ Future<Image> resizeFromFile(Map<String, dynamic> values) async {
 
 Image fillSquareImage(Image img, int size) {
   var square = Image(
-    size,
-    size,
-    channels: img.channels,
+    width: size,
+    height: size,
+    numChannels: img.numChannels,
     exif: img.exif,
   );
 
   var x = (size - img.width) ~/ 2;
   var y = (size - img.height) ~/ 2;
-  copyInto(square, img, dstX: x, dstY: y);
+  compositeImage(square, img, dstX: x, dstY: y);
   return square;
 }
 

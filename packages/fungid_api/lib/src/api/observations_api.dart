@@ -34,7 +34,7 @@ class ObservationsApi {
   /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
   ///
   /// Returns a [Future] containing a [Response] with a [PageGbifObservation] as data
-  /// Throws [DioError] if API call or serialization fails
+  /// Throws [DioException] if API call or serialization fails
   Future<Response<PageGbifObservation>> getAllObservationsObservationsGet({
     int? page = 1,
     int? size = 50,
@@ -83,12 +83,13 @@ class ObservationsApi {
         specifiedType: _responseType,
       ) as PageGbifObservation;
     } catch (error, stackTrace) {
-      throw DioError(
+      throw DioException(
         requestOptions: _response.requestOptions,
         response: _response,
-        type: DioErrorType.other,
+        type: DioExceptionType.unknown,
         error: error,
-      )..stackTrace = stackTrace;
+        stackTrace: stackTrace,
+      );
     }
 
     return Response<PageGbifObservation>(
@@ -116,7 +117,7 @@ class ObservationsApi {
   /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
   ///
   /// Returns a [Future] containing a [Response] with a [GbifObservationImage] as data
-  /// Throws [DioError] if API call or serialization fails
+  /// Throws [DioException] if API call or serialization fails
   Future<Response<GbifObservationImage>>
       getImageByIdObservationsImagesImageIdGet({
     required int imageId,
@@ -158,12 +159,13 @@ class ObservationsApi {
         specifiedType: _responseType,
       ) as GbifObservationImage;
     } catch (error, stackTrace) {
-      throw DioError(
+      throw DioException(
         requestOptions: _response.requestOptions,
         response: _response,
-        type: DioErrorType.other,
+        type: DioExceptionType.unknown,
         error: error,
-      )..stackTrace = stackTrace;
+        stackTrace: stackTrace,
+      );
     }
 
     return Response<GbifObservationImage>(
@@ -193,7 +195,7 @@ class ObservationsApi {
   /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
   ///
   /// Returns a [Future] containing a [Response] with a [PageGbifObservationImage] as data
-  /// Throws [DioError] if API call or serialization fails
+  /// Throws [DioException] if API call or serialization fails
   Future<Response<PageGbifObservationImage>>
       getObservationImagesByObservationIdObservationsObservationIdImagesGet({
     required int observationId,
@@ -245,12 +247,13 @@ class ObservationsApi {
         specifiedType: _responseType,
       ) as PageGbifObservationImage;
     } catch (error, stackTrace) {
-      throw DioError(
+      throw DioException(
         requestOptions: _response.requestOptions,
         response: _response,
-        type: DioErrorType.other,
+        type: DioExceptionType.unknown,
         error: error,
-      )..stackTrace = stackTrace;
+        stackTrace: stackTrace,
+      );
     }
 
     return Response<PageGbifObservationImage>(
@@ -279,7 +282,7 @@ class ObservationsApi {
   /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
   ///
   /// Returns a [Future] containing a [Response] with a [PageGbifObservationImage] as data
-  /// Throws [DioError] if API call or serialization fails
+  /// Throws [DioException] if API call or serialization fails
   Future<Response<PageGbifObservationImage>>
       getObservationImagesObservationsImagesGet({
     int? page = 1,
@@ -329,12 +332,13 @@ class ObservationsApi {
         specifiedType: _responseType,
       ) as PageGbifObservationImage;
     } catch (error, stackTrace) {
-      throw DioError(
+      throw DioException(
         requestOptions: _response.requestOptions,
         response: _response,
-        type: DioErrorType.other,
+        type: DioExceptionType.unknown,
         error: error,
-      )..stackTrace = stackTrace;
+        stackTrace: stackTrace,
+      );
     }
 
     return Response<PageGbifObservationImage>(
@@ -362,7 +366,7 @@ class ObservationsApi {
   /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
   ///
   /// Returns a [Future] containing a [Response] with a [GbifObservation] as data
-  /// Throws [DioError] if API call or serialization fails
+  /// Throws [DioException] if API call or serialization fails
   Future<Response<GbifObservation>> getObservationsByIdObservationsIdGet({
     required int id,
     CancelToken? cancelToken,
@@ -403,12 +407,13 @@ class ObservationsApi {
         specifiedType: _responseType,
       ) as GbifObservation;
     } catch (error, stackTrace) {
-      throw DioError(
+      throw DioException(
         requestOptions: _response.requestOptions,
         response: _response,
-        type: DioErrorType.other,
+        type: DioExceptionType.unknown,
         error: error,
-      )..stackTrace = stackTrace;
+        stackTrace: stackTrace,
+      );
     }
 
     return Response<GbifObservation>(
@@ -438,7 +443,7 @@ class ObservationsApi {
   /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
   ///
   /// Returns a [Future] containing a [Response] with a [PageGbifObservation] as data
-  /// Throws [DioError] if API call or serialization fails
+  /// Throws [DioException] if API call or serialization fails
   Future<Response<PageGbifObservation>>
       getObservationsBySpeciesObservationsBySpeciesSpeciesGet({
     required String species,
@@ -490,12 +495,13 @@ class ObservationsApi {
         specifiedType: _responseType,
       ) as PageGbifObservation;
     } catch (error, stackTrace) {
-      throw DioError(
+      throw DioException(
         requestOptions: _response.requestOptions,
         response: _response,
-        type: DioErrorType.other,
+        type: DioExceptionType.unknown,
         error: error,
-      )..stackTrace = stackTrace;
+        stackTrace: stackTrace,
+      );
     }
 
     return Response<PageGbifObservation>(

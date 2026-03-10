@@ -21,6 +21,9 @@ class AppSettings extends Equatable {
   @override
   List<Object?> get props => [
         isDarkMode,
+        isOfflineModeActive,
+        languageCode,
+        showLocalNotifications,
       ];
 
   static List<AppSettings> observations = [];

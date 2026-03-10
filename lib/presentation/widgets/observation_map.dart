@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_map/plugin_api.dart';
-import 'package:flutter_map_tile_caching/fmtc_advanced.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map_tile_caching/flutter_map_tile_caching.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 
@@ -28,24 +28,15 @@ class ObservationMapView extends StatelessWidget {
         urlTemplate: osmUrl,
         userAgentPackageName: 'app.fungid.flutter',
         retinaMode: MediaQuery.of(context).devicePixelRatio > 1.0,
-        tileProvider: FMTC.instance[cleanTileStoreName(osmUrl)].getTileProvider(
-          FMTCTileProviderSettings(
-            behavior: CacheBehavior.cacheFirst,
-            cachedValidDuration: const Duration(days: 28),
-          ),
-        ),
+        tileProvider: const FMTCStore('osm_tiles').getTileProvider(),
       ),
-      TileLayer(
-        urlTemplate: url,
-        userAgentPackageName: 'app.fungid.flutter',
-        retinaMode: MediaQuery.of(context).devicePixelRatio > 1.0,
-        opacity: .6,
-        backgroundColor: Colors.transparent,
-        tileProvider: FMTC.instance[cleanTileStoreName(url)].getTileProvider(
-          FMTCTileProviderSettings(
-            behavior: CacheBehavior.cacheFirst,
-            cachedValidDuration: const Duration(days: 7),
-          ),
+      Opacity(
+        opacity: 0.6,
+        child: TileLayer(
+          urlTemplate: url,
+          userAgentPackageName: 'app.fungid.flutter',
+          retinaMode: MediaQuery.of(context).devicePixelRatio > 1.0,
+          tileProvider: const FMTCStore('overlay_tiles').getTileProvider(),
         ),
       ),
     ];
@@ -55,7 +46,7 @@ class ObservationMapView extends StatelessWidget {
         MarkerLayer(
           markers: [
             Marker(
-              builder: (context) => const Icon(
+              child: const Icon(
                 Icons.location_on,
                 color: Colors.red,
               ),
@@ -69,22 +60,19 @@ class ObservationMapView extends StatelessWidget {
     return FlutterMap(
       mapController: _mapController,
       options: MapOptions(
-        center: pos,
-        zoom: 9.0,
+        initialCenter: pos,
+        initialZoom: 9.0,
         keepAlive: true,
-        interactiveFlags: InteractiveFlag.pinchZoom | InteractiveFlag.drag,
+        interactionOptions: const InteractionOptions(
+          flags: InteractiveFlag.pinchZoom | InteractiveFlag.drag,
+        ),
       ),
-      nonRotatedChildren: [
-        AttributionWidget.defaultWidget(
-          source: '© OpenStreetMap',
-          onSourceTapped: () {},
+      children: [
+        ...layers,
+        const SimpleAttributionWidget(
+          source: Text('© OpenStreetMap'),
         ),
       ],
-      children: layers,
     );
-  }
-
-  String cleanTileStoreName(String url) {
-    return url.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_');
   }
 }

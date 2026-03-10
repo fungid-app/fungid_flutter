@@ -37,7 +37,7 @@ class ClassifierApi {
   /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
   ///
   /// Returns a [Future] containing a [Response] with a [FullPredictions] as data
-  /// Throws [DioError] if API call or serialization fails
+  /// Throws [DioException] if API call or serialization fails
   Future<Response<FullPredictions>> evaluateFullClassifierClassifierFullPut({
     required DateTime date,
     required num lat,
@@ -78,15 +78,16 @@ class ClassifierApi {
         r'images': images.toList(),
       });
     } catch (error, stackTrace) {
-      throw DioError(
+      throw DioException(
         requestOptions: _options.compose(
           _dio.options,
           _path,
           queryParameters: _queryParameters,
         ),
-        type: DioErrorType.other,
+        type: DioExceptionType.unknown,
         error: error,
-      )..stackTrace = stackTrace;
+        stackTrace: stackTrace,
+      );
     }
 
     final _response = await _dio.request<Object>(
@@ -108,12 +109,13 @@ class ClassifierApi {
         specifiedType: _responseType,
       ) as FullPredictions;
     } catch (error, stackTrace) {
-      throw DioError(
+      throw DioException(
         requestOptions: _response.requestOptions,
         response: _response,
-        type: DioErrorType.other,
+        type: DioExceptionType.unknown,
         error: error,
-      )..stackTrace = stackTrace;
+        stackTrace: stackTrace,
+      );
     }
 
     return Response<FullPredictions>(
@@ -141,7 +143,7 @@ class ClassifierApi {
   /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
   ///
   /// Returns a [Future] containing a [Response] with a [BuiltMap<String, num>] as data
-  /// Throws [DioError] if API call or serialization fails
+  /// Throws [DioException] if API call or serialization fails
   Future<Response<BuiltMap<String, num>>>
       evaluateImageClassifierClassifierImagePut({
     required BuiltList<MultipartFile> images,
@@ -173,14 +175,15 @@ class ClassifierApi {
         r'images': images.toList(),
       });
     } catch (error, stackTrace) {
-      throw DioError(
+      throw DioException(
         requestOptions: _options.compose(
           _dio.options,
           _path,
         ),
-        type: DioErrorType.other,
+        type: DioExceptionType.unknown,
         error: error,
-      )..stackTrace = stackTrace;
+        stackTrace: stackTrace,
+      );
     }
 
     final _response = await _dio.request<Object>(
@@ -202,12 +205,13 @@ class ClassifierApi {
         specifiedType: _responseType,
       ) as BuiltMap<String, num>;
     } catch (error, stackTrace) {
-      throw DioError(
+      throw DioException(
         requestOptions: _response.requestOptions,
         response: _response,
-        type: DioErrorType.other,
+        type: DioExceptionType.unknown,
         error: error,
-      )..stackTrace = stackTrace;
+        stackTrace: stackTrace,
+      );
     }
 
     return Response<BuiltMap<String, num>>(
@@ -236,7 +240,7 @@ class ClassifierApi {
   /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
   ///
   /// Returns a [Future] containing a [Response] with a [BuiltMap<String, num>] as data
-  /// Throws [DioError] if API call or serialization fails
+  /// Throws [DioException] if API call or serialization fails
   Future<Response<BuiltMap<String, num>>>
       evaluateLocationClassifierClassifierLocationGet({
     required num lat,
@@ -285,12 +289,13 @@ class ClassifierApi {
         specifiedType: _responseType,
       ) as BuiltMap<String, num>;
     } catch (error, stackTrace) {
-      throw DioError(
+      throw DioException(
         requestOptions: _response.requestOptions,
         response: _response,
-        type: DioErrorType.other,
+        type: DioExceptionType.unknown,
         error: error,
-      )..stackTrace = stackTrace;
+        stackTrace: stackTrace,
+      );
     }
 
     return Response<BuiltMap<String, num>>(
@@ -320,7 +325,7 @@ class ClassifierApi {
   /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
   ///
   /// Returns a [Future] containing a [Response] with a [BuiltMap<String, num>] as data
-  /// Throws [DioError] if API call or serialization fails
+  /// Throws [DioException] if API call or serialization fails
   Future<Response<BuiltMap<String, num>>>
       evaluateTabularClassifierClassifierTabularGet({
     required DateTime date,
@@ -372,12 +377,13 @@ class ClassifierApi {
         specifiedType: _responseType,
       ) as BuiltMap<String, num>;
     } catch (error, stackTrace) {
-      throw DioError(
+      throw DioException(
         requestOptions: _response.requestOptions,
         response: _response,
-        type: DioErrorType.other,
+        type: DioExceptionType.unknown,
         error: error,
-      )..stackTrace = stackTrace;
+        stackTrace: stackTrace,
+      );
     }
 
     return Response<BuiltMap<String, num>>(
@@ -406,7 +412,7 @@ class ClassifierApi {
   /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
   ///
   /// Returns a [Future] containing a [Response] with a [BuiltList<String>] as data
-  /// Throws [DioError] if API call or serialization fails
+  /// Throws [DioException] if API call or serialization fails
   Future<Response<BuiltList<String>>> getLocalClassifierLocalGet({
     required num lat,
     required num lon,
@@ -453,12 +459,13 @@ class ClassifierApi {
         specifiedType: _responseType,
       ) as BuiltList<String>;
     } catch (error, stackTrace) {
-      throw DioError(
+      throw DioException(
         requestOptions: _response.requestOptions,
         response: _response,
-        type: DioErrorType.other,
+        type: DioExceptionType.unknown,
         error: error,
-      )..stackTrace = stackTrace;
+        stackTrace: stackTrace,
+      );
     }
 
     return Response<BuiltList<String>>(
@@ -490,7 +497,7 @@ class ClassifierApi {
   /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
   ///
   /// Returns a [Future] containing a [Response] with a [PageBasicPrediction] as data
-  /// Throws [DioError] if API call or serialization fails
+  /// Throws [DioException] if API call or serialization fails
   Future<Response<PageBasicPrediction>> getSeasonalClassifierSeasonalGet({
     required num lat,
     required num lon,
@@ -546,12 +553,13 @@ class ClassifierApi {
         specifiedType: _responseType,
       ) as PageBasicPrediction;
     } catch (error, stackTrace) {
-      throw DioError(
+      throw DioException(
         requestOptions: _response.requestOptions,
         response: _response,
-        type: DioErrorType.other,
+        type: DioExceptionType.unknown,
         error: error,
-      )..stackTrace = stackTrace;
+        stackTrace: stackTrace,
+      );
     }
 
     return Response<PageBasicPrediction>(
@@ -578,7 +586,7 @@ class ClassifierApi {
   /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
   ///
   /// Returns a [Future] containing a [Response] with a [ClassifierVersion] as data
-  /// Throws [DioError] if API call or serialization fails
+  /// Throws [DioException] if API call or serialization fails
   Future<Response<ClassifierVersion>> getVersionClassifierVersionGet({
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
@@ -617,12 +625,13 @@ class ClassifierApi {
         specifiedType: _responseType,
       ) as ClassifierVersion;
     } catch (error, stackTrace) {
-      throw DioError(
+      throw DioException(
         requestOptions: _response.requestOptions,
         response: _response,
-        type: DioErrorType.other,
+        type: DioExceptionType.unknown,
         error: error,
-      )..stackTrace = stackTrace;
+        stackTrace: stackTrace,
+      );
     }
 
     return Response<ClassifierVersion>(

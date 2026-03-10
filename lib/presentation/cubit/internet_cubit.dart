@@ -16,23 +16,23 @@ class InternetCubit extends Cubit<InternetState> {
     monitorInternetConnection();
   }
 
-  Future<StreamSubscription<ConnectivityResult>>
+  Future<StreamSubscription<List<ConnectivityResult>>>
       monitorInternetConnection() async {
-    var result = await connectivity.checkConnectivity();
-    emitResult(result);
+    var results = await connectivity.checkConnectivity();
+    emitResults(results);
 
     return connectivityStreamSubscription =
-        connectivity.onConnectivityChanged.listen((connectivityResult) {
-      emitResult(connectivityResult);
+        connectivity.onConnectivityChanged.listen((connectivityResults) {
+      emitResults(connectivityResults);
     });
   }
 
-  void emitResult(ConnectivityResult result) {
-    if (result == ConnectivityResult.wifi) {
+  void emitResults(List<ConnectivityResult> results) {
+    if (results.contains(ConnectivityResult.wifi)) {
       emitInternetConnected(ConnectionType.wifi);
-    } else if (result == ConnectivityResult.mobile) {
+    } else if (results.contains(ConnectivityResult.mobile)) {
       emitInternetConnected(ConnectionType.mobile);
-    } else if (result == ConnectivityResult.none) {
+    } else if (results.contains(ConnectivityResult.none)) {
       emitInternetDisconnected();
     }
   }

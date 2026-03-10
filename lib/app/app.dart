@@ -1,5 +1,6 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:device_preview_screenshot/device_preview_screenshot.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fungid_flutter/presentation/bloc/app_settings_bloc.dart';
@@ -20,9 +21,8 @@ import 'package:openapi_generator_annotations/openapi_generator_annotations.dart
       pubName: 'fungid_api',
       pubAuthor: 'Michael Weishuhn',
     ),
-    inputSpecFile: 'tmp/fungid-openapi.json',
+    inputSpec: InputSpec(path: 'tmp/fungid-openapi.json'),
     generatorName: Generator.dio,
-    alwaysRun: true,
     outputDirectory: 'packages/fungid_api')
 class FungIDApp extends StatelessWidget {
   const FungIDApp({
@@ -114,9 +114,8 @@ class AppView extends StatelessWidget {
         if (state is AppSettingsLoaded) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
-            useInheritedMediaQuery: true,
-            locale: DevicePreview.locale(context),
-            builder: DevicePreview.appBuilder,
+            locale: kReleaseMode ? null : DevicePreview.locale(context),
+            builder: kReleaseMode ? null : DevicePreview.appBuilder,
             title: 'FungID',
             theme: UiHelpers.lightTheme,
             darkTheme: UiHelpers.darkTheme,

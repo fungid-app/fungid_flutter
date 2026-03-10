@@ -32,7 +32,7 @@ class TaxonomyApi {
   /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
   ///
   /// Returns a [Future] containing a [Response] with a [PageSpecies] as data
-  /// Throws [DioError] if API call or serialization fails
+  /// Throws [DioException] if API call or serialization fails
   Future<Response<PageSpecies>> getAllSpeciesTaxonomySpeciesGet({
     int? page = 1,
     int? size = 50,
@@ -81,12 +81,13 @@ class TaxonomyApi {
         specifiedType: _responseType,
       ) as PageSpecies;
     } catch (error, stackTrace) {
-      throw DioError(
+      throw DioException(
         requestOptions: _response.requestOptions,
         response: _response,
-        type: DioErrorType.other,
+        type: DioExceptionType.unknown,
         error: error,
-      )..stackTrace = stackTrace;
+        stackTrace: stackTrace,
+      );
     }
 
     return Response<PageSpecies>(
@@ -114,7 +115,7 @@ class TaxonomyApi {
   /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
   ///
   /// Returns a [Future] containing a [Response] with a [Species] as data
-  /// Throws [DioError] if API call or serialization fails
+  /// Throws [DioException] if API call or serialization fails
   Future<Response<Species>> getSpeciesTaxonomySpeciesNameOrIdGet({
     required String nameOrId,
     CancelToken? cancelToken,
@@ -155,12 +156,13 @@ class TaxonomyApi {
         specifiedType: _responseType,
       ) as Species;
     } catch (error, stackTrace) {
-      throw DioError(
+      throw DioException(
         requestOptions: _response.requestOptions,
         response: _response,
-        type: DioErrorType.other,
+        type: DioExceptionType.unknown,
         error: error,
-      )..stackTrace = stackTrace;
+        stackTrace: stackTrace,
+      );
     }
 
     return Response<Species>(

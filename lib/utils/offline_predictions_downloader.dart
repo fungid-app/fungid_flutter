@@ -181,7 +181,7 @@ class OfflinePredictionsDownloader {
   @pragma('vm:entry-point')
   static void downloadCallback(
     String id,
-    DownloadTaskStatus status,
+    int status,
     int progress,
   ) {
     final SendPort? send =

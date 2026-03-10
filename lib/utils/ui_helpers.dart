@@ -32,7 +32,7 @@ class UiHelpers {
   }
 
   static Color linkColor(BuildContext context) {
-    return Theme.of(context).toggleableActiveColor;
+    return Theme.of(context).colorScheme.secondary;
   }
 
   static Widget header(BuildContext context, String text) {

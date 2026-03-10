@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_map/plugin_api.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:fungid_flutter/presentation/cubit/location_cubit.dart';
 import 'package:latlong2/latlong.dart';
 
@@ -57,7 +57,7 @@ class LocationPickerView extends StatelessWidget {
     var pos = LatLng(location.latitude, location.longitude);
 
     var marker = Marker(
-      builder: (context) => const Icon(
+      child: const Icon(
         Icons.location_on,
         color: Colors.red,
       ),
@@ -66,7 +66,7 @@ class LocationPickerView extends StatelessWidget {
 
     _mapController.mapEventStream.listen((event) {
       if (event is MapEventMove) {
-        context.read<LocationCubit>().updateLocation(event.center);
+        context.read<LocationCubit>().updateLocation(event.camera.center);
       }
     });
 
@@ -82,17 +82,13 @@ class LocationPickerView extends StatelessWidget {
       body: FlutterMap(
         mapController: _mapController,
         options: MapOptions(
-          center: pos,
-          zoom: 12.0,
+          initialCenter: pos,
+          initialZoom: 12.0,
           keepAlive: false,
-          interactiveFlags: InteractiveFlag.pinchZoom | InteractiveFlag.drag,
-        ),
-        nonRotatedChildren: [
-          AttributionWidget.defaultWidget(
-            source: '© OpenStreetMap contributors',
-            onSourceTapped: () {},
+          interactionOptions: const InteractionOptions(
+            flags: InteractiveFlag.pinchZoom | InteractiveFlag.drag,
           ),
-        ],
+        ),
         children: [
           TileLayer(
             urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -101,7 +97,10 @@ class LocationPickerView extends StatelessWidget {
           ),
           MarkerLayer(
             markers: [marker],
-          )
+          ),
+          const SimpleAttributionWidget(
+            source: Text('© OpenStreetMap contributors'),
+          ),
         ],
       ),
     );
