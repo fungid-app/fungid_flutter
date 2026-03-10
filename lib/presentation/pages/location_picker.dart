@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -39,15 +41,39 @@ class LocationPicker extends StatelessWidget {
   }
 }
 
-class LocationPickerView extends StatelessWidget {
-  LocationPickerView({
+class LocationPickerView extends StatefulWidget {
+  const LocationPickerView({
     Key? key,
     required this.onLocationChanged,
   }) : super(key: key);
 
-  final MapController _mapController = MapController();
-
   final Function(double, double) onLocationChanged;
+
+  @override
+  State<LocationPickerView> createState() => _LocationPickerViewState();
+}
+
+class _LocationPickerViewState extends State<LocationPickerView> {
+  final MapController _mapController = MapController();
+  StreamSubscription? _mapEventSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    _mapEventSubscription =
+        _mapController.mapEventStream.listen((event) {
+      if (event is MapEventMove) {
+        context.read<LocationCubit>().updateLocation(event.camera.center);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _mapEventSubscription?.cancel();
+    _mapController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,16 +90,10 @@ class LocationPickerView extends StatelessWidget {
       point: pos,
     );
 
-    _mapController.mapEventStream.listen((event) {
-      if (event is MapEventMove) {
-        context.read<LocationCubit>().updateLocation(event.camera.center);
-      }
-    });
-
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          onLocationChanged(location.latitude, location.longitude);
+          widget.onLocationChanged(location.latitude, location.longitude);
           Navigator.pop(context);
         },
         child: const Icon(Icons.check_rounded),

@@ -13,18 +13,9 @@ UserObservation removeImageFromObservation(
   UserObservation obs,
   String imageID,
 ) {
-  try {
-    UserObservationImageBase? image =
-        obs.images.firstWhere((element) => element.id == imageID);
-
-    obs.images.remove(image);
-  } catch (e) {
-    if (e is! StateError) {
-      rethrow;
-    }
-  }
-
-  return obs;
+  return obs.copyWith(
+    images: obs.images.where((element) => element.id != imageID).toList(),
+  );
 }
 
 @JsonSerializable()

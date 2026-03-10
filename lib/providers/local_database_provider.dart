@@ -60,7 +60,9 @@ class LocalDatabaseProvider {
       return [];
     }
 
-    double topCount = counts[7].value.toDouble();
+    double topCount = counts.length > 7
+        ? counts[7].value.toDouble()
+        : counts.last.value.toDouble();
 
     return counts
         .map(

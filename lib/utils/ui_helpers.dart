@@ -13,7 +13,6 @@ class UiHelpers {
         scheme: FlexScheme.outerSpace,
         surfaceMode: FlexSurfaceMode.highScaffoldLowSurface,
         blendLevel: 20,
-        appBarOpacity: 0.95,
         visualDensity: FlexColorScheme.comfortablePlatformDensity,
       );
 
@@ -21,7 +20,6 @@ class UiHelpers {
         scheme: FlexScheme.outerSpace,
         surfaceMode: FlexSurfaceMode.highScaffoldLowSurface,
         blendLevel: 15,
-        appBarOpacity: 0.90,
         visualDensity: FlexColorScheme.comfortablePlatformDensity,
       );
 

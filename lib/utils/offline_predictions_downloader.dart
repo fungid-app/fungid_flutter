@@ -186,7 +186,7 @@ class OfflinePredictionsDownloader {
   ) {
     final SendPort? send =
         IsolateNameServer.lookupPortByName('downloader_send_port');
-    send?.send([id, status, progress]);
+    send?.send([id, DownloadTaskStatus.fromInt(status), progress]);
   }
 
   Future<void> _loadData() async {

@@ -58,7 +58,7 @@ class ViewSpeciesImagesPageState extends State<ViewSpeciesImagesPage> {
                 },
                 itemCount: widget.images.length,
                 itemBuilder: (context, index) {
-                  if (index < widget.images.length) {
+                  if (index < widget.images.length - 1) {
                     precacheImage(
                       CachedNetworkImageProvider(
                         widget.images[index + 1].fungidUrl,

@@ -166,7 +166,8 @@ class PredictionsRepository {
   bool _isCurrentOnlineVersion(String? version) {
     var curVersion = _onlinePredictionsProvider.currentVersion;
     log('Current online version: $curVersion vs $version');
-    return version == (curVersion ?? version);
+    if (curVersion == null) return false;
+    return version == curVersion;
   }
 
   bool _isCurrentOfflineVersion(String? version) {

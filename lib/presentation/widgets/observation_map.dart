@@ -4,24 +4,36 @@ import 'package:flutter_map_tile_caching/flutter_map_tile_caching.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 
-class ObservationMapView extends StatelessWidget {
+class ObservationMapView extends StatefulWidget {
   final Position position;
   final String url;
   final bool showMarker;
 
-  ObservationMapView({
+  const ObservationMapView({
     Key? key,
     required this.position,
     required this.url,
     required this.showMarker,
   }) : super(key: key);
+
+  @override
+  State<ObservationMapView> createState() => _ObservationMapViewState();
+}
+
+class _ObservationMapViewState extends State<ObservationMapView> {
   final _mapController = MapController();
+
+  @override
+  void dispose() {
+    _mapController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     String osmUrl = "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
 
-    LatLng pos = LatLng(position.latitude, position.longitude);
+    LatLng pos = LatLng(widget.position.latitude, widget.position.longitude);
 
     List<Widget> layers = [
       TileLayer(
@@ -33,7 +45,7 @@ class ObservationMapView extends StatelessWidget {
       Opacity(
         opacity: 0.6,
         child: TileLayer(
-          urlTemplate: url,
+          urlTemplate: widget.url,
           userAgentPackageName: 'app.fungid.flutter',
           retinaMode: MediaQuery.of(context).devicePixelRatio > 1.0,
           tileProvider: const FMTCStore('overlay_tiles').getTileProvider(),
@@ -41,7 +53,7 @@ class ObservationMapView extends StatelessWidget {
       ),
     ];
 
-    if (showMarker) {
+    if (widget.showMarker) {
       layers.add(
         MarkerLayer(
           markers: [

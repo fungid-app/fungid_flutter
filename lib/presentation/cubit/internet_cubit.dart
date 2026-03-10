@@ -8,7 +8,7 @@ part 'internet_state.dart';
 
 class InternetCubit extends Cubit<InternetState> {
   final Connectivity connectivity;
-  late StreamSubscription connectivityStreamSubscription;
+  StreamSubscription? connectivityStreamSubscription;
 
   InternetCubit({
     required this.connectivity,
@@ -16,12 +16,11 @@ class InternetCubit extends Cubit<InternetState> {
     monitorInternetConnection();
   }
 
-  Future<StreamSubscription<List<ConnectivityResult>>>
-      monitorInternetConnection() async {
+  Future<void> monitorInternetConnection() async {
     var results = await connectivity.checkConnectivity();
     emitResults(results);
 
-    return connectivityStreamSubscription =
+    connectivityStreamSubscription =
         connectivity.onConnectivityChanged.listen((connectivityResults) {
       emitResults(connectivityResults);
     });
@@ -32,7 +31,13 @@ class InternetCubit extends Cubit<InternetState> {
       emitInternetConnected(ConnectionType.wifi);
     } else if (results.contains(ConnectivityResult.mobile)) {
       emitInternetConnected(ConnectionType.mobile);
+    } else if (results.contains(ConnectivityResult.ethernet)) {
+      emitInternetConnected(ConnectionType.wifi);
+    } else if (results.contains(ConnectivityResult.vpn)) {
+      emitInternetConnected(ConnectionType.wifi);
     } else if (results.contains(ConnectivityResult.none)) {
+      emitInternetDisconnected();
+    } else {
       emitInternetDisconnected();
     }
   }
@@ -44,7 +49,7 @@ class InternetCubit extends Cubit<InternetState> {
 
   @override
   Future<void> close() {
-    connectivityStreamSubscription.cancel();
+    connectivityStreamSubscription?.cancel();
     return super.close();
   }
 }

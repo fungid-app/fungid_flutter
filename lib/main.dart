@@ -37,6 +37,8 @@ Future<void> main() async {
       WidgetsFlutterBinding.ensureInitialized();
       await setupFirebase();
       await FMTCObjectBoxBackend().initialise();
+      await const FMTCStore('osm_tiles').manage.create();
+      await const FMTCStore('overlay_tiles').manage.create();
 
       await FlutterDownloader.initialize(
         debug:
@@ -211,7 +213,7 @@ Future<WikipediaArticleProvider> setupWikipedia() async {
 
     var tar = TarDecoder().decodeBytes(decompressed);
 
-    extractArchiveToDisk(tar, await getLocalFilePath('wikipedia'));
+    await extractArchiveToDisk(tar, await getLocalFilePath('wikipedia'));
 
     await versionFile.writeAsString(_bundleWikiVersion);
   }

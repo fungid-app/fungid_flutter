@@ -1,3 +1,13 @@
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    // START: FlutterFire Configuration
+    id "com.google.gms.google-services"
+    id "com.google.firebase.crashlytics"
+    // END: FlutterFire Configuration
+    id "dev.flutter.flutter-gradle-plugin"
+}
+
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file('local.properties')
 
@@ -5,11 +15,6 @@ if (localPropertiesFile.exists()) {
     localPropertiesFile.withReader('UTF-8') { reader ->
         localProperties.load(reader)
     }
-}
-
-def flutterRoot = localProperties.getProperty('flutter.sdk')
-if (flutterRoot == null) {
-    throw new FileNotFoundException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
 }
 
 def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
@@ -35,25 +40,18 @@ if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
 
-apply plugin: 'com.android.application'
-// START: FlutterFire Configuration
-apply plugin: 'com.google.gms.google-services'
-apply plugin: 'com.google.firebase.crashlytics'
-// END: FlutterFire Configuration
-apply plugin: 'kotlin-android'
-apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
-
 android {
-    compileSdkVersion 34
+    namespace "app.fungid.fungid_app"
+    compileSdk 36
     ndkVersion flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '17'
     }
 
     sourceSets {
@@ -62,10 +60,8 @@ android {
 
     defaultConfig {
         applicationId "app.fungid.fungid_app"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-build-configuration.
-        minSdkVersion 21
-        targetSdkVersion 34
+        minSdk flutter.minSdkVersion
+        targetSdk 36
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         manifestPlaceholders += [
@@ -89,7 +85,7 @@ android {
 
            minifyEnabled true
            shrinkResources true
-           
+
            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
 
        }
@@ -97,15 +93,10 @@ android {
             applicationIdSuffix = ".debug"
         }
    }
-   packagingOptions {
-        pickFirst 'lib/x86/libfbjni.so'
-        pickFirst 'lib/x86_64/libfbjni.so'
-        pickFirst 'lib/armeabi-v7a/libfbjni.so'
-        pickFirst 'lib/arm64-v8a/libfbjni.so'    
-        pickFirst 'lib/x86/libpytorch_jni_lite.so'
-        pickFirst 'lib/x86_64/libpytorch_jni_lite.so'
-        pickFirst 'lib/armeabi-v7a/libpytorch_jni_lite.so'
-        pickFirst 'lib/arm64-v8a/libpytorch_jni_lite.so'
+   packaging {
+        jniLibs {
+            pickFirsts += ['lib/x86/libfbjni.so', 'lib/x86_64/libfbjni.so', 'lib/armeabi-v7a/libfbjni.so', 'lib/arm64-v8a/libfbjni.so', 'lib/x86/libpytorch_jni_lite.so', 'lib/x86_64/libpytorch_jni_lite.so', 'lib/armeabi-v7a/libpytorch_jni_lite.so', 'lib/arm64-v8a/libpytorch_jni_lite.so']
+        }
     }
 }
 
@@ -114,6 +105,5 @@ flutter {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'com.google.android.material:material:1.6.1'
+    implementation 'com.google.android.material:material:1.12.0'
 }

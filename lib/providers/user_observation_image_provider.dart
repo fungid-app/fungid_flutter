@@ -2,7 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:fungid_flutter/domain/observations.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:gal/gal.dart';
 import 'package:path_provider/path_provider.dart';
 
 class UserObservationImageFileSystemProvider {
@@ -58,7 +58,7 @@ class UserObservationImageFileSystemProvider {
     var file = await (img.getFile(storageDirectory)).copy(
       image.getFilePath(storageDirectory),
     );
-    await ImageGallerySaver.saveFile(file.path);
+    await Gal.putImage(file.path);
 
     return image;
   }
