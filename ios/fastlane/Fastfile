@@ -15,43 +15,21 @@
 
 default_platform(:ios)
 
-app_team_id = 'AB83BKF89B'
-itc_team_id = '1384242'
-itc_provider_id = 'AwesomeOrgLLC'
-
-
 platform :ios do
   desc "Push a new beta build to TestFlight"
   lane :beta do
-    build_app(
-      skip_build_archive: true,
-      archive_path: "../build/ios/archive/Runner.xcarchive",
-    )
-    # https://github.com/fastlane/fastlane/issues/20773
-
     upload_to_testflight(
-      itc_provider: "QVF4W6GHP4",
-      ipa: "../build/ios/ipa/fungid_flutter.ipa"
+      ipa: "../build/ios/ipa/fungid_flutter.ipa",
+      skip_waiting_for_build_processing: true,
     )
   end
 
   lane :upload do
-    # https://github.com/fastlane/fastlane/issues/20773
-
-    # upload_to_testflight(
-    #   itc_provider: "QVF4W6GHP4",
-    #   ipa: "../build/ios/ipa/fungid_flutter.ipa"
-    # )
     upload_to_app_store(
-      itc_provider: "QVF4W6GHP4",
       ipa: "../build/ios/ipa/fungid_flutter.ipa",
       automatic_release: true,
       force: true,
-      # export_compliance_compliance_required: false,
-      # export_compliance_contains_third_party_cryptography: false,
-      # export_compliance_contains_proprietary_cryptography: false
     )
-
   end
 
   lane :crashlytics do

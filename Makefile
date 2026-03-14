@@ -19,16 +19,24 @@ clean:
 deploy-ios-beta:
 	flutter clean \
 	&& source .env \
-	&& flutter build ipa \
+	&& mv /opt/homebrew/bin/rsync /opt/homebrew/bin/rsync.bak 2>/dev/null; \
+	flutter build ipa --export-options-plist=$$(pwd)/ios/ExportOptions.plist; \
+	EXIT_CODE=$$?; \
+	mv /opt/homebrew/bin/rsync.bak /opt/homebrew/bin/rsync 2>/dev/null; \
+	[ $$EXIT_CODE -eq 0 ] \
 	&& cd ios \
-	&& fastlane ios beta
+	&& PATH="/opt/homebrew/opt/ruby/bin:$$PATH" /opt/homebrew/opt/ruby/bin/ruby /Users/weishuhn/.local/share/gem/bin/fastlane ios beta
 
 deploy-ios-release:
 	flutter clean \
 	&& source .env \
-	&& flutter build ipa \
+	&& mv /opt/homebrew/bin/rsync /opt/homebrew/bin/rsync.bak 2>/dev/null; \
+	flutter build ipa --export-options-plist=$$(pwd)/ios/ExportOptions.plist; \
+	EXIT_CODE=$$?; \
+	mv /opt/homebrew/bin/rsync.bak /opt/homebrew/bin/rsync 2>/dev/null; \
+	[ $$EXIT_CODE -eq 0 ] \
 	&& cd ios \
-	&& fastlane ios upload
+	&& PATH="/opt/homebrew/opt/ruby/bin:$$PATH" /opt/homebrew/opt/ruby/bin/ruby /Users/weishuhn/.local/share/gem/bin/fastlane ios upload
 
 deploy-android-draft:
 	flutter clean \

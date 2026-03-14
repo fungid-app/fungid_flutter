@@ -1,7 +1,7 @@
 name: fungid_flutter
 description: The App for Fungid.app
 publish_to: 'none'
-version: 0.1.3+25
+version: 0.2.0+28
 
 environment:
   sdk: '>=3.0.0 <4.0.0'

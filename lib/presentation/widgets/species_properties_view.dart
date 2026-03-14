@@ -47,7 +47,9 @@ class SpeciesPropertiesView extends StatelessWidget {
       return [];
     }
 
-    var width = MediaQuery.of(context).size.width * .45;
+    final availableWidth =
+        MediaQuery.of(context).size.width - (UiHelpers.horizontalPadding * 2);
+    var width = (availableWidth - UiHelpers.itemSpacing) / 2;
 
     return list
         .map(
