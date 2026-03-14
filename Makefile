@@ -9,34 +9,25 @@ get-openapi-spec:
 generate-code:
 	flutter pub run build_runner build --delete-conflicting-outputs
 
-generate: get-openapi-spec generate-code 
+generate: get-openapi-spec generate-code
 
 deploy-beta: deploy-android-draft deploy-ios-beta
 
 clean:
 	flutter clean
 
+RUBY = /opt/homebrew/opt/ruby/bin/ruby
+FASTLANE = /Users/weishuhn/.local/share/gem/bin/fastlane
+
 deploy-ios-beta:
-	flutter clean \
-	&& source .env \
-	&& mv /opt/homebrew/bin/rsync /opt/homebrew/bin/rsync.bak 2>/dev/null; \
-	flutter build ipa --export-options-plist=$$(pwd)/ios/ExportOptions.plist; \
-	EXIT_CODE=$$?; \
-	mv /opt/homebrew/bin/rsync.bak /opt/homebrew/bin/rsync 2>/dev/null; \
-	[ $$EXIT_CODE -eq 0 ] \
-	&& cd ios \
-	&& PATH="/opt/homebrew/opt/ruby/bin:$$PATH" /opt/homebrew/opt/ruby/bin/ruby /Users/weishuhn/.local/share/gem/bin/fastlane ios beta
+	flutter clean
+	source .env && flutter build ipa --export-options-plist=$$(pwd)/ios/ExportOptions.plist
+	cd ios && $(RUBY) $(FASTLANE) ios beta
 
 deploy-ios-release:
-	flutter clean \
-	&& source .env \
-	&& mv /opt/homebrew/bin/rsync /opt/homebrew/bin/rsync.bak 2>/dev/null; \
-	flutter build ipa --export-options-plist=$$(pwd)/ios/ExportOptions.plist; \
-	EXIT_CODE=$$?; \
-	mv /opt/homebrew/bin/rsync.bak /opt/homebrew/bin/rsync 2>/dev/null; \
-	[ $$EXIT_CODE -eq 0 ] \
-	&& cd ios \
-	&& PATH="/opt/homebrew/opt/ruby/bin:$$PATH" /opt/homebrew/opt/ruby/bin/ruby /Users/weishuhn/.local/share/gem/bin/fastlane ios upload
+	flutter clean
+	source .env && flutter build ipa --export-options-plist=$$(pwd)/ios/ExportOptions.plist
+	cd ios && $(RUBY) $(FASTLANE) ios upload
 
 deploy-android-draft:
 	flutter clean \
@@ -58,20 +49,20 @@ generate-imagedb-file:
 	sqlite3 ../fungid-api/dbs/gbif.sqlite3 < app_db/create-image-table.sql \
 	&& sqlite3 ../fungid-api/dbs/gbif.sqlite3 ".dump classifier_species_images" > assets/db/images.sql \
 	&& sqlite3 ../fungid-api/dbs/gbif.sqlite3 "DROP TABLE classifier_species_images;"
-	
+
 detect-leaks:
 	gitleaks detect -v
-	
+
 check-size:
 	flutter clean \
 	&& flutter build appbundle --analyze-size --target-platform android-arm64
 
 direct-install:
-	&& flutter build appbundle \
+	flutter build appbundle \
 	&& bundletool build-apks --bundle=build/app/outputs/bundle/release/app-release.aab --output=build/app/outputs/bundle/release/app-release.apks \
 	&& bundletool install-apks --apks=build/app/outputs/bundle/release/app-release.apks
 
-setup-assets: 
+setup-assets:
 	cp assets_staging/wikipedia.tar.bz2 assets/ \
 		&& bzip2 -9 assets_staging/app.sqlite3 -c > assets/app.sqlite3.bz2 \
 		&& cp assets_staging/models/labels.csv assets/models
